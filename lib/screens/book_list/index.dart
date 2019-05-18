@@ -1,9 +1,6 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
-import 'package:http/http.dart' as http;
+import 'package:booklog/remotes/fetch_books.dart';
 
 const API_ENDPOINT = "https://dapi.kakao.com/v3/search/book";
 const API_KEY = "04180f02a662d58371bb715b54ce4c7b";
@@ -26,18 +23,6 @@ class Book {
       imageUri: json['thumbnail'],
     );
   }
-}
-
-Future<List<Book>> fetchBooks({String query}) async {
-  final response = await http.get('${API_ENDPOINT}?query=${query}',
-      headers: {'Authorization': 'KakaoAK ${API_KEY}'});
-
-  final books = json.decode(response.body)['documents'];
-
-  final bookIterable = books.map((data) => Book.fromPayload(data));
-  final bookList = bookIterable.toList().cast<Book>();
-
-  return bookList;
 }
 
 class BooksState extends State<Books> {
@@ -98,6 +83,8 @@ class BooksState extends State<Books> {
               } else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               }
+
+              return Container(width: 0, height: 0);
             }));
   }
 
