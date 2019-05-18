@@ -16,23 +16,25 @@ class BookCard extends StatelessWidget {
     return GestureDetector(
       child: Card(
         child: Padding(
-          padding:
-              const EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 8),
-          child: Row(children: [
-            Image.network(book.imageUri, width: 100, fit: BoxFit.cover),
-            Flexible(
-                child: Column(children: [
-              ListTile(
-                title: Text(
-                  book.title,
-                ),
-                subtitle: Text(
-                  book.author,
-                  style: TextStyle(fontSize: 14.0),
-                ),
-              )
-            ]))
-          ]),
+          padding: const EdgeInsets.all(8.0),
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Image.network(book.imageUri, width: 100, fit: BoxFit.cover),
+              Flexible(
+                  child: Column(children: [
+                ListTile(
+                  title: Text(
+                    book.title,
+                  ),
+                  subtitle: Text(
+                    '${book.author} | ${book.publisher}',
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                )
+              ]))
+            ]),
+          ),
         ),
       ),
       onTap: onTap,
