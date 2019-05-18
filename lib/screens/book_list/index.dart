@@ -1,23 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
-final books = [
-  new Book(
-      title: "함께 자라기",
-      author: "김창준",
-      isbn: "9788966262335",
-      linkUri:
-          "https://m.search.daum.net/search?w=bookpage&bookId=4833808&q=%ED%95%A8%EA%BB%98%20%EC%9E%90%EB%9D%BC%EA%B8%B0",
-      imageUri:
-          "https://search1.kakaocdn.net/thumb/C216x312.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F4833808%3Fmoddttm=201902032300"),
-  new Book(
-      title: "플라이룸",
-      author: "김우재",
-      isbn: "9788934984368",
-      linkUri:
-          "https://m.search.daum.net/search?w=bookpage&bookId=4836833&tab=introduction&DA=LB0&q=%ED%94%8C%EB%9D%BC%EC%9D%B4%EB%A3%B8",
-      imageUri:
-          "https://search1.kakaocdn.net/thumb/C216x312.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F4836833%3Fmoddttm=201902032302")
-];
+import 'package:http/http.dart' as http;
+
+const API_ENDPOINT = "https://dapi.kakao.com/v3/search/book";
+const API_KEY = "04180f02a662d58371bb715b54ce4c7b";
 
 class Book {
   final String isbn;
@@ -27,22 +16,43 @@ class Book {
   final String imageUri;
 
   Book({this.author, this.imageUri, this.isbn, this.linkUri, this.title}) {}
+
+  static fromPayload(Map<String, dynamic> json) {
+    return Book(
+      isbn: json['isbn'],
+      title: json['title'],
+      author: (json['authors'].cast<String>()).join(", "),
+      linkUri: json['uri'],
+      imageUri: json['thumbnail'],
+    );
+  }
+}
+
+Future<List<Book>> fetchBooks({String query}) async {
+  final response = await http.get('${API_ENDPOINT}?query=${query}',
+      headers: {'Authorization': 'KakaoAK ${API_KEY}'});
+
+  final books = json.decode(response.body)['documents'];
+
+  final bookIterable = books.map((data) => Book.fromPayload(data));
+  final bookList = bookIterable.toList().cast<Book>();
+
+  return bookList;
 }
 
 class BooksState extends State<Books> {
-  List<Book> _books = books;
   final Set<Book> _saved = Set<Book>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
-  Widget _buildRows() {
+  Widget _buildRows(List<Book> books) {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        itemCount: _books.length * 2,
+        itemCount: books.length * 2,
         itemBuilder: (context, i) {
           if (i.isOdd) return Divider();
 
           final index = i ~/ 2;
-          return _buildRow(_books[index]);
+          return _buildRow(books[index]);
         });
   }
 
@@ -74,14 +84,21 @@ class BooksState extends State<Books> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('My booklog'),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
-        ],
-      ),
-      body: _buildRows(),
-    );
+        appBar: AppBar(
+          title: Text('My booklog'),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
+          ],
+        ),
+        body: FutureBuilder(
+            future: fetchBooks(query: '프로그래밍'),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return _buildRows(snapshot.data);
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+            }));
   }
 
   void _pushSaved() {
