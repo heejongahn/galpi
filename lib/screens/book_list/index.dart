@@ -35,7 +35,7 @@ class BooksState extends State<Books> {
                 return Text("${snapshot.error}");
               }
 
-              return Container(width: 0, height: 0);
+              return Center(child: CircularProgressIndicator());
             }));
   }
 
