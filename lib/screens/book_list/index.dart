@@ -1,34 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:booklog/components/book_card/main.dart';
+import 'package:booklog/models/book.dart';
 import 'package:booklog/remotes/fetch_books.dart';
 
-const API_ENDPOINT = "https://dapi.kakao.com/v3/search/book";
-const API_KEY = "04180f02a662d58371bb715b54ce4c7b";
-
-class Book {
-  final String isbn;
-  final String title;
-  final String author;
-  final String linkUri;
-  final String imageUri;
-
-  Book({this.author, this.imageUri, this.isbn, this.linkUri, this.title}) {}
-
-  static fromPayload(Map<String, dynamic> json) {
-    return Book(
-      isbn: json['isbn'],
-      title: json['title'],
-      author: (json['authors'].cast<String>()).join(", "),
-      linkUri: json['uri'],
-      imageUri: json['thumbnail'],
-    );
-  }
-}
-
 class BooksState extends State<Books> {
-  final Set<Book> _saved = Set<Book>();
-  final _biggerFont = const TextStyle(fontSize: 18.0);
-
   Widget _buildRows(List<Book> books) {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
@@ -37,33 +13,8 @@ class BooksState extends State<Books> {
           if (i.isOdd) return Divider();
 
           final index = i ~/ 2;
-          return _buildRow(books[index]);
+          return BookCard(book: books[index], onTap: _pushSaved);
         });
-  }
-
-  Widget _buildRow(Book book) {
-    final bool alreadySaved = _saved.contains(book);
-    double width = MediaQuery.of(context).size.width;
-
-    return GestureDetector(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, bottom: 16),
-        child: Column(children: [
-          Image.network(book.imageUri, width: width, fit: BoxFit.cover),
-          ListTile(
-            title: Text(
-              book.title,
-              style: _biggerFont,
-            ),
-            subtitle: Text(
-              book.author,
-              style: TextStyle(fontSize: 14.0),
-            ),
-          )
-        ]),
-      ),
-      onTap: _pushSaved,
-    );
   }
 
   @override
@@ -92,27 +43,11 @@ class BooksState extends State<Books> {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          final Iterable<ListTile> tiles = _saved.map(
-            (Book book) {
-              return ListTile(
-                title: Text(
-                  book.title,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
-
-          final List<Widget> divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
-
           return Scaffold(
             appBar: AppBar(
               title: Text('Saved Suggestions'),
             ),
-            body: ListView(children: divided),
+            body: ListView(children: []),
           );
         },
       ),
