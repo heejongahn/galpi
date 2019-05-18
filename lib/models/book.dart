@@ -12,7 +12,7 @@ class Book {
       this.isbn,
       this.publisher,
       this.linkUri,
-      this.title}) {}
+      this.title});
 
   static fromPayload(Map<String, dynamic> json) {
     return Book(
