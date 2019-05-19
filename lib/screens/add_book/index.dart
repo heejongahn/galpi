@@ -4,21 +4,14 @@ import 'package:booklog/components/book_card/main.dart';
 import 'package:booklog/models/book.dart';
 import 'package:booklog/remotes/fetch_books.dart';
 
-typedef void OnSelectBook(Book book);
-
 class AddBook extends StatefulWidget {
-  final OnSelectBook onSelectBook;
-
-  AddBook(this.onSelectBook);
-
-  _AddBookState createState() => _AddBookState(this.onSelectBook);
+  _AddBookState createState() => _AddBookState();
 }
 
 class _AddBookState extends State<AddBook> {
   FocusNode _focusNode = new FocusNode();
   Book selectedBook;
   FutureBuilder<List<Book>> searchResultBuilder;
-  OnSelectBook onSelectBook;
 
   @override
   void dispose() {
@@ -110,7 +103,6 @@ class _AddBookState extends State<AddBook> {
   }
 
   _onBookClick(Book book) {
-    onSelectBook(book);
-    Navigator.of(context).pop();
+    Navigator.pop(context, book);
   }
 }

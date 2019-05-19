@@ -16,7 +16,7 @@ class BooksState extends State<Books> {
           if (i.isOdd) return Divider();
 
           final index = i ~/ 2;
-          return BookCard(book: books[index], onTap: _pushSaved);
+          return BookCard(book: books[index]);
         });
   }
 
@@ -26,9 +26,6 @@ class BooksState extends State<Books> {
       key: scaffoldKey,
       appBar: AppBar(
         title: Text('My booklog'),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
-        ],
       ),
       body: FutureBuilder(
           future: fetchBooks(query: '프로그래밍'),
@@ -41,25 +38,7 @@ class BooksState extends State<Books> {
 
             return Center(child: CircularProgressIndicator());
           }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _pushSaved,
-        child: Icon(Icons.add),
-      ),
     );
-  }
-
-  void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return AddBook(onSelectBook);
-        },
-      ),
-    );
-  }
-
-  onSelectBook(Book book) {
-    scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(book.title)));
   }
 }
 
