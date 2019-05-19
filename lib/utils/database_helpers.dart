@@ -53,6 +53,12 @@ class DatabaseHelper {
     return id;
   }
 
+  Future<void> deleteReview(int id) async {
+    Database db = await database;
+    await db
+        .delete(Review.table, where: '${Review.columnId} = ?', whereArgs: [id]);
+  }
+
   Future<List<Review>> queryAllReviews() async {
     Database db = await database;
     List<Map> maps = await db.query(Review.table);

@@ -4,8 +4,9 @@ import 'package:booklog/models/review.dart';
 class ReviewCard extends StatelessWidget {
   final Review review;
   final GestureTapCallback onTap;
+  final VoidCallback onDelete;
 
-  ReviewCard({this.review, this.onTap});
+  ReviewCard({this.review, this.onTap, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +19,6 @@ class ReviewCard extends StatelessWidget {
           child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(children: [
-                // Flexible(
-                //     child: Container(
-                //   child: Row(
-                //       children: List(5)
-                //           .map((i) => review.stars > i + 1
-                //               ? Icon(Icons.star)
-                //               : Icon(Icons.star_border))
-                //           .toList()),
-                // )),
                 ListTile(
                   title: Text(
                     review.title,
@@ -35,7 +27,19 @@ class ReviewCard extends StatelessWidget {
                     '${review.body}',
                     style: TextStyle(fontSize: 14.0),
                   ),
-                )
+                  trailing: RaisedButton(
+                    child: Text('삭제'),
+                    onPressed: onDelete,
+                  ),
+                ),
+                Container(
+                  child: Row(
+                      children: List<int>.generate(5, (i) => i + 1)
+                          .map((i) => review.stars > i
+                              ? Icon(Icons.star)
+                              : Icon(Icons.star_border))
+                          .toList()),
+                ),
               ]))),
       onTap: onTap,
     );
