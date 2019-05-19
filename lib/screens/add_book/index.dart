@@ -15,31 +15,58 @@ class AddBook extends StatefulWidget {
 }
 
 class _AddBookState extends State<AddBook> {
-  String query = '파이썬';
+  FocusNode _focusNode = new FocusNode();
   Book selectedBook;
   FutureBuilder<List<Book>> searchResultBuilder;
   OnSelectBook onSelectBook;
 
-  _AddBookState(this.onSelectBook);
+  @override
+  void dispose() {
+    super.dispose();
+    _focusNode.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onOnFocusNodeEvent);
+  }
+
+  _onOnFocusNodeEvent() {
+    setState(() {
+      // Re-renders
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('책 추가'),
+          title: Text('새 리뷰'),
         ),
         body: Column(children: [
           Container(
             padding: const EdgeInsets.all(20),
             child: TextField(
+              focusNode: _focusNode,
               onSubmitted: _searchBooks,
               textInputAction: TextInputAction.search,
-              decoration: InputDecoration(prefixIcon: Icon(Icons.search)),
+              decoration: InputDecoration(
+                  labelText: '책 제목',
+                  prefixIcon: _focusNode.hasFocus
+                      ? IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          onPressed: () {
+                            _focusNode.unfocus();
+                          })
+                      : Icon(Icons.search),
+                  border: OutlineInputBorder()),
             ),
           ),
           Expanded(
               child: searchResultBuilder == null
-                  ? Container(child: Text('검색어 입력'))
+                  ? Container(
+                      alignment: Alignment.center, child: Text('검색 결과가 없습니다.'))
                   : searchResultBuilder)
         ]));
   }
