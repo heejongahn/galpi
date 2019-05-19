@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:booklog/models/book.dart';
 import 'package:booklog/screens/add_book/index.dart';
 import 'package:booklog/screens/book_list/index.dart';
+import 'package:booklog/screens/review_list/index.dart';
 
 void main() => runApp(MaterialApp(home: MyApp()));
 
@@ -28,11 +28,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _pageIndex, children: [
-        Books(),
-        AddBook((Book book) => {}),
-        AddBook((Book book) => {}),
-      ]),
+      body: IndexedStack(
+          index: _pageIndex, children: [Books(), AddBook(), Reviews()]),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           homeItem,
