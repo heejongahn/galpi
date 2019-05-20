@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:booklog/screens/add_book/index.dart';
+import 'package:booklog/screens/add_review/index.dart';
 import 'package:booklog/components/review_card/main.dart';
 import 'package:booklog/models/review.dart';
 import 'package:booklog/utils/database_helpers.dart';
@@ -55,7 +55,7 @@ class ReviewsState extends State<Reviews> {
   void _onOpenNewReview() {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
-      return AddBook();
+      return AddReview();
     }));
   }
 }

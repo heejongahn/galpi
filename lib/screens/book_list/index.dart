@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:booklog/components/book_card/main.dart';
 import 'package:booklog/models/book.dart';
 import 'package:booklog/remotes/fetch_books.dart';
-import 'package:booklog/screens/add_book/index.dart';
 
 class BooksState extends State<Books> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();

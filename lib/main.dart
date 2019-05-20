@@ -4,7 +4,10 @@ import 'package:booklog/components/screen_with_navigator/index.dart';
 import 'package:booklog/screens/book_list/index.dart';
 import 'package:booklog/screens/review_list/index.dart';
 
-void main() => runApp(MaterialApp(home: MyApp()));
+void main() => runApp(MaterialApp(
+      home: MyApp(),
+      theme: ThemeData(fontFamily: 'Spoqa-Han-Sans'),
+    ));
 
 class MyApp extends StatefulWidget {
   @override
