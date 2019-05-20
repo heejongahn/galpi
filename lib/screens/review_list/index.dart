@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:booklog/screens/add_book/index.dart';
 import 'package:booklog/components/review_card/main.dart';
 import 'package:booklog/models/review.dart';
 import 'package:booklog/utils/database_helpers.dart';
@@ -41,24 +42,21 @@ class ReviewsState extends State<Reviews> {
             return Center(child: CircularProgressIndicator());
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: _insertDummyReview,
+        onPressed: _onOpenNewReview,
         child: Icon(Icons.add),
       ),
     );
   }
 
-  void _insertDummyReview() async {
-    final Review review = Review(
-      stars: 4,
-      title: '더미 리뷰 제목',
-      body: '더미 리뷰 본문',
-    );
-
-    await DatabaseHelper.instance.insertReview(review);
-  }
-
   void _deleteReview(Review review) {
     DatabaseHelper.instance.deleteReview(review.id);
+  }
+
+  void _onOpenNewReview() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      return AddBook();
+    }));
   }
 }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:booklog/screens/add_book/index.dart';
+import 'package:booklog/components/screen_with_navigator/index.dart';
 import 'package:booklog/screens/book_list/index.dart';
 import 'package:booklog/screens/review_list/index.dart';
 
@@ -19,21 +19,19 @@ class _MyAppState extends State<MyApp> {
     title: Text('피드'),
   );
 
-  final addItem = const BottomNavigationBarItem(
-      icon: Icon(Icons.create), title: Text('새 리뷰'));
-
   final myItem = const BottomNavigationBarItem(
-      icon: Icon(Icons.person), title: Text('MY'));
+      icon: Icon(Icons.person), title: Text('내 리뷰'));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-          index: _pageIndex, children: [Books(), AddBook(), Reviews()]),
+      body: IndexedStack(index: _pageIndex, children: [
+        ScreenWithNavigator(child: Books()),
+        ScreenWithNavigator(child: Reviews())
+      ]),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           homeItem,
-          addItem,
           myItem,
         ],
         currentIndex: _pageIndex,
