@@ -49,7 +49,9 @@ class ReviewsState extends State<Reviews> {
   }
 
   void _deleteReview(Review review) {
-    DatabaseHelper.instance.deleteReview(review.id);
+    setState(() {
+      DatabaseHelper.instance.deleteReview(review.id);
+    });
   }
 
   void _onOpenNewReview() {
