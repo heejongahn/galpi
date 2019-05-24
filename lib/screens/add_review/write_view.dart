@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:booklog/models/book.dart';
 import 'package:booklog/models/review.dart';
-import 'package:booklog/utils/database_helpers.dart';
 
-typedef void OnCreate(Review review);
+typedef Future<void> OnCreate(Review review, Book book);
 
 class WriteView extends StatefulWidget {
   final Book selectedBook;
@@ -137,7 +136,6 @@ class _WriteViewState extends State<WriteView> {
     }
 
     form.save();
-    await DatabaseHelper.instance.insertReview(review);
-    Navigator.of(context).pop();
+    await widget.onCreate(review, widget.selectedBook);
   }
 }

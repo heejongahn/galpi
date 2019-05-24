@@ -15,6 +15,7 @@ class Review {
   final DateTime readingFinishedAt;
   final DateTime createdAt;
   final DateTime lastModifiedAt;
+  final int bookId;
 
   static final table = 'Review';
   static final columnId = 'id';
@@ -25,6 +26,7 @@ class Review {
   static final columnReadingFinishedAt = 'readingFinishedAt';
   static final columnCreatedAt = 'createdAt';
   static final columnLastModifiedAt = 'lastModifiedAt';
+  static final columnBookId = 'bookId';
 
   Review(
       {this.id,
@@ -34,22 +36,23 @@ class Review {
       this.readingStartedAt,
       this.readingFinishedAt,
       this.createdAt,
-      this.lastModifiedAt});
+      this.lastModifiedAt,
+      this.bookId});
 
   static fromMap(Map<String, dynamic> map) {
     return Review(
-      id: map[columnId],
-      stars: map[columnStars],
-      title: map[columnTitle],
-      body: map[columnBody],
-      readingStartedAt: map[columnReadingStartedAt],
-      readingFinishedAt: map[columnReadingFinishedAt],
-      createdAt: map[columnCreatedAt],
-      lastModifiedAt: map[columnLastModifiedAt],
-    );
+        id: map[columnId],
+        stars: map[columnStars],
+        title: map[columnTitle],
+        body: map[columnBody],
+        readingStartedAt: map[columnReadingStartedAt],
+        readingFinishedAt: map[columnReadingFinishedAt],
+        createdAt: map[columnCreatedAt],
+        lastModifiedAt: map[columnLastModifiedAt],
+        bookId: map[columnBookId]);
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap(int bookId) {
     var map = <String, dynamic>{
       columnStars: stars,
       columnTitle: title,
@@ -58,6 +61,7 @@ class Review {
       columnReadingFinishedAt: readingFinishedAt,
       columnCreatedAt: createdAt,
       columnLastModifiedAt: lastModifiedAt,
+      columnBookId: bookId
     };
 
     if (id != null) {

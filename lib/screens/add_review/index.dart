@@ -32,8 +32,8 @@ class _AddReviewState extends State<AddReview> {
     });
   }
 
-  _onCreate(Review review) async {
-    await DatabaseHelper.instance.insertReview(review);
+  Future<void> _onCreate(Review review, Book book) async {
+    await DatabaseHelper.instance.insertReview(review, book);
     Navigator.of(context).pop();
   }
 }

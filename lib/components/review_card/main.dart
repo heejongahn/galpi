@@ -23,7 +23,7 @@ class ReviewCard extends StatelessWidget {
               child: Column(children: [
                 ListTile(
                   title: Text(
-                    review.title,
+                    '${review.title} (bookId: ${review.bookId})',
                   ),
                   subtitle: Text(
                     '${review.body}',

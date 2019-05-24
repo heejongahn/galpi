@@ -54,11 +54,13 @@ class ReviewsState extends State<Reviews> {
     });
   }
 
-  void _onOpenNewReview() {
-    Navigator.of(context)
+  void _onOpenNewReview() async {
+    await Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
       return AddReview();
     }));
+
+    setState(() {});
   }
 }
 
