@@ -24,7 +24,7 @@ class BooksState extends State<Books> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: Text('My booklog'),
+        title: Text('feed'),
       ),
       body: FutureBuilder(
           future: fetchBooks(query: '프로그래밍'),

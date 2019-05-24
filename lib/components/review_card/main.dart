@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:booklog/models/review.dart';
 
+// import
+
 class ReviewCard extends StatelessWidget {
   final Review review;
   final GestureTapCallback onTap;

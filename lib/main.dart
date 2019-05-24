@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:booklog/components/screen_with_navigator/index.dart';
 import 'package:booklog/screens/book_list/index.dart';
 import 'package:booklog/screens/review_list/index.dart';
+import 'package:booklog/utils/theme.dart';
 
-void main() => runApp(MaterialApp(
-      home: MyApp(),
-      theme: ThemeData(fontFamily: 'Spoqa-Han-Sans'),
-    ));
+final primaryColor = Color.fromRGBO(0xff, 0x74, 0x73, 1);
+
+void main() => runApp(MaterialApp(home: MyApp(), theme: theme));
 
 class MyApp extends StatefulWidget {
   @override

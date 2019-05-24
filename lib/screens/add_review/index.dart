@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:booklog/components/book_card/main.dart';
 import 'package:booklog/models/book.dart';
 import 'package:booklog/models/review.dart';
-import 'package:booklog/remotes/fetch_books.dart';
 import 'package:booklog/utils/database_helpers.dart';
 
 import './search_view.dart';
@@ -21,7 +19,7 @@ class _AddReviewState extends State<AddReview> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('새 리뷰'),
+          title: Text('newreview'),
         ),
         body: selectedBook != null
             ? WriteView(selectedBook: selectedBook, onCreate: _onCreate)

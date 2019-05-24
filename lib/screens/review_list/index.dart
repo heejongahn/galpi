@@ -28,7 +28,7 @@ class ReviewsState extends State<Reviews> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: Text('리뷰 피드'),
+        title: Text('myreviews'),
       ),
       body: FutureBuilder<List<Review>>(
           future: DatabaseHelper.instance.queryAllReviews(),
