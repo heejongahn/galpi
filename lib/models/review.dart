@@ -8,9 +8,9 @@ enum ReadingStatus {
 
 class Review {
   final int id;
-  final int stars;
-  final String title;
-  final String body;
+  int stars;
+  String title;
+  String body;
   final DateTime readingStartedAt;
   final DateTime readingFinishedAt;
   final DateTime createdAt;
