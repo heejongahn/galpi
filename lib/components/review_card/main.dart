@@ -35,7 +35,7 @@ class ReviewCard extends StatelessWidget {
                 Container(
                   child: Row(
                       children: List<int>.generate(5, (i) => i + 1)
-                          .map((i) => review.stars > i
+                          .map((i) => review.stars >= i
                               ? Icon(Icons.star)
                               : Icon(Icons.star_border))
                           .toList()),
