@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:developer';
 import 'package:path/path.dart';
+import 'package:tuple/tuple.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:booklog/models/review.dart';
@@ -89,11 +91,56 @@ class DatabaseHelper {
         .delete(Review.table, where: '${Review.columnId} = ?', whereArgs: [id]);
   }
 
-  Future<List<Review>> queryAllReviews() async {
+  Future<Tuple2<List<Review>, List<Book>>> queryAllReviews() async {
     Database db = await database;
-    List<Map> maps = await db.query(Review.table);
+    final bookColumns = [
+      Book.columnId,
+      Book.columnIsbn,
+      Book.columnTitle,
+      Book.columnAuthor,
+      Book.columnPublisher,
+      Book.columnLinkUri,
+      Book.columnImageUri,
+    ];
 
-    return maps.map((map) => Review.fromMap(map)).cast<Review>().toList();
+    final reviewColumns = [
+      Review.columnId,
+      Review.columnStars,
+      Review.columnTitle,
+      Review.columnBody,
+      Review.columnReadingStartedAt,
+      Review.columnReadingFinishedAt,
+      Review.columnCreatedAt,
+      Review.columnLastModifiedAt,
+      Review.columnBookId,
+    ];
+
+    final bookQuery = bookColumns
+        .map((col) => '${Book.table}.${col} as ${Book.table}_${col}')
+        .join(',');
+    final reviewQuery = reviewColumns
+        .map((col) => '${Review.table}.${col} as ${Review.table}_${col}')
+        .join(',');
+
+    List<Map> maps = await db.rawQuery('''
+    SELECT
+    ${bookQuery},
+    ${reviewQuery}
+    FROM ${Review.table}
+    INNER JOIN ${Book.table} ON ${Review.table}.${Review.columnBookId} = ${Book.table}.${Book.columnId};
+    ''', []);
+
+    final reviews = maps
+        .map((map) {
+          return Review.fromJoinedMap(map);
+        })
+        .cast<Review>()
+        .toList();
+
+    final books =
+        maps.map((map) => Book.fromJoinedMap(map)).cast<Book>().toList();
+
+    return Tuple2(reviews, books);
   }
 
   Future<Review> queryReview(int id) async {

@@ -1,14 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:booklog/models/book.dart';
 import 'package:booklog/models/review.dart';
-
-// import
 
 class ReviewCard extends StatelessWidget {
   final Review review;
+  final Book book;
   final GestureTapCallback onTap;
+  final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  ReviewCard({this.review, this.onTap, this.onDelete});
+  ReviewCard({this.review, this.book, this.onTap, this.onEdit, this.onDelete});
+
+  get bookImage {
+    return book.imageUri != ''
+        ? Image.network(book.imageUri, width: 100, fit: BoxFit.cover)
+        : Container(width: 0, height: 0);
+  }
+
+  get bookDescription {
+    return Flexible(
+        child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(children: [
+              Flexible(
+                  flex: 0,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(0),
+                    title: Text(
+                      '${book.title}',
+                    ),
+                    subtitle: Text(
+                      '${book.author} | ${book.publisher}',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                  )),
+              Container(
+                child: Row(
+                    children: List<int>.generate(5, (i) => i + 1)
+                        .map((i) =>
+                            (review.stars == null ? 0 : review.stars) >= i
+                                ? Icon(
+                                    Icons.star,
+                                    size: 16,
+                                  )
+                                : Icon(Icons.star_border, size: 16))
+                        .toList()),
+              ),
+            ])));
+  }
+
+  get moreIcon {
+    return PopupMenuButton(
+        icon: Icon(Icons.more_vert),
+        onSelected: (value) {
+          switch (value) {
+            case 'edit':
+              {
+                onEdit();
+                break;
+              }
+            case 'delete':
+              {
+                onDelete();
+                break;
+              }
+            default:
+              {}
+          }
+        },
+        itemBuilder: (BuildContext context) => [
+              PopupMenuItem(value: 'edit', child: Text('수정')),
+              PopupMenuItem(value: 'delete', child: Text('삭제')),
+            ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,31 +82,11 @@ class ReviewCard extends StatelessWidget {
 
     return GestureDetector(
       child: Card(
-          child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(children: [
-                ListTile(
-                  title: Text(
-                    '${review.title} (bookId: ${review.bookId})',
-                  ),
-                  subtitle: Text(
-                    '${review.body}',
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                  trailing: RaisedButton(
-                    child: Text('삭제'),
-                    onPressed: onDelete,
-                  ),
-                ),
-                Container(
-                  child: Row(
-                      children: List<int>.generate(5, (i) => i + 1)
-                          .map((i) => review.stars >= i
-                              ? Icon(Icons.star)
-                              : Icon(Icons.star_border))
-                          .toList()),
-                ),
-              ]))),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[bookImage, bookDescription, moreIcon],
+        ),
+      ),
       onTap: onTap,
     );
   }

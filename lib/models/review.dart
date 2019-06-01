@@ -52,6 +52,19 @@ class Review {
         bookId: map[columnBookId]);
   }
 
+  static fromJoinedMap(Map<String, dynamic> map) {
+    return Review(
+        id: map['${table}_${columnId}'],
+        stars: map['${table}_${columnStars}'],
+        title: map['${table}_${columnTitle}'],
+        body: map['${table}_${columnBody}'],
+        readingStartedAt: map['${table}_${columnReadingStartedAt}'],
+        readingFinishedAt: map['${table}_${columnReadingFinishedAt}'],
+        createdAt: map['${table}_${columnCreatedAt}'],
+        lastModifiedAt: map['${table}_${columnLastModifiedAt}'],
+        bookId: map['${table}_${columnBookId}']);
+  }
+
   Map<String, dynamic> toMap(int bookId) {
     var map = <String, dynamic>{
       columnStars: stars,

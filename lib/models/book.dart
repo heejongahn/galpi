@@ -47,6 +47,17 @@ class Book {
     );
   }
 
+  static fromJoinedMap(Map<String, dynamic> map) {
+    return Book(
+      isbn: map['${table}_${columnIsbn}'],
+      title: map['${table}_${columnTitle}'],
+      author: map['${table}_${columnAuthor}'],
+      publisher: map['${table}_${columnPublisher}'],
+      linkUri: map['${table}_${columnLinkUri}'],
+      imageUri: map['${table}_${columnImageUri}'],
+    );
+  }
+
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
       columnIsbn: isbn,
