@@ -38,6 +38,7 @@ class Book {
 
   static fromMap(Map<String, dynamic> map) {
     return Book(
+      id: map[columnId],
       isbn: map[columnIsbn],
       title: map[columnTitle],
       author: map[columnAuthor],
@@ -49,6 +50,7 @@ class Book {
 
   static fromJoinedMap(Map<String, dynamic> map) {
     return Book(
+      id: map['${table}_${columnId}'],
       isbn: map['${table}_${columnIsbn}'],
       title: map['${table}_${columnTitle}'],
       author: map['${table}_${columnAuthor}'],
