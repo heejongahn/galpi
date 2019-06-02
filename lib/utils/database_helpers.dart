@@ -85,6 +85,13 @@ class DatabaseHelper {
     return id;
   }
 
+  Future<int> updateReview(Review review, Book book) async {
+    Database db = await database;
+    int id = await db.update(Review.table, review.toMap(book.id),
+        where: '${Review.columnId} = ?', whereArgs: [review.id]);
+    return id;
+  }
+
   Future<void> deleteReview(int id) async {
     Database db = await database;
     await db

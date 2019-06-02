@@ -3,6 +3,7 @@ import 'package:tuple/tuple.dart';
 
 import 'package:booklog/screens/add_review/index.dart';
 import 'package:booklog/components/review_card/main.dart';
+import 'package:booklog/components/review_form/index.dart';
 import 'package:booklog/models/book.dart';
 import 'package:booklog/models/review.dart';
 import 'package:booklog/utils/database_helpers.dart';
@@ -21,6 +22,7 @@ class ReviewsState extends State<Reviews> {
           return ReviewCard(
             review: reviews[index],
             book: books[index],
+            onEdit: () => _editReview(reviews[index], books[index]),
             onDelete: () => _deleteReview(reviews[index]),
           );
         });
@@ -57,6 +59,25 @@ class ReviewsState extends State<Reviews> {
     setState(() {
       DatabaseHelper.instance.deleteReview(review.id);
     });
+  }
+
+  void _editReview(Review review, Book book) async {
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      return Scaffold(
+          appBar: AppBar(
+            title: Text('editreview'),
+          ),
+          body: ReviewForm(
+              review: review,
+              book: book,
+              onSave: (Review newReview, Book _) async {
+                await DatabaseHelper.instance.updateReview(newReview, book);
+                Navigator.of(context).pop();
+              }));
+    }));
+
+    setState(() {});
   }
 
   void _onOpenNewReview() async {
