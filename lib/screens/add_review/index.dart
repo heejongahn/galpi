@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:booklog/components/review_form/index.dart';
 import 'package:booklog/models/book.dart';
 import 'package:booklog/models/review.dart';
 import 'package:booklog/utils/database_helpers.dart';
 
 import './search_view.dart';
-import './write_view.dart';
 
 class AddReview extends StatefulWidget {
   _AddReviewState createState() => _AddReviewState();
@@ -22,7 +22,10 @@ class _AddReviewState extends State<AddReview> {
           title: Text('newreview'),
         ),
         body: selectedBook != null
-            ? WriteView(selectedBook: selectedBook, onCreate: _onCreate)
+            ? ReviewForm(
+                book: selectedBook,
+                review: new Review(stars: 0),
+                onSave: _onCreate)
             : SearchView(onSelectBook: _onBookClick));
   }
 
