@@ -16,6 +16,8 @@ class DatabaseHelper {
 
   static Database _database;
   Future<Database> get database async {
+    final dbDirectory = await getApplicationDocumentsDirectory();
+    print('Database directory: ${dbDirectory}');
     if (_database != null) {
       return _database;
     }
@@ -54,10 +56,10 @@ class DatabaseHelper {
         ${Review.columnStars} INTEGER NOT NULL,
         ${Review.columnTitle} TEXT NOT NULL,
         ${Review.columnBody} TEXT NOT NULL,
-        ${Review.columnReadingStartedAt} DATETIME,
-        ${Review.columnReadingFinishedAt} DATETIME,
-        ${Review.columnCreatedAt} DATETIME DEFAULT CURRENT_TIMESTAMP,
-        ${Review.columnLastModifiedAt} DATETIME DEFAULT CURRENT_TIMESTAMP,
+        ${Review.columnReadingStartedAt} TEXT,
+        ${Review.columnReadingFinishedAt} TEXT,
+        ${Review.columnCreatedAt} TEXT NOT NULL,
+        ${Review.columnLastModifiedAt} TEXT,
         ${Review.columnBookId} INTEGER NOT NULL,
         FOREIGN KEY(${Review.columnBookId}) REFERENCES ${Book.table}(${Book.columnId})
       );

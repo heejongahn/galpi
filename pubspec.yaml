@@ -23,6 +23,7 @@ dependencies:
   sqflite: ^1.1.5
   path_provider: ^1.1.0
   tuple: ^1.0.2
+  intl: ^0.15.8
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 // import 'package:booklog/models/book.dart';
+import 'dart:developer';
 
 enum ReadingStatus {
   hasntStarted,
@@ -40,42 +41,60 @@ class Review {
       this.bookId});
 
   static fromMap(Map<String, dynamic> map) {
+    final readingStartedAt = map[columnReadingStartedAt] == null
+        ? null
+        : DateTime.tryParse(map[columnReadingStartedAt]);
+    final readingFinishedAt = map[columnReadingFinishedAt] == null
+        ? null
+        : DateTime.tryParse(map[columnReadingFinishedAt]);
+
     return Review(
         id: map[columnId],
         stars: map[columnStars],
         title: map[columnTitle],
         body: map[columnBody],
-        readingStartedAt: map[columnReadingStartedAt],
-        readingFinishedAt: map[columnReadingFinishedAt],
-        createdAt: map[columnCreatedAt],
-        lastModifiedAt: map[columnLastModifiedAt],
+        readingStartedAt: readingStartedAt,
+        readingFinishedAt: readingFinishedAt,
+        createdAt: DateTime.parse(map[columnCreatedAt]),
+        lastModifiedAt: DateTime.parse(map[columnLastModifiedAt]),
         bookId: map[columnBookId]);
   }
 
   static fromJoinedMap(Map<String, dynamic> map) {
+    final readingStartedAt = map['${table}_${columnReadingStartedAt}'] == null
+        ? null
+        : DateTime.tryParse(map['${table}_${columnReadingStartedAt}']);
+    final readingFinishedAt = map['${table}_${columnReadingFinishedAt}'] == null
+        ? null
+        : DateTime.tryParse(map['${table}_${columnReadingFinishedAt}']);
+
     return Review(
         id: map['${table}_${columnId}'],
         stars: map['${table}_${columnStars}'],
         title: map['${table}_${columnTitle}'],
         body: map['${table}_${columnBody}'],
-        readingStartedAt: map['${table}_${columnReadingStartedAt}'],
-        readingFinishedAt: map['${table}_${columnReadingFinishedAt}'],
-        createdAt: map['${table}_${columnCreatedAt}'],
-        lastModifiedAt: map['${table}_${columnLastModifiedAt}'],
+        readingStartedAt: readingStartedAt,
+        readingFinishedAt: readingFinishedAt,
+        createdAt: DateTime.parse(map['${table}_${columnCreatedAt}']),
+        lastModifiedAt: DateTime.parse(map['${table}_${columnLastModifiedAt}']),
         bookId: map['${table}_${columnBookId}']);
   }
 
   Map<String, dynamic> toMap(int bookId) {
+    final now = DateTime.now().toIso8601String();
+
     var map = <String, dynamic>{
       columnStars: stars,
       columnTitle: title,
       columnBody: body,
-      columnReadingStartedAt: readingStartedAt,
-      columnReadingFinishedAt: readingFinishedAt,
-      columnCreatedAt: createdAt,
-      columnLastModifiedAt: lastModifiedAt,
+      columnReadingStartedAt: readingStartedAt?.toIso8601String(),
+      columnReadingFinishedAt: readingFinishedAt?.toIso8601String(),
+      columnLastModifiedAt: now,
       columnBookId: bookId
     };
+
+    map[columnCreatedAt] =
+        createdAt != null ? createdAt.toIso8601String() : now;
 
     if (id != null) {
       map[columnId] = id;
