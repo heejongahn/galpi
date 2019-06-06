@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
 import 'package:booklog/screens/add_review/index.dart';
+import 'package:booklog/screens/book_detail/index.dart';
 import 'package:booklog/components/review_card/main.dart';
 import 'package:booklog/components/review_form/index.dart';
 import 'package:booklog/models/book.dart';
@@ -19,11 +20,15 @@ class ReviewsState extends State<Reviews> {
           if (i.isOdd) return Divider();
 
           final index = i ~/ 2;
+          final review = reviews[index];
+          final book = books[index];
+
           return ReviewCard(
             review: reviews[index],
             book: books[index],
-            onEdit: () => _editReview(reviews[index], books[index]),
-            onDelete: () => _deleteReview(reviews[index]),
+            onTap: () => _onOpenReviewDetail(review, book),
+            onEdit: () => _editReview(review, book),
+            onDelete: () => _deleteReview(review),
           );
         });
   }
@@ -78,6 +83,13 @@ class ReviewsState extends State<Reviews> {
     }));
 
     setState(() {});
+  }
+
+  void _onOpenReviewDetail(Review review, Book book) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      return BookDetail(review: review, book: book);
+    }));
   }
 
   void _onOpenNewReview() async {

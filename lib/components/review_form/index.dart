@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:booklog/components/stars_row/index.dart';
 import 'package:booklog/models/book.dart';
 import 'package:booklog/models/review.dart';
 
@@ -109,17 +110,13 @@ class _ReviewFormState extends State<ReviewForm> {
                         widget.review.body = val;
                       }),
                 ))),
-            Row(
-                children: List<int>.generate(5, (i) => i + 1).map((i) {
-              final onPressed = () => setState(() {
+            StarsRow(
+              stars: widget.review.stars,
+              size: 24,
+              onTapStar: (i) => setState(() {
                     widget.review.stars = i;
-                  });
-
-              return widget.review.stars >= i
-                  ? IconButton(icon: Icon(Icons.star), onPressed: onPressed)
-                  : IconButton(
-                      icon: Icon(Icons.star_border), onPressed: onPressed);
-            }).toList()),
+                  }),
+            ),
             Align(
               alignment: Alignment.centerRight,
               child: RaisedButton(

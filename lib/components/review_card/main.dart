@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:booklog/components/stars_row/index.dart';
 import 'package:booklog/models/book.dart';
 import 'package:booklog/models/review.dart';
 
@@ -35,16 +36,7 @@ class ReviewCard extends StatelessWidget {
                     ),
                   )),
               Container(
-                child: Row(
-                    children: List<int>.generate(5, (i) => i + 1)
-                        .map((i) =>
-                            (review.stars == null ? 0 : review.stars) >= i
-                                ? Icon(
-                                    Icons.star,
-                                    size: 16,
-                                  )
-                                : Icon(Icons.star_border, size: 16))
-                        .toList()),
+                child: StarsRow(stars: review.stars),
               ),
             ])));
   }
