@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:booklog/components/screen_with_navigator/index.dart';
 import 'package:booklog/screens/book_list/index.dart';
@@ -7,7 +8,17 @@ import 'package:booklog/utils/theme.dart';
 
 final primaryColor = Color.fromRGBO(0xff, 0x74, 0x73, 1);
 
-void main() => runApp(MaterialApp(home: MyApp(), theme: theme));
+void main() => runApp(MaterialApp(
+      home: MyApp(),
+      theme: theme,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('ko', 'KR'),
+      ],
+    ));
 
 class MyApp extends StatefulWidget {
   @override

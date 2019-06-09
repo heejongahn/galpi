@@ -12,8 +12,8 @@ class Review {
   int stars;
   String title;
   String body;
-  final DateTime readingStartedAt;
-  final DateTime readingFinishedAt;
+  DateTime readingStartedAt;
+  DateTime readingFinishedAt;
   final DateTime createdAt;
   final DateTime lastModifiedAt;
   final int bookId;
@@ -113,5 +113,22 @@ class Review {
     }
 
     return ReadingStatus.finishedReading;
+  }
+
+  String get displayReadingStatus {
+    switch (this.readingStatus) {
+      case ReadingStatus.reading:
+        {
+          return '읽는 중';
+        }
+      case ReadingStatus.hasntStarted:
+        {
+          return '읽기 전';
+        }
+      case ReadingStatus.finishedReading:
+        {
+          return '읽음';
+        }
+    }
   }
 }

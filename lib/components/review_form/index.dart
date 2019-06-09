@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:booklog/components/date_picker_form_field/index.dart';
 import 'package:booklog/components/stars_row/index.dart';
 import 'package:booklog/models/book.dart';
 import 'package:booklog/models/review.dart';
@@ -47,6 +48,7 @@ class _ReviewFormState extends State<ReviewForm> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Flexible(
+                      flex: 9,
                       child: TextFormField(
                         enabled: false,
                         initialValue: widget.book.author,
@@ -59,7 +61,9 @@ class _ReviewFormState extends State<ReviewForm> {
                         },
                       ),
                     ),
+                    Spacer(flex: 2),
                     Flexible(
+                      flex: 9,
                       child: TextFormField(
                           enabled: false,
                           initialValue: widget.book.publisher,
@@ -71,6 +75,25 @@ class _ReviewFormState extends State<ReviewForm> {
                             }
                           }),
                     ),
+                  ],
+                )),
+            Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: <Widget>[
+                    DatePickerFormField(
+                        label: '읽기 시작한 날짜',
+                        initialDate: widget.review.readingStartedAt,
+                        onSaved: (DateTime date) {
+                          widget.review.readingStartedAt = date;
+                        }),
+                    Spacer(),
+                    DatePickerFormField(
+                        label: '다 읽은 날짜',
+                        initialDate: widget.review.readingFinishedAt,
+                        onSaved: (DateTime date) {
+                          widget.review.readingFinishedAt = date;
+                        }),
                   ],
                 )),
             Padding(
@@ -138,5 +161,9 @@ class _ReviewFormState extends State<ReviewForm> {
 
     form.save();
     await widget.onSave(widget.review, widget.book);
+  }
+
+  _onReadingStartedAtChange(DateTime date) async {
+    final form = _formKey.currentState;
   }
 }

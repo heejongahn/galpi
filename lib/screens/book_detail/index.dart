@@ -30,24 +30,16 @@ class BookDetail extends StatelessWidget {
                       style: Theme.of(context).textTheme.headline.copyWith()),
                   Text('${book.author} | ${book.publisher}',
                       style: Theme.of(context).textTheme.subhead),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            review.createdAt != null
-                                ? '${formatter.format(review.createdAt)} 작성'
-                                : '작성 일자 없음',
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                          Text(
-                              review.lastModifiedAt != null
-                                  ? '${formatter.format(review.lastModifiedAt)} 최종 수정'
-                                  : '최종 수정 일자 없음',
-                              style: Theme.of(context).textTheme.caption)
-                        ]),
-                  ),
+                  DateInfo(review: review, formatter: formatter),
+                  Chip(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      label: Text(review.displayReadingStatus),
+                      labelStyle: Theme.of(context)
+                          .textTheme
+                          .button
+                          .copyWith(fontSize: 12, color: Colors.white),
+                      labelPadding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 4)),
                   StarsRow(
                     stars: review.stars,
                   ),
@@ -59,5 +51,36 @@ class BookDetail extends StatelessWidget {
                               .body1
                               .copyWith(fontSize: 16)))
                 ]))));
+  }
+}
+
+class DateInfo extends StatelessWidget {
+  const DateInfo({
+    Key key,
+    @required this.review,
+    @required this.formatter,
+  }) : super(key: key);
+
+  final Review review;
+  final DateFormat formatter;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+          review.createdAt != null
+              ? '${formatter.format(review.createdAt)} 작성'
+              : '작성 일자 없음',
+          style: Theme.of(context).textTheme.caption,
+        ),
+        Text(
+            review.lastModifiedAt != null
+                ? '${formatter.format(review.lastModifiedAt)} 최종 수정'
+                : '최종 수정 일자 없음',
+            style: Theme.of(context).textTheme.caption)
+      ]),
+    );
   }
 }
