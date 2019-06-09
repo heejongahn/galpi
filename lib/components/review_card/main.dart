@@ -18,7 +18,7 @@ class ReviewCard extends StatelessWidget {
         : Container(width: 0, height: 0);
   }
 
-  get bookDescription {
+  buildBookDescription(BuildContext context) {
     return Flexible(
         child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -30,10 +30,8 @@ class ReviewCard extends StatelessWidget {
                     title: Text(
                       '${book.title}',
                     ),
-                    subtitle: Text(
-                      '${book.author} | ${book.publisher}',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
+                    subtitle: Text('${book.author} | ${book.publisher}',
+                        style: Theme.of(context).textTheme.caption),
                   )),
               Container(
                 child: StarsRow(stars: review.stars),
@@ -76,7 +74,11 @@ class ReviewCard extends StatelessWidget {
       child: Card(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[bookImage, bookDescription, moreIcon],
+          children: <Widget>[
+            bookImage,
+            buildBookDescription(context),
+            moreIcon
+          ],
         ),
       ),
       onTap: onTap,
