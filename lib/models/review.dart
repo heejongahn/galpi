@@ -104,15 +104,17 @@ class Review {
   }
 
   ReadingStatus get readingStatus {
-    if (readingStartedAt == null) {
-      return ReadingStatus.hasntStarted;
+    final now = DateTime.now();
+
+    if (readingFinishedAt != null && now.isAfter(readingFinishedAt)) {
+      return ReadingStatus.finishedReading;
     }
 
-    if (readingFinishedAt == null) {
+    if (readingStartedAt != null && now.isAfter(readingStartedAt)) {
       return ReadingStatus.reading;
     }
 
-    return ReadingStatus.finishedReading;
+    return ReadingStatus.hasntStarted;
   }
 
   String get displayReadingStatus {
