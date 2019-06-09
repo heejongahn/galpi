@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -9,12 +10,16 @@ class DatePickerFormField extends StatefulWidget {
   final OnSaved onSaved;
   final String label;
   final DateTime initialDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
 
   DatePickerFormField({
     Key key,
     this.onSaved,
     this.label,
     this.initialDate,
+    this.firstDate,
+    this.lastDate,
   }) : super(key: key);
 
   _DatePickerFormFieldState createState() =>
@@ -73,12 +78,15 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
   }
 
   _onTap() async {
+    DateTime now = new DateTime.now();
+    DateTime today = new DateTime(now.year, now.month, now.day);
+
     final selectedDate = await showDatePicker(
         locale: Locale('ko'),
         context: context,
-        initialDate: date ?? DateTime.now(),
-        firstDate: DateTime(2019),
-        lastDate: DateTime(2099));
+        initialDate: date ?? today,
+        firstDate: widget.firstDate ?? DateTime(2015),
+        lastDate: widget.lastDate ?? DateTime(2099));
 
     setState(() {
       if (selectedDate != null) {
