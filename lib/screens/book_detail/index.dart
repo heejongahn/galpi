@@ -15,7 +15,6 @@ class BookDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatter = DateFormat('yyyy-MM-dd HH:mm');
     return Scaffold(
-        appBar: AppBar(title: Text('reviewww')),
         body: Padding(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: SingleChildScrollView(

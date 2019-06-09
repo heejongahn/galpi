@@ -18,9 +18,6 @@ class _AddReviewState extends State<AddReview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('newreview'),
-        ),
         body: selectedBook != null
             ? ReviewForm(
                 book: selectedBook,

@@ -5,6 +5,7 @@ import 'package:booklog/screens/add_review/index.dart';
 import 'package:booklog/screens/book_detail/index.dart';
 import 'package:booklog/components/review_card/main.dart';
 import 'package:booklog/components/review_form/index.dart';
+import 'package:booklog/components/safe_area_route/index.dart';
 import 'package:booklog/models/book.dart';
 import 'package:booklog/models/review.dart';
 import 'package:booklog/utils/database_helpers.dart';
@@ -37,9 +38,6 @@ class ReviewsState extends State<Reviews> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(
-        title: Text('myreviews'),
-      ),
       body: FutureBuilder<Tuple2<List<Review>, List<Book>>>(
           future: DatabaseHelper.instance.queryAllReviews(),
           builder: (context, snapshot) {
@@ -67,36 +65,26 @@ class ReviewsState extends State<Reviews> {
   }
 
   void _editReview(Review review, Book book) async {
-    await Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) {
-      return Scaffold(
-          appBar: AppBar(
-            title: Text('editreview'),
-          ),
-          body: ReviewForm(
-              review: review,
-              book: book,
-              onSave: (Review newReview, Book _) async {
-                await DatabaseHelper.instance.updateReview(newReview, book);
-                Navigator.of(context).pop();
-              }));
-    }));
+    await Navigator.of(context).push(SafeAreaRoute(
+        child: Scaffold(
+            body: ReviewForm(
+                review: review,
+                book: book,
+                onSave: (Review newReview, Book _) async {
+                  await DatabaseHelper.instance.updateReview(newReview, book);
+                  Navigator.of(context).pop();
+                }))));
 
     setState(() {});
   }
 
   void _onOpenReviewDetail(Review review, Book book) {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) {
-      return BookDetail(review: review, book: book);
-    }));
+        .push(SafeAreaRoute(child: BookDetail(review: review, book: book)));
   }
 
   void _onOpenNewReview() async {
-    await Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) {
-      return AddReview();
-    }));
+    await Navigator.of(context).push(SafeAreaRoute(child: AddReview()));
 
     setState(() {});
   }

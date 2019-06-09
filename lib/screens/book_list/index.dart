@@ -23,9 +23,6 @@ class BooksState extends State<Books> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(
-        title: Text('feed'),
-      ),
       body: FutureBuilder(
           future: fetchBooks(query: '프로그래밍'),
           builder: (context, snapshot) {
