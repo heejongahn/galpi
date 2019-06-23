@@ -14,43 +14,57 @@ class ReviewsState extends State<Reviews> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget _buildRows(List<Review> reviews, List<Book> books) {
-    return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: reviews.length * 2,
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
+    return Flexible(
+        child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            itemCount: reviews.length,
+            itemBuilder: (context, i) {
+              final review = reviews[i];
+              final book = books[i];
 
-          final index = i ~/ 2;
-          final review = reviews[index];
-          final book = books[index];
-
-          return ReviewCard(
-            review: reviews[index],
-            book: books[index],
-            onTap: () => _onOpenReviewDetail(review, book),
-            onEdit: () => _editReview(review, book),
-            onDelete: () => _deleteReview(review),
-          );
-        });
+              return Container(
+                margin: EdgeInsets.symmetric(vertical: 12),
+                child: ReviewCard(
+                  review: reviews[i],
+                  book: books[i],
+                  onTap: () => _onOpenReviewDetail(review, book),
+                  onEdit: () => _editReview(review, book),
+                  onDelete: () => _deleteReview(review),
+                ),
+              );
+            }));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      body: FutureBuilder<Tuple2<List<Review>, List<Book>>>(
-          future: DatabaseHelper.instance.queryAllReviews(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final reviews = snapshot.data.item1;
-              final books = snapshot.data.item2;
-              return _buildRows(reviews, books);
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            }
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: FutureBuilder<Tuple2<List<Review>, List<Book>>>(
+            future: DatabaseHelper.instance.queryAllReviews(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final reviews = snapshot.data.item1;
+                final books = snapshot.data.item2;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      '내 리뷰',
+                      style: Theme.of(context).textTheme.display3.copyWith(
+                          fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                    _buildRows(reviews, books),
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
 
-            return Center(child: CircularProgressIndicator());
-          }),
+              return Center(child: CircularProgressIndicator());
+            }),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _onOpenNewReview,
         child: Icon(Icons.add),

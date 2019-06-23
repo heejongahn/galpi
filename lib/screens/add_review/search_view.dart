@@ -28,15 +28,7 @@ class _SearchViewState extends State<SearchView> {
           onSubmitted: this._searchBooks,
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
-              labelText: '책 제목',
-              prefixIcon: this._focusNode.hasFocus
-                  ? IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        this._focusNode.unfocus();
-                      })
-                  : Icon(Icons.search),
-              border: OutlineInputBorder()),
+              labelText: '제목, 저자, 출판사', border: OutlineInputBorder()),
         ),
       ),
       Expanded(
