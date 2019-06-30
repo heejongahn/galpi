@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:booklog/components/book_card/main.dart';
-import 'package:booklog/models/book.dart';
-import 'package:booklog/remotes/fetch_books.dart';
+import 'package:galpi/components/book_card/main.dart';
+import 'package:galpi/models/book.dart';
+import 'package:galpi/remotes/fetch_books.dart';
 
 typedef void OnSelectBook(Book book);
 

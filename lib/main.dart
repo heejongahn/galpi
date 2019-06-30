@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'package:booklog/components/screen_with_navigator/index.dart';
-import 'package:booklog/screens/book_list/index.dart';
-import 'package:booklog/screens/review_list/index.dart';
-import 'package:booklog/utils/theme.dart';
+import 'package:galpi/components/screen_with_navigator/index.dart';
+import 'package:galpi/screens/book_list/index.dart';
+import 'package:galpi/screens/review_list/index.dart';
+import 'package:galpi/utils/theme.dart';
 
 final primaryColor = Color.fromRGBO(0xff, 0x74, 0x73, 1);
 

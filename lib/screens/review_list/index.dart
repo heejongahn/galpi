@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
-import 'package:booklog/screens/add_review/index.dart';
-import 'package:booklog/screens/book_detail/index.dart';
-import 'package:booklog/components/review_card/main.dart';
-import 'package:booklog/components/review_form/index.dart';
-import 'package:booklog/components/safe_area_route/index.dart';
-import 'package:booklog/models/book.dart';
-import 'package:booklog/models/review.dart';
-import 'package:booklog/utils/database_helpers.dart';
+import 'package:galpi/screens/add_review/index.dart';
+import 'package:galpi/screens/book_detail/index.dart';
+import 'package:galpi/components/review_card/main.dart';
+import 'package:galpi/components/review_form/index.dart';
+import 'package:galpi/components/safe_area_route/index.dart';
+import 'package:galpi/models/book.dart';
+import 'package:galpi/models/review.dart';
+import 'package:galpi/utils/database_helpers.dart';
 
 class ReviewsState extends State<Reviews> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();

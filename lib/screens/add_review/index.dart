@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:booklog/components/review_form/index.dart';
-import 'package:booklog/models/book.dart';
-import 'package:booklog/models/review.dart';
-import 'package:booklog/utils/database_helpers.dart';
+import 'package:galpi/components/review_form/index.dart';
+import 'package:galpi/models/book.dart';
+import 'package:galpi/models/review.dart';
+import 'package:galpi/utils/database_helpers.dart';
 
 import './search_view.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:booklog/components/safe_area_route/index.dart';
+import 'package:galpi/components/safe_area_route/index.dart';
 
 class ScreenWithNavigatorState extends State<ScreenWithNavigator> {
   Widget child;

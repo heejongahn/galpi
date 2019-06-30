@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:booklog/components/date_picker_form_field/index.dart';
-import 'package:booklog/components/stars_row/index.dart';
-import 'package:booklog/models/book.dart';
-import 'package:booklog/models/review.dart';
+import 'package:galpi/components/date_picker_form_field/index.dart';
+import 'package:galpi/components/stars_row/index.dart';
+import 'package:galpi/models/book.dart';
+import 'package:galpi/models/review.dart';
 
 typedef Future<void> OnSave(Review review, Book book);
 

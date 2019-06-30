@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:booklog/utils/secret.dart';
-import 'package:booklog/models/book.dart' show Book;
+import 'package:galpi/utils/secret.dart';
+import 'package:galpi/models/book.dart' show Book;
 
 const API_ENDPOINT = "https://dapi.kakao.com/v3/search/book";
 

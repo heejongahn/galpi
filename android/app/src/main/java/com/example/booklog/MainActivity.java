@@ -1,4 +1,4 @@
-package com.example.booklog;
+package name.ahnheejong.galpi;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

@@ -4,8 +4,8 @@ import 'package:path/path.dart';
 import 'package:tuple/tuple.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:booklog/models/review.dart';
-import 'package:booklog/models/book.dart';
+import 'package:galpi/models/review.dart';
+import 'package:galpi/models/book.dart';
 
 class DatabaseHelper {
   static final _databaseName = "MyDatabase.db";

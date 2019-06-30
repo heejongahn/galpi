@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:booklog/models/book.dart';
-import 'package:booklog/models/review.dart';
+import 'package:galpi/models/book.dart';
+import 'package:galpi/models/review.dart';
 
 typedef Future<void> OnCreate(Review review, Book book);
 

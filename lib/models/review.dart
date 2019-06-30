@@ -1,4 +1,4 @@
-// import 'package:booklog/models/book.dart';
+// import 'package:galpi/models/book.dart';
 import 'dart:developer';
 
 enum ReadingStatus {
