@@ -11,6 +11,7 @@ final primaryColor = Color.fromRGBO(0xff, 0x74, 0x73, 1);
 void main() => runApp(MaterialApp(
       home: MyApp(),
       theme: theme,
+      debugShowCheckedModeBanner: false,
       // FIXME: Cupertino UI의 국제화 이슈로 잠시 홀드.
       // https://github.com/flutter/flutter/issues/13452
       // localizationsDelegates: [
