@@ -9,7 +9,11 @@ class ScreenWithNavigatorState extends State<ScreenWithNavigator> {
   @override
   Widget build(BuildContext context) {
     return Navigator(onGenerateRoute: (RouteSettings settings) {
-      return new SafeAreaRoute(settings: settings, child: child);
+      return new MaterialPageRoute(
+          settings: settings,
+          builder: (BuildContext context) {
+            return child;
+          });
     });
   }
 }

@@ -18,6 +18,10 @@ class _AddReviewState extends State<AddReview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          title: Text('새 리뷰 작성'),
+          centerTitle: false,
+        ),
         body: selectedBook != null
             ? ReviewForm(
                 book: selectedBook,

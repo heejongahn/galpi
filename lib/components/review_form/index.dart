@@ -144,7 +144,7 @@ class _ReviewFormState extends State<ReviewForm> {
               alignment: Alignment.centerRight,
               child: RaisedButton(
                 onPressed: _onSave,
-                child: Text('작성'),
+                child: Text(widget.review != null ? '저장' : '작성'),
               ),
             ),
           ],

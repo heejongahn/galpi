@@ -39,6 +39,13 @@ class ReviewsState extends State<Reviews> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
+      appBar: AppBar(
+        title: Text(
+          'galpi',
+          style: TextStyle(fontFamily: 'Abril-Fatface'),
+        ),
+        centerTitle: false,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: FutureBuilder<Tuple2<List<Review>, List<Book>>>(
@@ -50,11 +57,6 @@ class ReviewsState extends State<Reviews> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      '내 리뷰',
-                      style: Theme.of(context).textTheme.display3.copyWith(
-                          fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
                     _buildRows(reviews, books),
                   ],
                 );
@@ -73,14 +75,40 @@ class ReviewsState extends State<Reviews> {
   }
 
   void _deleteReview(Review review) {
-    setState(() {
-      DatabaseHelper.instance.deleteReview(review.id);
-    });
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("정말 삭제하시겠습니까?"),
+            content: Text("삭제한 리뷰는 다시 복구할 수 없습니다."),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("취소"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                textColor: Colors.red,
+                child: Text("삭제"),
+                onPressed: () {
+                  setState(() {
+                    DatabaseHelper.instance.deleteReview(review.id);
+                  });
+                },
+              ),
+            ],
+          );
+        });
   }
 
   void _editReview(Review review, Book book) async {
-    await Navigator.of(context).push(SafeAreaRoute(
-        child: Scaffold(
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => Scaffold(
+            appBar: AppBar(
+              title: Text('리뷰 수정'),
+              centerTitle: false,
+            ),
             body: ReviewForm(
                 review: review,
                 book: book,
@@ -93,12 +121,13 @@ class ReviewsState extends State<Reviews> {
   }
 
   void _onOpenReviewDetail(Review review, Book book) {
-    Navigator.of(context)
-        .push(SafeAreaRoute(child: BookDetail(review: review, book: book)));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => BookDetail(review: review, book: book)));
   }
 
   void _onOpenNewReview() async {
-    await Navigator.of(context).push(SafeAreaRoute(child: AddReview()));
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => AddReview()));
 
     setState(() {});
   }
@@ -106,5 +135,5 @@ class ReviewsState extends State<Reviews> {
 
 class Reviews extends StatefulWidget {
   @override
-  ReviewsState createState() => new ReviewsState();
+  ReviewsState createState() => ReviewsState();
 }
