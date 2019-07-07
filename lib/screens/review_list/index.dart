@@ -5,7 +5,6 @@ import 'package:galpi/screens/add_review/index.dart';
 import 'package:galpi/screens/book_detail/index.dart';
 import 'package:galpi/components/review_card/main.dart';
 import 'package:galpi/components/review_form/index.dart';
-import 'package:galpi/components/safe_area_route/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/utils/database_helpers.dart';
@@ -47,7 +46,7 @@ class ReviewsState extends State<Reviews> {
         centerTitle: false,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
         child: FutureBuilder<Tuple2<List<Review>, List<Book>>>(
             future: DatabaseHelper.instance.queryAllReviews(),
             builder: (context, snapshot) {
@@ -110,6 +109,7 @@ class ReviewsState extends State<Reviews> {
               centerTitle: false,
             ),
             body: ReviewForm(
+                isEditing: true,
                 review: review,
                 book: book,
                 onSave: (Review newReview, Book _) async {

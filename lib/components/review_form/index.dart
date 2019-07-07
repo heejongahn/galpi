@@ -11,10 +11,11 @@ class ReviewForm extends StatefulWidget {
   final Book book;
   final OnSave onSave;
   final Review review;
+  final bool isEditing;
 
   _ReviewFormState createState() => _ReviewFormState();
 
-  ReviewForm({this.book, this.review, this.onSave}) {}
+  ReviewForm({this.book, this.review, this.onSave, this.isEditing = false}) {}
 }
 
 class _ReviewFormState extends State<ReviewForm> {
@@ -144,7 +145,7 @@ class _ReviewFormState extends State<ReviewForm> {
               alignment: Alignment.centerRight,
               child: RaisedButton(
                 onPressed: _onSave,
-                child: Text(widget.review != null ? '저장' : '작성'),
+                child: Text(widget.isEditing ? '저장' : '작성'),
               ),
             ),
           ],

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:galpi/components/stars_row/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 
@@ -14,29 +13,30 @@ class ReviewCard extends StatelessWidget {
 
   get bookImage {
     return book.imageUri != ''
-        ? Image.network(book.imageUri, width: 100, fit: BoxFit.cover)
+        ? Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(15, 0x00, 0x00, 0x00),
+            ),
+            child: Image.network(book.imageUri, height: 150, fit: BoxFit.cover))
         : Container(width: 0, height: 0);
   }
 
   buildBookDescription(BuildContext context) {
-    return Flexible(
-        child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(children: [
-              Flexible(
-                  flex: 0,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.all(0),
-                    title: Text(
-                      '${book.title}',
-                    ),
-                    subtitle: Text('${book.author} | ${book.publisher}',
-                        style: Theme.of(context).textTheme.caption),
-                  )),
-              Container(
-                child: StarsRow(stars: review.stars),
-              ),
-            ])));
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Expanded(
+            child: ListTile(
+          contentPadding: EdgeInsets.all(0),
+          title: Text(review.title, style: Theme.of(context).textTheme.title),
+          subtitle: Text([book.title, book.author, book.publisher].join(' | '),
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.caption),
+        )),
+        moreIcon
+      ]),
+    );
   }
 
   get moreIcon {
@@ -72,12 +72,13 @@ class ReviewCard extends StatelessWidget {
 
     return GestureDetector(
       child: Card(
-        child: Row(
+        elevation: 2,
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             bookImage,
             buildBookDescription(context),
-            moreIcon
+            // moreIcon
           ],
         ),
       ),
