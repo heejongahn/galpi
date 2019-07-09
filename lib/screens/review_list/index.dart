@@ -3,8 +3,8 @@ import 'package:tuple/tuple.dart';
 
 import 'package:galpi/screens/add_review/index.dart';
 import 'package:galpi/screens/book_detail/index.dart';
+import 'package:galpi/screens/write_review/index.dart';
 import 'package:galpi/components/review_card/main.dart';
-import 'package:galpi/components/review_form/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/utils/database_helpers.dart';
@@ -102,20 +102,19 @@ class ReviewsState extends State<Reviews> {
   }
 
   void _editReview(Review review, Book book) async {
-    await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => Scaffold(
-            appBar: AppBar(
-              title: Text('리뷰 수정'),
-              centerTitle: false,
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WriteReview(
+              isEditing: true,
+              review: review,
+              book: book,
+              onSave: (Review newReview, Book _) async {
+                await DatabaseHelper.instance.updateReview(newReview, book);
+                Navigator.of(context).pop();
+              },
             ),
-            body: ReviewForm(
-                isEditing: true,
-                review: review,
-                book: book,
-                onSave: (Review newReview, Book _) async {
-                  await DatabaseHelper.instance.updateReview(newReview, book);
-                  Navigator.of(context).pop();
-                }))));
+      ),
+    );
 
     setState(() {});
   }
