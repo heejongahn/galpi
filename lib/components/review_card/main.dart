@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/components/book_info/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
+import 'package:intl/intl.dart';
+
+final formatter = DateFormat('yyyy-MM-dd');
 
 class ReviewCard extends StatelessWidget {
   final Review review;
@@ -11,26 +15,15 @@ class ReviewCard extends StatelessWidget {
 
   ReviewCard({this.review, this.book, this.onTap, this.onEdit, this.onDelete});
 
-  get bookImage {
-    return book.imageUri != ''
-        ? Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Color.fromARGB(15, 0x00, 0x00, 0x00),
-            ),
-            child: Image.network(book.imageUri, height: 150, fit: BoxFit.cover))
-        : Container(width: 0, height: 0);
-  }
-
   buildBookDescription(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12.0),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(
             child: ListTile(
           contentPadding: EdgeInsets.all(0),
           title: Text(review.title, style: Theme.of(context).textTheme.title),
-          subtitle: Text([book.title, book.author, book.publisher].join(' | '),
+          subtitle: Text(review.displayCreatedDate,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.caption),
         )),
@@ -76,7 +69,7 @@ class ReviewCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            bookImage,
+            BookInfo(book: book),
             buildBookDescription(context),
             // moreIcon
           ],

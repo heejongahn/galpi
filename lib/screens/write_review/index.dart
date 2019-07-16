@@ -93,31 +93,12 @@ class _WriteReviewState extends State<WriteReview> {
                     )),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      children: <Widget>[
-                        DatePickerFormField(
-                            label: '읽기 시작한 날짜',
-                            initialDate: widget.review.readingStartedAt,
-                            onSaved: (DateTime date) {
-                              widget.review.readingStartedAt = date;
-                            }),
-                        Spacer(),
-                        DatePickerFormField(
-                            label: '다 읽은 날짜',
-                            initialDate: widget.review.readingFinishedAt,
-                            onSaved: (DateTime date) {
-                              widget.review.readingFinishedAt = date;
-                            }),
-                      ],
-                    )),
-                Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: (TextFormField(
                       initialValue:
                           widget.review != null ? widget.review.title : null,
                       decoration: InputDecoration(
                           alignLabelWithHint: true,
-                          labelText: '제목',
+                          labelText: '리뷰 제목',
                           border: OutlineInputBorder()),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -147,6 +128,25 @@ class _WriteReviewState extends State<WriteReview> {
                             widget.review.body = val;
                           }),
                     ))),
+                Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Row(
+                      children: <Widget>[
+                        DatePickerFormField(
+                            label: '읽기 시작한 날짜',
+                            initialDate: widget.review.readingStartedAt,
+                            onSaved: (DateTime date) {
+                              widget.review.readingStartedAt = date;
+                            }),
+                        Spacer(),
+                        DatePickerFormField(
+                            label: '다 읽은 날짜',
+                            initialDate: widget.review.readingFinishedAt,
+                            onSaved: (DateTime date) {
+                              widget.review.readingFinishedAt = date;
+                            }),
+                      ],
+                    )),
                 StarsRow(
                   stars: widget.review.stars,
                   size: 24,

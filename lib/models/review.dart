@@ -1,5 +1,8 @@
 // import 'package:galpi/models/book.dart';
 import 'dart:developer';
+import 'package:intl/intl.dart';
+
+final formatter = DateFormat('yyyy-MM-dd');
 
 enum ReadingStatus {
   hasntStarted,
@@ -132,5 +135,9 @@ class Review {
           return '읽음';
         }
     }
+  }
+
+  String get displayCreatedDate {
+    return formatter.format(this.createdAt);
   }
 }
