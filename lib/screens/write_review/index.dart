@@ -25,7 +25,7 @@ class _WriteReviewState extends State<WriteReview> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.isEditing ? '리뷰 수정' : '리뷰 작성'),
+          title: Text(widget.isEditing ? '독후감 수정' : '독후감 작성'),
           centerTitle: false,
           actions: <Widget>[
             IconButton(
@@ -98,7 +98,7 @@ class _WriteReviewState extends State<WriteReview> {
                           widget.review != null ? widget.review.title : null,
                       decoration: InputDecoration(
                           alignLabelWithHint: true,
-                          labelText: '리뷰 제목',
+                          labelText: '독후감 제목',
                           border: OutlineInputBorder()),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -106,8 +106,8 @@ class _WriteReviewState extends State<WriteReview> {
                         }
                       },
                       onSaved: (val) => setState(() {
-                            widget.review.title = val;
-                          }),
+                        widget.review.title = val;
+                      }),
                     ))),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -125,8 +125,8 @@ class _WriteReviewState extends State<WriteReview> {
                         }
                       },
                       onSaved: (val) => setState(() {
-                            widget.review.body = val;
-                          }),
+                        widget.review.body = val;
+                      }),
                     ))),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -151,8 +151,8 @@ class _WriteReviewState extends State<WriteReview> {
                   stars: widget.review.stars,
                   size: 24,
                   onTapStar: (i) => setState(() {
-                        widget.review.stars = i;
-                      }),
+                    widget.review.stars = i;
+                  }),
                 ),
               ],
             ),

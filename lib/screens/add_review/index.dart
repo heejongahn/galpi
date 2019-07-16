@@ -19,7 +19,7 @@ class _AddReviewState extends State<AddReview> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('새 리뷰 작성'),
+          title: Text('새 독후감 작성'),
           centerTitle: false,
         ),
         body: SearchView(onSelectBook: _onBookClick));

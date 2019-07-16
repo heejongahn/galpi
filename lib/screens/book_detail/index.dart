@@ -17,7 +17,7 @@ class BookDetail extends StatelessWidget {
     final formatter = DateFormat('yyyy-MM-dd HH:mm');
     return Scaffold(
         appBar: AppBar(
-          title: Text('리뷰'),
+          title: Text('독후감'),
           centerTitle: false,
         ),
         body: SingleChildScrollView(

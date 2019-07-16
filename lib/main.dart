@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
   );
 
   final myItem = const BottomNavigationBarItem(
-      icon: Icon(Icons.person), title: Text('내 리뷰'));
+      icon: Icon(Icons.person), title: Text('내 독후감'));
 
   @override
   Widget build(BuildContext context) {
