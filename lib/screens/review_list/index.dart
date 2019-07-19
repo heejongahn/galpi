@@ -3,7 +3,6 @@ import 'package:tuple/tuple.dart';
 
 import 'package:galpi/screens/add_review/index.dart';
 import 'package:galpi/screens/review_detail/index.dart';
-import 'package:galpi/screens/write_review/index.dart';
 import 'package:galpi/components/review_card/main.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
@@ -42,8 +41,6 @@ class ReviewsState extends State<Reviews> {
             review: reviews[i],
             book: books[i],
             onTap: () => _onOpenReviewDetail(review, book),
-            onEdit: () => _editReview(review, book),
-            onDelete: () => _deleteReview(review),
           ),
         );
       },
@@ -84,53 +81,6 @@ class ReviewsState extends State<Reviews> {
         child: Icon(Icons.add),
       ),
     );
-  }
-
-  void _deleteReview(Review review) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("정말 삭제하시겠습니까?"),
-            content: Text("삭제한 독후감는 다시 복구할 수 없습니다."),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("취소"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                textColor: Colors.red,
-                child: Text("삭제"),
-                onPressed: () {
-                  setState(() {
-                    DatabaseHelper.instance.deleteReview(review.id);
-                    Navigator.of(context).pop();
-                  });
-                },
-              ),
-            ],
-          );
-        });
-  }
-
-  void _editReview(Review review, Book book) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => WriteReview(
-          isEditing: true,
-          review: review,
-          book: book,
-          onSave: (Review newReview, Book _) async {
-            await DatabaseHelper.instance.updateReview(newReview, book);
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-    );
-
-    setState(() {});
   }
 
   void _onOpenReviewDetail(Review review, Book book) {

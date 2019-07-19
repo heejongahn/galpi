@@ -5,6 +5,9 @@ import 'package:galpi/components/book_info/index.dart';
 import 'package:galpi/components/stars_row/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
+import 'package:galpi/screens/review_list/index.dart';
+import 'package:galpi/screens/write_review/index.dart';
+import 'package:galpi/utils/database_helpers.dart';
 
 class ReviewDetail extends StatelessWidget {
   final Review review;
@@ -14,21 +17,31 @@ class ReviewDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = DateFormat('yyyy-MM-dd HH:mm');
     return Scaffold(
-        appBar: AppBar(
-          title: Text('독후감'),
-          centerTitle: false,
-        ),
-        body: SingleChildScrollView(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      appBar: AppBar(
+        title: Text('독후감'),
+        centerTitle: false,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => _onEditReview(review, book, context),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () => _onDeleteReview(review, context),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           BookInfo(book: book),
-          getReviewDetail(context, formatter),
-        ])));
+          getReviewDetail(context),
+        ]),
+      ),
+    );
   }
 
-  Padding getReviewDetail(BuildContext context, DateFormat formatter) {
+  Padding getReviewDetail(BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Column(
@@ -41,7 +54,7 @@ class ReviewDetail extends StatelessWidget {
                   .display3
                   .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
             ),
-            DateInfo(review: review, formatter: formatter),
+            DateInfo(review: review),
             Chip(
                 backgroundColor: Theme.of(context).primaryColor,
                 label: Text(review.displayReadingStatus),
@@ -62,17 +75,61 @@ class ReviewDetail extends StatelessWidget {
           ],
         ));
   }
+
+  void _onDeleteReview(Review review, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("정말 삭제하시겠습니까?"),
+            content: Text("삭제한 독후감는 다시 복구할 수 없습니다."),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("취소"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                textColor: Colors.red,
+                child: Text("삭제"),
+                onPressed: () {
+                  DatabaseHelper.instance.deleteReview(review.id);
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (ctx) {
+                    return Reviews();
+                  }), (Route r) => false);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void _onEditReview(Review review, Book book, BuildContext context) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WriteReview(
+          isEditing: true,
+          review: review,
+          book: book,
+          onSave: (Review newReview, Book _) async {
+            await DatabaseHelper.instance.updateReview(newReview, book);
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+    );
+  }
 }
 
 class DateInfo extends StatelessWidget {
-  const DateInfo({
-    Key key,
+  DateInfo({
     @required this.review,
-    @required this.formatter,
-  }) : super(key: key);
+  });
 
   final Review review;
-  final DateFormat formatter;
+  final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
 
   @override
   Widget build(BuildContext context) {
