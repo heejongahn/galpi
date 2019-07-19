@@ -6,11 +6,11 @@ import 'package:galpi/components/stars_row/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 
-class BookDetail extends StatelessWidget {
+class ReviewDetail extends StatelessWidget {
   final Review review;
   final Book book;
 
-  const BookDetail({Key key, this.review, this.book}) : super(key: key);
+  const ReviewDetail({Key key, this.review, this.book}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
