@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:galpi/components/book_info/index.dart';
 
 import 'package:galpi/components/date_picker_form_field/index.dart';
 import 'package:galpi/components/stars_row/index.dart';
@@ -44,113 +45,12 @@ class _WriteReviewState extends State<WriteReview> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextFormField(
-                      enabled: false,
-                      initialValue: widget.book.title,
-                      decoration: InputDecoration(
-                          labelText: '제목', border: UnderlineInputBorder()),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return '제목을 입력해주세요.';
-                        }
-                      },
-                    ),
+                  BookInfo(
+                    book: widget.book,
                   ),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Flexible(
-                            flex: 9,
-                            child: TextFormField(
-                              enabled: false,
-                              initialValue: widget.book.author,
-                              decoration: InputDecoration(
-                                  labelText: '작가',
-                                  border: UnderlineInputBorder()),
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return '작가를 입력해주세요.';
-                                }
-                              },
-                            ),
-                          ),
-                          Spacer(flex: 2),
-                          Flexible(
-                            flex: 9,
-                            child: TextFormField(
-                                enabled: false,
-                                initialValue: widget.book.publisher,
-                                decoration: InputDecoration(
-                                    labelText: '출판사',
-                                    border: UnderlineInputBorder()),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return '출판사를 입력해주세요.';
-                                  }
-                                }),
-                          ),
-                        ],
-                      )),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: (TextFormField(
-                        initialValue:
-                            widget.review != null ? widget.review.title : null,
-                        decoration: InputDecoration(
-                            alignLabelWithHint: true,
-                            labelText: '독후감 제목',
-                            border: OutlineInputBorder()),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return '내용을 입력해주세요.';
-                          }
-                        },
-                        onSaved: (val) => setState(() {
-                          widget.review.title = val;
-                        }),
-                      ))),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: (TextFormField(
-                        initialValue:
-                            widget.review != null ? widget.review.body : null,
-                        maxLines: 5,
-                        decoration: InputDecoration(
-                            alignLabelWithHint: true,
-                            labelText: '내용',
-                            border: OutlineInputBorder()),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return '내용을 입력해주세요.';
-                          }
-                        },
-                        onSaved: (val) => setState(() {
-                          widget.review.body = val;
-                        }),
-                      ))),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Row(
-                        children: <Widget>[
-                          DatePickerFormField(
-                              label: '읽기 시작한 날짜',
-                              initialDate: widget.review.readingStartedAt,
-                              onSaved: (DateTime date) {
-                                widget.review.readingStartedAt = date;
-                              }),
-                          Spacer(),
-                          DatePickerFormField(
-                              label: '다 읽은 날짜',
-                              initialDate: widget.review.readingFinishedAt,
-                              onSaved: (DateTime date) {
-                                widget.review.readingFinishedAt = date;
-                              }),
-                        ],
-                      )),
+                  getTitleFormField(),
+                  getBodyFormField(),
+                  getDateFormFields(),
                   StarsRow(
                     stars: widget.review.stars,
                     size: 24,
@@ -163,6 +63,75 @@ class _WriteReviewState extends State<WriteReview> {
             ),
           ),
         ));
+  }
+
+  Padding getTitleFormField() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 24, 0, 8),
+      child: TextFormField(
+        initialValue: widget.review != null ? widget.review.title : null,
+        decoration: InputDecoration(
+            alignLabelWithHint: true,
+            labelText: '독후감 제목',
+            border: OutlineInputBorder()),
+        validator: (value) {
+          if (value.isEmpty) {
+            return '내용을 입력해주세요.';
+          }
+        },
+        onSaved: (val) => setState(() {
+          widget.review.title = val;
+        }),
+      ),
+    );
+  }
+
+  Padding getBodyFormField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        initialValue: widget.review != null ? widget.review.body : null,
+        decoration: InputDecoration(
+          alignLabelWithHint: true,
+          labelText: '내용',
+          border: OutlineInputBorder(),
+        ),
+        maxLines: 10,
+        validator: (value) {
+          if (value.isEmpty) {
+            return '내용을 입력해주세요.';
+          }
+        },
+        onSaved: (val) => setState(() {
+          widget.review.body = val;
+        }),
+      ),
+    );
+  }
+
+  Padding getDateFormFields() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        children: <Widget>[
+          DatePickerFormField(
+            label: '읽기 시작한 날짜',
+            initialDate: widget.review.readingStartedAt,
+            onSaved: (DateTime date) {
+              widget.review.readingStartedAt = date;
+            },
+          ),
+          Spacer(),
+          DatePickerFormField(
+            label: '다 읽은 날짜',
+            initialDate: widget.review.readingFinishedAt,
+            onSaved: (DateTime date) {
+              widget.review.readingFinishedAt = date;
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   _onSave() async {

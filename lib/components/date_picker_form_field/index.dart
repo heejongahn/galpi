@@ -62,7 +62,7 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
   }
 
   Text buildDateText() {
-    return Text(date != null ? formatter.format(date) : '날짜 없음',
+    return Text(date != null ? formatter.format(date) : '-',
         style: TextStyle(fontSize: 17));
   }
 
