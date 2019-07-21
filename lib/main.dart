@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -12,16 +13,14 @@ void main() => runApp(MaterialApp(
       home: MyApp(),
       theme: theme,
       debugShowCheckedModeBanner: false,
-      // FIXME: Cupertino UI의 국제화 이슈로 잠시 홀드.
-      // https://github.com/flutter/flutter/issues/13452
-      // localizationsDelegates: [
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,
-      //   const FallbackCupertinoLocalisationsDelegate()
-      // ],
-      // supportedLocales: [
-      //   const Locale('ko', 'KR'),
-      // ],
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('ko', 'KR'),
+      ],
     ));
 
 class MyApp extends StatefulWidget {
