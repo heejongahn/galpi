@@ -7,6 +7,7 @@ Book logging app made with Flutter.
 - [x] Review list
 - [x] Review write / edit
 - [x] Review delete
-- [ ] Book info modal
+- [x] Book info webview
+- [ ] Google Books API
 - [ ] Reading status selector
 - [ ] Open Source Notice

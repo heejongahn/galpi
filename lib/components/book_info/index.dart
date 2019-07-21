@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/models/book.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class BookInfo extends StatelessWidget {
   final Book book;
@@ -35,7 +36,15 @@ class BookInfo extends StatelessWidget {
                       color: Color.fromARGB(100, 0x1c, 0x23, 0x2e)),
                   child: buildOverlay(context),
                 ),
-              )
+              ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: GestureDetector(
+                  child: Icon(Icons.info_outline),
+                  onTap: () => _onClickBookDetail(context),
+                ),
+              ),
             ],
           )
         : Container(width: 0, height: 0);
@@ -65,6 +74,22 @@ class BookInfo extends StatelessWidget {
                 .copyWith(color: Colors.white),
           )
         ],
+      ),
+    );
+  }
+
+  _onClickBookDetail(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext ctx) {
+          return Scaffold(
+            appBar: AppBar(title: Text('책 정보')),
+            body: WebView(
+              initialUrl: book.linkUri,
+              javascriptMode: JavascriptMode.unrestricted,
+            ),
+          );
+        },
       ),
     );
   }
