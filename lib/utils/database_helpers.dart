@@ -136,7 +136,8 @@ class DatabaseHelper {
     ${bookQuery},
     ${reviewQuery}
     FROM ${Review.table}
-    INNER JOIN ${Book.table} ON ${Review.table}.${Review.columnBookId} = ${Book.table}.${Book.columnId};
+    INNER JOIN ${Book.table} ON ${Review.table}.${Review.columnBookId} = ${Book.table}.${Book.columnId}
+    ORDER BY ${Review.table}.${Review.columnCreatedAt} DESC;
     ''', []);
 
     final reviews = maps
