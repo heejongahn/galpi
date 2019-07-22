@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:tuple/tuple.dart';
 
 import 'package:galpi/screens/add_review/index.dart';
@@ -52,6 +53,7 @@ class ReviewsState extends State<Reviews> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'galpi',
           style: TextStyle(fontFamily: 'Abril-Fatface'),
@@ -76,10 +78,40 @@ class ReviewsState extends State<Reviews> {
               return Center(child: CircularProgressIndicator());
             }),
       ),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: buildAboutListTile(),
+            ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _onOpenNewReview,
         child: Icon(Icons.add),
       ),
+    );
+  }
+
+  FutureBuilder<PackageInfo> buildAboutListTile() {
+    return FutureBuilder<PackageInfo>(
+      future: PackageInfo.fromPlatform(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return AboutListTile(
+            icon: Icon(Icons.info_outline),
+            applicationName: 'galpi',
+            applicationVersion: snapshot.data.version,
+          );
+        }
+
+        return AboutListTile(
+          icon: Icon(Icons.info_outline),
+          applicationName: 'galpi',
+        );
+      },
     );
   }
 
