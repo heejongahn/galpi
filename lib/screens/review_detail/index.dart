@@ -1,8 +1,8 @@
+import 'package:galpi/components/score_chip/index.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 import 'package:galpi/components/book_info/index.dart';
-import 'package:galpi/components/stars_row/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/screens/review_list/index.dart';
@@ -63,8 +63,8 @@ class ReviewDetail extends StatelessWidget {
                     .button
                     .copyWith(fontSize: 12, color: Colors.white),
                 labelPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 4)),
-            StarsRow(
-              stars: review.stars,
+            ScoreChip(
+              score: review.stars,
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 24),

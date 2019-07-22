@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:galpi/components/book_info/index.dart';
 
 import 'package:galpi/components/date_picker_form_field/index.dart';
-import 'package:galpi/components/stars_row/index.dart';
+import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 
@@ -39,26 +39,23 @@ class _WriteReviewState extends State<WriteReview> {
         body: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: _onBlur,
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  BookInfo(
-                    book: widget.book,
-                  ),
-                  getTitleFormField(),
-                  getBodyFormField(),
-                  getDateFormFields(),
-                  StarsRow(
-                    stars: widget.review.stars,
-                    size: 24,
-                    onTapStar: (i) => setState(() {
-                      widget.review.stars = i;
-                    }),
-                  ),
-                ],
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    BookInfo(
+                      book: widget.book,
+                    ),
+                    getTitleFormField(),
+                    getBodyFormField(),
+                    getDateFormFields(),
+                    getScoreFormField(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -132,6 +129,37 @@ class _WriteReviewState extends State<WriteReview> {
         ],
       ),
     );
+  }
+
+  Padding getScoreFormField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '평가',
+            style: Theme.of(context).textTheme.caption,
+          ),
+          Wrap(
+            spacing: 16,
+            children: [1, 2, 3]
+                .map((score) => ScoreChip(
+                      score: score,
+                      isSelected: widget.review.stars == score,
+                      onTap: _onScoreBadgeClick,
+                    ))
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _onScoreBadgeClick(int score) {
+    setState(() {
+      widget.review.stars = score;
+    });
   }
 
   _onSave() async {
