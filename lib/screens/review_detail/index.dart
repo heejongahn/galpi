@@ -1,3 +1,4 @@
+import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class ReviewDetail extends StatelessWidget {
   }
 
   Padding getReviewDetail(BuildContext context) {
+    print(review.readingStatus);
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Column(
@@ -55,16 +57,14 @@ class ReviewDetail extends StatelessWidget {
                   .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
             ),
             DateInfo(review: review),
-            Chip(
-                backgroundColor: Theme.of(context).primaryColor,
-                label: Text(review.displayReadingStatus),
-                labelStyle: Theme.of(context)
-                    .textTheme
-                    .button
-                    .copyWith(fontSize: 12, color: Colors.white),
-                labelPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 4)),
-            ScoreChip(
-              score: review.stars,
+            Wrap(
+              spacing: 16,
+              children: <Widget>[
+                ReadingStatusChip(readingStatus: review.readingStatus),
+                ScoreChip(
+                  score: review.stars,
+                ),
+              ],
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 24),

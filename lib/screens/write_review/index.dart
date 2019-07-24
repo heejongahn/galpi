@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:galpi/components/book_info/index.dart';
 
-import 'package:galpi/components/date_picker_form_field/index.dart';
+import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
@@ -52,7 +52,7 @@ class _WriteReviewState extends State<WriteReview> {
                     ),
                     getTitleFormField(),
                     getBodyFormField(),
-                    getDateFormFields(),
+                    getReadingStatusFormFields(),
                     getScoreFormField(),
                   ],
                 ),
@@ -106,25 +106,29 @@ class _WriteReviewState extends State<WriteReview> {
     );
   }
 
-  Padding getDateFormFields() {
+  Padding getReadingStatusFormFields() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          DatePickerFormField(
-            label: '읽기 시작한 날짜',
-            initialDate: widget.review.readingStartedAt,
-            onSaved: (DateTime date) {
-              widget.review.readingStartedAt = date;
-            },
+          Text(
+            '독서 상태',
+            style: Theme.of(context).textTheme.caption,
           ),
-          Spacer(),
-          DatePickerFormField(
-            label: '다 읽은 날짜',
-            initialDate: widget.review.readingFinishedAt,
-            onSaved: (DateTime date) {
-              widget.review.readingFinishedAt = date;
-            },
+          Wrap(
+            spacing: 16,
+            children: [
+              ReadingStatus.hasntStarted,
+              ReadingStatus.reading,
+              ReadingStatus.finishedReading
+            ]
+                .map((status) => ReadingStatusChip(
+                      readingStatus: status,
+                      isSelected: widget.review.readingStatus == status,
+                      onTap: _onReadingStatusBadgeClick,
+                    ))
+                .toList(),
           ),
         ],
       ),
@@ -159,6 +163,12 @@ class _WriteReviewState extends State<WriteReview> {
   _onScoreBadgeClick(int score) {
     setState(() {
       widget.review.stars = score;
+    });
+  }
+
+  _onReadingStatusBadgeClick(ReadingStatus readingStatus) {
+    setState(() {
+      widget.review.readingStatus = readingStatus;
     });
   }
 

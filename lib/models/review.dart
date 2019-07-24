@@ -10,11 +10,21 @@ enum ReadingStatus {
   finishedReading,
 }
 
+Map<ReadingStatus, String> readingStatusMap = {
+  ReadingStatus.hasntStarted: 'hasntStarted',
+  ReadingStatus.reading: 'reading',
+  ReadingStatus.finishedReading: 'finishedReading'
+};
+
+Map<String, ReadingStatus> readingStatusInverseMap =
+    readingStatusMap.map((k, v) => MapEntry(v, k));
+
 class Review {
   final int id;
   int stars;
   String title;
   String body;
+  ReadingStatus readingStatus;
   DateTime readingStartedAt;
   DateTime readingFinishedAt;
   final DateTime createdAt;
@@ -26,6 +36,7 @@ class Review {
   static final columnStars = 'stars';
   static final columnTitle = 'title';
   static final columnBody = 'body';
+  static final columnReadingStatus = 'readingStatus';
   static final columnReadingStartedAt = 'readingStartedAt';
   static final columnReadingFinishedAt = 'readingFinishedAt';
   static final columnCreatedAt = 'createdAt';
@@ -37,6 +48,7 @@ class Review {
       this.stars,
       this.title,
       this.body,
+      this.readingStatus = ReadingStatus.hasntStarted,
       this.readingStartedAt,
       this.readingFinishedAt,
       this.createdAt,
@@ -56,6 +68,7 @@ class Review {
         stars: map[columnStars],
         title: map[columnTitle],
         body: map[columnBody],
+        readingStatus: readingStatusInverseMap[map[columnReadingStatus]],
         readingStartedAt: readingStartedAt,
         readingFinishedAt: readingFinishedAt,
         createdAt: DateTime.parse(map[columnCreatedAt]),
@@ -76,6 +89,8 @@ class Review {
         stars: map['${table}_${columnStars}'],
         title: map['${table}_${columnTitle}'],
         body: map['${table}_${columnBody}'],
+        readingStatus:
+            readingStatusInverseMap[map['${table}_${columnReadingStatus}']],
         readingStartedAt: readingStartedAt,
         readingFinishedAt: readingFinishedAt,
         createdAt: DateTime.parse(map['${table}_${columnCreatedAt}']),
@@ -90,6 +105,7 @@ class Review {
       columnStars: stars,
       columnTitle: title,
       columnBody: body,
+      columnReadingStatus: readingStatusMap[readingStatus],
       columnReadingStartedAt: readingStartedAt?.toIso8601String(),
       columnReadingFinishedAt: readingFinishedAt?.toIso8601String(),
       columnLastModifiedAt: now,
@@ -104,20 +120,6 @@ class Review {
     }
 
     return map;
-  }
-
-  ReadingStatus get readingStatus {
-    final now = DateTime.now();
-
-    if (readingFinishedAt != null && now.isAfter(readingFinishedAt)) {
-      return ReadingStatus.finishedReading;
-    }
-
-    if (readingStartedAt != null && now.isAfter(readingStartedAt)) {
-      return ReadingStatus.reading;
-    }
-
-    return ReadingStatus.hasntStarted;
   }
 
   String get displayReadingStatus {
