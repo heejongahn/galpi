@@ -83,8 +83,16 @@ class ReviewsState extends State<Reviews> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              child: buildAboutListTile(),
+              child: ListTile(
+                title: Text(
+                  '프로필 없음',
+                ),
+                subtitle: Text(
+                  '곧 로그인 기능이 추가됩니다. 데이터 백업, 다른 사용자들과의 독후감 공유 등의 다양한 변경사항을 기대해주세요!',
+                ),
+              ),
             ),
+            buildAboutListTile()
           ],
         ),
       ),
