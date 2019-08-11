@@ -1,0 +1,3 @@
+Two minor changes:
+- Add information about upcoming login feature to the main screen's drawer
+- Save app version into NSUserDefaults on startup, for possible migrations in the future
