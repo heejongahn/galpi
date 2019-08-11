@@ -1,0 +1,10 @@
+git_url("git@github.com:heejongahn/galpi-certificate.git")
+
+storage_mode("git")
+
+type("appstore")
+
+app_identifier("name.ahnheejong.galpi")
+username("heejongahn@gmail.com") 
+
+# The docs are available on https://docs.fastlane.tools/actions/match
