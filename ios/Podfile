@@ -1,5 +1,8 @@
+# Using a CDN with CocoaPods 1.7.2 or later can save a lot of time on pod installation, but it's experimental rather than the default.
+# source 'https://cdn.cocoapods.org/'
+
 # Uncomment this line to define a global platform for your project
-# platform :ios, '9.0'
+platform :ios, '10.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -17,8 +20,10 @@ def parse_KV_file(file, separator='=')
   end
   pods_ary = []
   skip_line_start_symbols = ["#", "/"]
+  puts "#{file_abs_path} starts\n\n\n"
   File.foreach(file_abs_path) { |line|
       next if skip_line_start_symbols.any? { |symbol| line =~ /^\s*#{symbol}/ }
+      puts "#{line}"
       plugin = line.split(pattern=separator)
       if plugin.length == 2
         podname = plugin[0].strip()
@@ -29,6 +34,7 @@ def parse_KV_file(file, separator='=')
         puts "Invalid plugin specification: #{line}"
       end
   }
+  puts "#{file_abs_path} ends\n\n\n"
   return pods_ary
 end
 
@@ -41,7 +47,7 @@ target 'Runner' do
   # Flutter Pods
   generated_xcode_build_settings = parse_KV_file('./Flutter/Generated.xcconfig')
   if generated_xcode_build_settings.empty?
-    puts "Generated.xcconfig must exist. If you're running pod install manually, make sure flutter packages get is executed first."
+    puts "Generated.xcconfig must exist. If you're running pod install manually, make sure flutter pub get is executed first."
   end
   generated_xcode_build_settings.map { |p|
     if p[:name] == 'FLUTTER_FRAMEWORK_DIR'
@@ -59,6 +65,9 @@ target 'Runner' do
     pod p[:name], :path => File.join(symlink, 'ios')
   }
 end
+
+# # Prevent Cocoapods from embedding a second Flutter framework and causing an error with the new Xcode build system.
+# install! 'cocoapods', :disable_input_output_paths => true
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|

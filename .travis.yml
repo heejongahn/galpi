@@ -2,11 +2,23 @@ language: generic
 
 # For now, Flutter doesn't provide a canonical way to define variables at build time
 # https://github.com/flutter/flutter/issues/26638
-before_script:
-  - git clone https://github.com/flutter/flutter.git -b dev
-  - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
 
-script:
-  - bash scripts/populate_secret.sh
-  - flutter packages get
-  - flutter test
+matrix:
+  include:
+    - name: iOS Build
+      os: osx
+      language: generic
+      osx_image: xcode10.2
+      before_script:
+        - echo -e "machine github.com\n  login $GITHUB_TOKEN" >> ~/.netrc
+        - git clone https://github.com/flutter/flutter.git -b dev
+        - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+        - gem install bundler
+        - gem install cocoapods
+        - cd ios && bundle install && cd ..
+      script:
+        - flutter doctor -v
+        - bash scripts/populate_secret.sh
+        - flutter build ios --no-codesign --build-number=$(date "+%Y%m%d%H%M%S")
+        - cd ios
+        - bundle exec fastlane beta
