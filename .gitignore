@@ -80,3 +80,6 @@ secrets/keys.json
 android/key.properties
 android/app/upload.keystore
 android/app/serviceAccount.json
+android/fastlane/report.xml
+
+secrets.tar

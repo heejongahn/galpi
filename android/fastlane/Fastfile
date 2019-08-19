@@ -16,18 +16,12 @@
 default_platform(:android)
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
-  end
-
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
     begin
       upload_to_play_store(
         track: 'internal',
         aab: '../build/app/outputs/bundle/release/app.aab',
-        json_key: '/Users/maru/android_cert/api-6523209285473482503-887198-b6febeb5b8bd.json',
       )
       rescue => exception
         raise exception unless exception.message.include?('apkUpgradeVersionConflict')

@@ -1,2 +1,2 @@
-json_key_file("/Users/maru/android_cert/api-6523209285473482503-887198-b6febeb5b8bd.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
-package_name("name.ahnheejong.galpi") # e.g. com.krausefx.app
+json_key_file("app/serviceAccount.json")
+package_name("name.ahnheejong.galpi") 
