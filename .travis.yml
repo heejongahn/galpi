@@ -13,6 +13,7 @@ matrix:
           - build-tools-28.0.3
           - android-28
       before_script:
+        - export TZ=Asia/Seoul
         - openssl aes-256-cbc -K $encrypted_d0cc22ff5b43_key -iv $encrypted_d0cc22ff5b43_iv -in secrets.tar.enc -out secrets.tar -d
         - tar xvf secrets.tar
         - git clone https://github.com/flutter/flutter.git -b stable
@@ -29,6 +30,7 @@ matrix:
       language: generic
       osx_image: xcode10.2
       before_script:
+        - export TZ=Asia/Seoul
         - echo -e "machine github.com\n  login $GITHUB_TOKEN" >> ~/.netrc
         - git clone https://github.com/flutter/flutter.git -b dev
         - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
