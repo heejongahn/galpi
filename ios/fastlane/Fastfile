@@ -36,7 +36,10 @@ platform :ios do
     )
 
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
-    upload_to_testflight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      apple_id: "1470817706"
+    )
   end
 
   desc "Push a new release build to the App Store"
