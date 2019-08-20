@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:galpi/components/book_card/main.dart';
@@ -17,7 +16,7 @@ class SearchView extends StatefulWidget {
 
 class _SearchViewState extends State<SearchView> {
   final FocusNode _focusNode = new FocusNode();
-  final _queryStreamController = StreamController<String>();
+  String query = '';
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +38,6 @@ class _SearchViewState extends State<SearchView> {
   @override
   void dispose() {
     super.dispose();
-    _queryStreamController.close();
     _focusNode.dispose();
   }
 
@@ -55,37 +53,33 @@ class _SearchViewState extends State<SearchView> {
     });
   }
 
-  _searchBooks(String query) async {
+  _searchBooks(String newQuery) async {
     setState(() {
-      this._queryStreamController.sink.add(query);
+      this.query = newQuery;
     });
   }
 
   Widget _buildContent() {
-    return StreamBuilder(
-        stream: this._queryStreamController.stream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return _bulidPlaceholder();
+    if (query == '') {
+      return _buildPlaceholder();
+    }
+
+    return FutureBuilder(
+        future: fetchBooks(query: query),
+        builder: (context, AsyncSnapshot<List<Book>> snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data == null || snapshot.data.length == 0
+                ? _buildPlaceholder()
+                : _buildRows(snapshot.data);
+          } else if (snapshot.hasError) {
+            return Flexible(child: Text("${snapshot.error}"));
           }
 
-          return FutureBuilder(
-              future: fetchBooks(query: snapshot.data),
-              builder: (context, AsyncSnapshot<List<Book>> snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data == null || snapshot.data.length == 0
-                      ? _bulidPlaceholder()
-                      : _buildRows(snapshot.data);
-                } else if (snapshot.hasError) {
-                  return Flexible(child: Text("${snapshot.error}"));
-                }
-
-                return Container(width: 0, height: 0);
-              });
+          return Container(width: 0, height: 0);
         });
   }
 
-  Widget _bulidPlaceholder() {
+  Widget _buildPlaceholder() {
     return Container(
       alignment: Alignment.center,
       child: Text('검색 결과가 없습니다.'),
