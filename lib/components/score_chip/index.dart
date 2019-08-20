@@ -36,13 +36,13 @@ class ScoreChip extends StatelessWidget {
       case 1:
         return '별로에요';
       case 2:
-        return '그럭저럭';
+        return '보통이에요';
       case 3:
         return '추천해요';
       case 4:
         return '최고에요';
       default:
-        return '그럭저럭';
+        return '보통이에요';
     }
   }
 

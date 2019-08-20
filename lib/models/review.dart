@@ -1,5 +1,3 @@
-// import 'package:galpi/models/book.dart';
-import 'dart:developer';
 import 'package:intl/intl.dart';
 
 final formatter = DateFormat('yyyy-MM-dd');
