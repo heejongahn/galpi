@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
 
 import 'package:galpi/components/book_card/main.dart';
@@ -16,7 +19,18 @@ class SearchView extends StatefulWidget {
 
 class _SearchViewState extends State<SearchView> {
   final FocusNode _focusNode = new FocusNode();
+
   String query = '';
+  final StreamController<String> _queryStreamController = StreamController();
+
+  Observable queryObservable;
+
+  _SearchViewState() {
+    Observable(_queryStreamController.stream)
+        .distinct()
+        .debounceTime(const Duration(milliseconds: 1000))
+        .listen(_onQueryChange);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +39,9 @@ class _SearchViewState extends State<SearchView> {
         padding: const EdgeInsets.all(20),
         child: TextField(
           focusNode: this._focusNode,
-          onSubmitted: this._searchBooks,
+          onChanged: (v) {
+            _queryStreamController.sink.add(v);
+          },
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
               labelText: '제목, 저자, 출판사', border: OutlineInputBorder()),
@@ -39,6 +55,7 @@ class _SearchViewState extends State<SearchView> {
   void dispose() {
     super.dispose();
     _focusNode.dispose();
+    _queryStreamController.close();
   }
 
   @override
@@ -53,9 +70,9 @@ class _SearchViewState extends State<SearchView> {
     });
   }
 
-  _searchBooks(String newQuery) async {
+  _onQueryChange(String newQuery) {
     setState(() {
-      this.query = newQuery;
+      query = newQuery;
     });
   }
 
