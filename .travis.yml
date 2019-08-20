@@ -3,6 +3,11 @@ language: generic
 # For now, Flutter doesn't provide a canonical way to define variables at build time
 # https://github.com/flutter/flutter/issues/26638
 
+env:
+  # Fastlane 세팅 중 Play Store Console에 실수로 이 버전 코드를 갖는 apk를 업로드 했는데
+  # 업로드한 apk를 삭제할 수단이 없어서 이 값을 버전 코드의 베이스로 사용한다.
+  - VERSION_CODE_BASE=1908191509
+
 matrix:
   include:
     - name: Android Build
@@ -13,7 +18,6 @@ matrix:
           - build-tools-28.0.3
           - android-28
       before_script:
-        - export TZ=Asia/Seoul
         - openssl aes-256-cbc -K $encrypted_d0cc22ff5b43_key -iv $encrypted_d0cc22ff5b43_iv -in secrets.tar.enc -out secrets.tar -d
         - tar xvf secrets.tar
         - git clone https://github.com/flutter/flutter.git -b stable
@@ -22,7 +26,7 @@ matrix:
       script:
         - flutter doctor -v
         - bash scripts/populate_secret.sh
-        - flutter build appbundle --build-number=$(expr $(date +%s) / 10)
+        - flutter build appbundle --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
         - cd android
         - bundle exec fastlane beta
     - name: iOS Build
@@ -30,7 +34,6 @@ matrix:
       language: generic
       osx_image: xcode10.2
       before_script:
-        - export TZ=Asia/Seoul
         - echo -e "machine github.com\n  login $GITHUB_TOKEN" >> ~/.netrc
         - git clone https://github.com/flutter/flutter.git -b dev
         - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
@@ -40,6 +43,6 @@ matrix:
       script:
         - flutter doctor -v
         - bash scripts/populate_secret.sh
-        - flutter build ios --no-codesign --build-number=$(expr $(date +%s) / 10)
+        - flutter build ios --no-codesign --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
         - cd ios
         - bundle exec fastlane beta
