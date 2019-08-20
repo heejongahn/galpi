@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:galpi/components/book_card/main.dart';
@@ -15,8 +16,8 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
-  FocusNode _focusNode = new FocusNode();
-  FutureBuilder<List<Book>> searchResultBuilder;
+  final FocusNode _focusNode = new FocusNode();
+  final _queryStreamController = StreamController<String>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +32,14 @@ class _SearchViewState extends State<SearchView> {
               labelText: '제목, 저자, 출판사', border: OutlineInputBorder()),
         ),
       ),
-      Expanded(
-          child: searchResultBuilder == null
-              ? Container(
-                  alignment: Alignment.center, child: Text('검색 결과가 없습니다.'))
-              : searchResultBuilder)
+      Expanded(child: _buildContent()),
     ]);
   }
 
   @override
   void dispose() {
     super.dispose();
+    _queryStreamController.close();
     _focusNode.dispose();
   }
 
@@ -59,23 +57,39 @@ class _SearchViewState extends State<SearchView> {
 
   _searchBooks(String query) async {
     setState(() {
-      this.searchResultBuilder = FutureBuilder(
-          future: fetchBooks(query: query),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return snapshot.data == null
-                  ? Container(
-                      width: 0,
-                      height: 0,
-                    )
-                  : _buildRows(snapshot.data);
-            } else if (snapshot.hasError) {
-              return Flexible(child: Text("${snapshot.error}"));
-            }
-
-            return Container(width: 0, height: 0);
-          });
+      this._queryStreamController.sink.add(query);
     });
+  }
+
+  Widget _buildContent() {
+    return StreamBuilder(
+        stream: this._queryStreamController.stream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return _bulidPlaceholder();
+          }
+
+          return FutureBuilder(
+              future: fetchBooks(query: snapshot.data),
+              builder: (context, AsyncSnapshot<List<Book>> snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data == null || snapshot.data.length == 0
+                      ? _bulidPlaceholder()
+                      : _buildRows(snapshot.data);
+                } else if (snapshot.hasError) {
+                  return Flexible(child: Text("${snapshot.error}"));
+                }
+
+                return Container(width: 0, height: 0);
+              });
+        });
+  }
+
+  Widget _bulidPlaceholder() {
+    return Container(
+      alignment: Alignment.center,
+      child: Text('검색 결과가 없습니다.'),
+    );
   }
 
   Widget _buildRows(List<Book> books) {
