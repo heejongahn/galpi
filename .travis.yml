@@ -22,7 +22,7 @@ matrix:
       script:
         - flutter doctor -v
         - bash scripts/populate_secret.sh
-        - flutter build appbundle --build-number=$(date "+%y%m%d%H%M")
+        - flutter build appbundle --build-number=$(expr $(date +%s) / 10)
         - cd android
         - bundle exec fastlane beta
     - name: iOS Build
@@ -40,6 +40,6 @@ matrix:
       script:
         - flutter doctor -v
         - bash scripts/populate_secret.sh
-        - flutter build ios --no-codesign --build-number=$(date "+%y%m%d%H%M")
+        - flutter build ios --no-codesign --build-number=$(expr $(date +%s) / 10)
         - cd ios
         - bundle exec fastlane beta
