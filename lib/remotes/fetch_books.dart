@@ -10,6 +10,10 @@ const API_ENDPOINT = "https://dapi.kakao.com/v3/search/book";
 Future<List<Book>> fetchBooks({String query}) async {
   Secret secret = await SecretLoader(secretPath: "secrets/keys.json").load();
 
+  if (query == '') {
+    return Future.value([]);
+  }
+
   final response = await http.get('${API_ENDPOINT}?query=${query}',
       headers: {'Authorization': 'KakaoAK ${secret.kakaoRestApiKey}'});
 
