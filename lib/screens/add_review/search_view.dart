@@ -90,11 +90,8 @@ class _SearchViewState extends State<SearchView> {
     return ListView.builder(
         scrollDirection: Axis.vertical,
         padding: const EdgeInsets.all(16.0),
-        itemCount: books.length * 2,
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-
-          final index = i ~/ 2;
+        itemCount: books.length,
+        itemBuilder: (context, index) {
           final book = books[index];
           return BookCard(
             book: book,
