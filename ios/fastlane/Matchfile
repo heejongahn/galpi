@@ -1,4 +1,4 @@
-git_url("https://github.com/heejongahn/galpi-certificate")
+git_url("git@github.com:heejongahn/galpi.git")
 
 storage_mode("git")
 

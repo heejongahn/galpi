@@ -34,7 +34,6 @@ matrix:
       language: generic
       osx_image: xcode10.2
       before_script:
-        - echo -e "machine github.com\n  login $GITHUB_TOKEN" >> ~/.netrc
         - git clone https://github.com/flutter/flutter.git -b dev
         - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
         - gem install bundler
