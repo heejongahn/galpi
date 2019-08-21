@@ -8,6 +8,10 @@ env:
   # 업로드한 apk를 삭제할 수단이 없어서 이 값을 버전 코드의 베이스로 사용한다.
   - VERSION_CODE_BASE=1908191509
 
+branches:
+  only:
+    - master
+
 matrix:
   include:
     - name: Android Build
