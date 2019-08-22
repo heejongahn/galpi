@@ -6,7 +6,7 @@ language: generic
 env:
   # Fastlane 세팅 중 Play Store Console에 실수로 이 버전 코드를 갖는 apk를 업로드 했는데
   # 업로드한 apk를 삭제할 수단이 없어서 이 값을 버전 코드의 베이스로 사용한다.
-  - VERSION_CODE_BASE=1908191509 FLUTTER_BUILD_RELEASE_CHANNEL=dev
+  - VERSION_CODE_BASE=1908191509 FLUTTER_BUILD_RELEASE_CHANNEL=beta
 
 branches:
   only:
