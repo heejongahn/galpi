@@ -1,5 +1,7 @@
 # galpi
 
+![Galpi app image](https://github.com/heejongahn/galpi/raw/master/docs/static/galpi.gif)
+
 Book logging app made with Flutter.
 
 ## Deployment
