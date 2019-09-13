@@ -1,0 +1,18 @@
+# Android related
+**/gradle-wrapper.jar
+.gradle
+captures/
+gradlew
+gradlew.bat
+local.properties
+**/GeneratedPluginRegistrant.java
+app/bin/
+app/gen/
+app/out/
+app/release/
+
+key.properties
+app/upload.keystore
+app/serviceAccount.json
+app/google-services.json
+fastlane/report.xml
