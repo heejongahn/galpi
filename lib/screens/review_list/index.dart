@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/screens/phone_auth/index.dart';
 import 'package:package_info/package_info.dart';
 import 'package:tuple/tuple.dart';
 
@@ -87,12 +88,20 @@ class ReviewsState extends State<Reviews> {
                 title: Text(
                   '프로필 없음',
                 ),
-                subtitle: Text(
-                  '곧 로그인 기능이 추가됩니다. 데이터 백업, 다른 사용자들과의 독후감 공유 등의 다양한 변경사항을 기대해주세요!',
-                ),
+                subtitle: Text('로그인하세요'),
               ),
             ),
-            buildAboutListTile()
+            buildAboutListTile(),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('로그인'),
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  return PhoneAuth();
+                }));
+              },
+            ),
           ],
         ),
       ),
