@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-const KR_DIAL_CODE = '+82';
-final FirebaseAuth _auth = FirebaseAuth.instance;
+import 'package:galpi/stores/user_repository.dart';
+import 'package:provider/provider.dart';
 
 class PhoneAuth extends StatefulWidget {
   @override
@@ -11,159 +9,107 @@ class PhoneAuth extends StatefulWidget {
 
 class _PhoneAuthState extends State<PhoneAuth> {
   String _verificationId;
-  String _message = '대기중';
   String _phoneNumber = '';
-  String _code = '';
-
-  @override
-  void initState() {
-    super.initState();
-
-    _auth.currentUser().then((currentUser) => {
-          if (currentUser != null)
-            {
-              setState(() {
-                _message = '이미 로그인 됨';
-              })
-            }
-        });
-  }
+  String _smsCode = '';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('로그인'),
-        centerTitle: false,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(24),
-        child: Column(
-          children: <Widget>[
-            Flexible(
-              flex: 0,
-              child: Row(children: [
-                Text(_message),
-              ]),
-            ),
-            Row(children: [
+    return Consumer<UserRepository>(builder: (context, userRepository, child) {
+      requestSms(String phoneNumber) async {
+        return userRepository.requestSms(
+          phoneNumber: phoneNumber,
+        );
+      }
+
+      signIn(String verificationId, String smsCode) {
+        return userRepository.signIn(
+          verificationId: verificationId,
+          smsCode: smsCode,
+        );
+      }
+
+      signOut() {
+        return userRepository.signOut();
+      }
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('로그인'),
+          centerTitle: false,
+        ),
+        body: Container(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            children: <Widget>[
               Flexible(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: '휴대폰 번호',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (String phoneNumber) {
-                    setState(() {
-                      _phoneNumber = phoneNumber;
-                    });
-                  },
-                ),
+                flex: 0,
+                child: Row(children: [
+                  Text(userRepository.authStatus.toString()),
+                ]),
               ),
-              RaisedButton(
-                child: Text('보내기'),
-                onPressed: _onAuth,
-              ),
-            ]),
-            Row(children: [
-              Flexible(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: '6자리 인증번호',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (String code) {
-                    setState(() {
-                      _code = code;
-                    });
-                  },
-                ),
-              ),
-              RaisedButton(
-                child: Text('인증'),
-                onPressed: _signInWithPhoneNumber,
-              ),
-            ]),
-            RaisedButton(
-              child: Text('로그아웃'),
-              onPressed: _signOut,
-            ),
-          ],
+              buildPhoneNumberRow(requestSms),
+              buildSmsCodeRow(signIn, context),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget buildPhoneNumberRow(Future<String> requestSms(String phoneNumber)) {
+    return Row(children: [
+      Flexible(
+        child: TextField(
+          decoration: InputDecoration(
+            labelText: '휴대폰 번호',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (String phoneNumber) {
+            setState(() {
+              _phoneNumber = phoneNumber;
+            });
+          },
         ),
       ),
-    );
+      RaisedButton(
+        child: Text('보내기'),
+        onPressed: () async {
+          final verificationId = await requestSms(_phoneNumber);
+          _verificationId = verificationId;
+        },
+      ),
+    ]);
   }
 
-  _onAuth() async {
-    final PhoneVerificationCompleted verificationCompleted =
-        (AuthCredential phoneAuthCredential) {
-      _auth.signInWithCredential(phoneAuthCredential);
-      setState(() {
-        _message = 'Received phone auth credential: $phoneAuthCredential';
-      });
-    };
+  Widget buildSmsCodeRow(
+      Future<bool> signIn(String verificationId, String smsCode),
+      BuildContext context) {
+    return Row(children: [
+      Flexible(
+        child: TextField(
+          decoration: InputDecoration(
+            labelText: '6자리 인증번호',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (String code) {
+            setState(() {
+              _smsCode = code;
+            });
+          },
+        ),
+      ),
+      RaisedButton(
+          child: Text('인증'),
+          onPressed: () async {
+            final success = await signIn(
+              _verificationId,
+              _smsCode,
+            );
 
-    final PhoneVerificationFailed verificationFailed =
-        (AuthException authException) {
-      setState(() {
-        _message =
-            'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}';
-      });
-    };
-
-    final PhoneCodeSent codeSent =
-        (String verificationId, [int forceResendingToken]) async {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('${_phoneNumber} (으)로 인증번호를 발송했습니다.'),
-      ));
-      _verificationId = verificationId;
-    };
-
-    final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
-        (String verificationId) {
-      _verificationId = verificationId;
-    };
-
-    await _auth.verifyPhoneNumber(
-      phoneNumber: '${KR_DIAL_CODE}${_phoneNumber}',
-      timeout: Duration(seconds: 5 * 60),
-      codeSent: codeSent,
-      verificationCompleted: verificationCompleted,
-      verificationFailed: verificationFailed,
-      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-    );
-  }
-
-  // Example code of how to sign in with phone.
-  void _signInWithPhoneNumber() async {
-    final AuthCredential credential = PhoneAuthProvider.getCredential(
-      verificationId: _verificationId,
-      smsCode: _code,
-    );
-
-    try {
-      final FirebaseUser user =
-          (await _auth.signInWithCredential(credential)).user;
-      final FirebaseUser currentUser = await _auth.currentUser();
-      assert(user.uid == currentUser.uid);
-      setState(() {
-        if (user != null) {
-          _message = '로그인됨: uid: ${user.uid}';
-        } else {
-          _message = '로그인 실패';
-        }
-      });
-    } catch (e) {
-      setState(() {
-        _message = '잘못된 인증번호';
-      });
-    }
-  }
-
-  _signOut() async {
-    await _auth.signOut();
-    setState(() {
-      _message = '로그아웃됨';
-    });
+            if (success) {
+              Navigator.of(context).pop();
+            }
+          }),
+    ]);
   }
 }

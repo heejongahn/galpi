@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:galpi/stores/user_repository.dart';
+import 'package:package_info/package_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 import 'package:galpi/components/screen_with_navigator/index.dart';
 import 'package:galpi/screens/book_list/index.dart';
 import 'package:galpi/screens/review_list/index.dart';
 import 'package:galpi/utils/theme.dart';
-import 'package:package_info/package_info.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 const SHARED_PREFERENCE_VERSION_KEY = 'version';
 final primaryColor = Color.fromRGBO(0xff, 0x74, 0x73, 1);
@@ -59,23 +61,26 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(index: _pageIndex, children: [
-        ScreenWithNavigator(child: Books()),
-        ScreenWithNavigator(child: Reviews())
-      ]),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   items: [
-      //     homeItem,
-      //     myItem,
-      //   ],
-      //   currentIndex: _pageIndex,
-      //   onTap: (int index) {
-      //     setState(() {
-      //       _pageIndex = index;
-      //     });
-      //   },
-      // ),
+    return ChangeNotifierProvider.value(
+      value: UserRepository.instance(),
+      child: Scaffold(
+        body: IndexedStack(index: _pageIndex, children: [
+          ScreenWithNavigator(child: Books()),
+          ScreenWithNavigator(child: Reviews())
+        ]),
+        // bottomNavigationBar: BottomNavigationBar(
+        //   items: [
+        //     homeItem,
+        //     myItem,
+        //   ],
+        //   currentIndex: _pageIndex,
+        //   onTap: (int index) {
+        //     setState(() {
+        //       _pageIndex = index;
+        //     });
+        //   },
+        // ),
+      ),
     );
   }
 }

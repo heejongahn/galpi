@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/components/main_drawer/index.dart';
 import 'package:galpi/screens/phone_auth/index.dart';
-import 'package:package_info/package_info.dart';
 import 'package:tuple/tuple.dart';
 
 import 'package:galpi/screens/add_review/index.dart';
@@ -79,56 +79,11 @@ class ReviewsState extends State<Reviews> {
               return Center(child: CircularProgressIndicator());
             }),
       ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: ListTile(
-                title: Text(
-                  '프로필 없음',
-                ),
-                subtitle: Text('로그인하세요'),
-              ),
-            ),
-            buildAboutListTile(),
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text('로그인'),
-              onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (BuildContext context) {
-                  return PhoneAuth();
-                }));
-              },
-            ),
-          ],
-        ),
-      ),
+      endDrawer: MainDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: _onOpenNewReview,
         child: Icon(Icons.add),
       ),
-    );
-  }
-
-  FutureBuilder<PackageInfo> buildAboutListTile() {
-    return FutureBuilder<PackageInfo>(
-      future: PackageInfo.fromPlatform(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return AboutListTile(
-            icon: Icon(Icons.info_outline),
-            applicationName: 'galpi',
-            applicationVersion: snapshot.data.version,
-          );
-        }
-
-        return AboutListTile(
-          icon: Icon(Icons.info_outline),
-          applicationName: 'galpi',
-        );
-      },
     );
   }
 
