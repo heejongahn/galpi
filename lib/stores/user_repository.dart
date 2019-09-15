@@ -74,6 +74,18 @@ class UserRepository extends ChangeNotifier {
     return Future.delayed(Duration.zero);
   }
 
+  Future onSetDisplayName({String displayName}) async {
+    if (_user == null) {
+      return;
+    }
+
+    final UserUpdateInfo userUpdateInfo = UserUpdateInfo();
+    userUpdateInfo.displayName = displayName;
+    await _user.updateProfile(userUpdateInfo);
+    _user = await _auth.currentUser();
+    notifyListeners();
+  }
+
   Future<void> _onAuthStateChanged(FirebaseUser firebaseUser) async {
     if (firebaseUser == null) {
       _status = AuthStatus.Unauthenticated;
