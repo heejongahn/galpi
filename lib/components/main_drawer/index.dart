@@ -18,10 +18,13 @@ class MainDrawer extends StatelessWidget {
       };
 
       final onClickSignIn = () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (BuildContext context) {
-          return PhoneAuth();
-        }));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (BuildContext context) {
+                return PhoneAuth();
+              },
+              fullscreenDialog: true),
+        );
       };
 
       final onChangeDisplayName = (String newDisplayName) async {
@@ -36,9 +39,15 @@ class MainDrawer extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: Divider.createBorderSide(context),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(0, 60, 0, 8),
               child: ListTile(
-                leading: Icon(Icons.account_circle),
+                leading: Icon(Icons.account_circle, size: 32),
                 title: Text(drawHeaderTitle),
                 trailing: GestureDetector(
                   child: Text(
