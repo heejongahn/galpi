@@ -8,6 +8,22 @@ typedef Future<bool> SignIn(String verificationId, String smsCode);
 
 const KR_DIAL_CODE = '+82';
 
+enum SendSmsStatus { CodeSent, AlreadyVerified, Error }
+
+class SendSmsResult {
+  @required
+  SendSmsStatus status;
+  String verificationId;
+  AuthCredential authCredential;
+  AuthException authException;
+
+  SendSmsResult(
+      {this.status,
+      this.verificationId,
+      this.authCredential,
+      this.authException});
+}
+
 enum AuthStatus {
   Uninitialized,
   Authenticated,
@@ -28,21 +44,33 @@ class UserRepository extends ChangeNotifier {
   FirebaseUser get user => _user;
   bool get isAuthenticated => _status == AuthStatus.Authenticated;
 
-  Future<String> requestSms({String phoneNumber}) {
-    Completer<String> _completer = new Completer();
+  Future<SendSmsResult> requestSms({String phoneNumber}) {
+    Completer<SendSmsResult> _completer = new Completer();
 
-    codeSent(String validationId, [int forceResendingToken]) {
-      _completer.complete(validationId);
+    codeSent(String verificationId, [int forceResendingToken]) {
+      _completer.complete(SendSmsResult(
+          status: SendSmsStatus.CodeSent, verificationId: verificationId));
+    }
+
+    verificationCompleted(AuthCredential authCredential) {
+      _completer.complete(SendSmsResult(
+          status: SendSmsStatus.AlreadyVerified,
+          authCredential: authCredential));
+    }
+
+    verificationFailed(AuthException authException) {
+      _completer.complete(SendSmsResult(
+          status: SendSmsStatus.Error, authException: authException));
     }
 
     _auth.verifyPhoneNumber(
       phoneNumber: '${KR_DIAL_CODE}${phoneNumber}',
       timeout: Duration(seconds: 5 * 60),
       codeSent: codeSent,
+      verificationCompleted: verificationCompleted,
+      verificationFailed: verificationFailed,
       /** 
        * TODO:
-       * verificationCompleted: verificationCompleted,
-       * verificationFailed: verificationFailed,
        * codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
       */
     );
@@ -50,15 +78,21 @@ class UserRepository extends ChangeNotifier {
     return _completer.future;
   }
 
-  Future<bool> signIn({String verificationId, String smsCode}) async {
+  Future<bool> signInWithPhone({String verificationId, String smsCode}) async {
+    _status = AuthStatus.Authenticating;
+    notifyListeners();
+    final AuthCredential credential = PhoneAuthProvider.getCredential(
+      verificationId: verificationId,
+      smsCode: smsCode,
+    );
+
+    return signinWithCredential(credential);
+  }
+
+  Future<bool> signinWithCredential(AuthCredential credential) async {
     try {
-      _status = AuthStatus.Authenticating;
-      notifyListeners();
-      final AuthCredential credential = PhoneAuthProvider.getCredential(
-        verificationId: verificationId,
-        smsCode: smsCode,
-      );
       await _auth.signInWithCredential(credential);
+      notifyListeners();
       return true;
     } catch (e) {
       _status = AuthStatus.Unauthenticated;
