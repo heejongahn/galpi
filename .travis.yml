@@ -47,6 +47,7 @@ matrix:
       script:
         - flutter doctor -v
         - bash scripts/populate_secret.sh
+        - pod repo update
         - flutter build ios --no-codesign --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
         - cd ios
         - bundle exec fastlane beta
