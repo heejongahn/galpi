@@ -38,16 +38,18 @@ matrix:
       language: generic
       osx_image: xcode10.2
       before_script:
+        - openssl aes-256-cbc -K $encrypted_d0cc22ff5b43_key -iv $encrypted_d0cc22ff5b43_iv -in secrets.tar.enc -out secrets.tar -d
+        - tar xvf secrets.tar
         - echo -e "machine github.com\n  login $GITHUB_TOKEN" >> ~/.netrc
         - git clone https://github.com/flutter/flutter.git -b $FLUTTER_BUILD_RELEASE_CHANNEL
         - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
         - gem install bundler
         - gem install cocoapods
+        - pod repo update
         - cd ios && bundle install && cd ..
       script:
         - flutter doctor -v
         - bash scripts/populate_secret.sh
-        - pod repo update
         - flutter build ios --no-codesign --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
         - cd ios
         - bundle exec fastlane beta
