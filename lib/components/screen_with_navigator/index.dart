@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:galpi/components/safe_area_route/index.dart';
 
 class ScreenWithNavigatorState extends State<ScreenWithNavigator> {
   Widget child;
 
-  ScreenWithNavigatorState({@required this.child}) {}
+  ScreenWithNavigatorState({@required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,7 @@ class ScreenWithNavigatorState extends State<ScreenWithNavigator> {
 class ScreenWithNavigator extends StatefulWidget {
   final Widget child;
 
-  ScreenWithNavigator({this.child}) {}
+  ScreenWithNavigator({this.child});
 
   @override
   ScreenWithNavigatorState createState() =>

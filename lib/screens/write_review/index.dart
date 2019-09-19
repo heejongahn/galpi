@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:galpi/components/book_info/index.dart';
 
@@ -17,7 +16,7 @@ class WriteReview extends StatefulWidget {
 
   _WriteReviewState createState() => _WriteReviewState();
 
-  WriteReview({this.book, this.review, this.onSave, this.isEditing = false}) {}
+  WriteReview({this.book, this.review, this.onSave, this.isEditing = false});
 }
 
 class _WriteReviewState extends State<WriteReview> {

@@ -1,6 +1,9 @@
 # Using a CDN with CocoaPods 1.7.2 or later can save a lot of time on pod installation, but it's experimental rather than the default.
 # source 'https://cdn.cocoapods.org/'
 
+# add pods for desired Firebase products
+# https://firebase.google.com/docs/ios/setup#available-pods
+
 # Uncomment this line to define a global platform for your project
 platform :ios, '10.0'
 
