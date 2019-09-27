@@ -65,7 +65,7 @@ class UserRepository extends ChangeNotifier {
 
     _auth.verifyPhoneNumber(
       phoneNumber: '${KR_DIAL_CODE}${phoneNumber}',
-      timeout: Duration(seconds: 5 * 60),
+      timeout: Duration(seconds: 2 * 60),
       codeSent: codeSent,
       verificationCompleted: verificationCompleted,
       verificationFailed: verificationFailed,
