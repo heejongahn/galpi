@@ -16,3 +16,7 @@ app/upload.keystore
 app/serviceAccount.json
 app/google-services.json
 fastlane/report.xml
+
+.project
+.classpath
+.settings/
