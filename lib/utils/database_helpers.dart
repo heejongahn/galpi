@@ -15,8 +15,6 @@ class DatabaseHelper {
 
   static Database _database;
   Future<Database> get database async {
-    final dbDirectory = await getApplicationDocumentsDirectory();
-    print('Database directory: ${dbDirectory}');
     if (_database != null) {
       return _database;
     }
