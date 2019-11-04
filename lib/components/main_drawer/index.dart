@@ -68,47 +68,37 @@ class MainDrawer extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            // Container(
-            //   decoration: BoxDecoration(
-            //     border: Border(
-            //       bottom: Divider.createBorderSide(context),
-            //     ),
-            //   ),
-            //   padding: EdgeInsets.fromLTRB(0, 60, 0, 24),
-            //   child: ListTile(
-            //     leading: Icon(Icons.account_circle, size: 32),
-            //     title: Text(drawerHeaderTitle),
-            //     subtitle: Text(drawerHeaderSubtitle),
-            //     trailing: isAuthenticated
-            //         ? buildNicknameSettingButton(
-            //             context: context,
-            //             onChangeDisplayName: onChangeDisplayName,
-            //             currentDisplayName: userRepository.user.displayName)
-            //         : null,
-            //   ),
-            // ),
-            DrawerHeader(
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: Divider.createBorderSide(context),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(0, 60, 0, 24),
               child: ListTile(
-                title: Text(
-                  '프로필 없음',
-                ),
-                subtitle: Text(
-                  '곧 로그인 기능이 추가됩니다. 데이터 백업, 다른 사용자들과의 독후감 공유 등의 다양한 변경사항을 기대해주세요!',
-                ),
+                leading: Icon(Icons.account_circle, size: 32),
+                title: Text(drawerHeaderTitle),
+                subtitle: Text(drawerHeaderSubtitle),
+                trailing: isAuthenticated
+                    ? buildNicknameSettingButton(
+                        context: context,
+                        onChangeDisplayName: onChangeDisplayName,
+                        currentDisplayName: userRepository.user.displayName)
+                    : null,
               ),
             ),
             buildAboutListTile(),
-            // isAuthenticated
-            //     ? ListTile(
-            //         leading: Icon(Icons.exit_to_app),
-            //         title: Text('로그아웃'),
-            //         onTap: onSignOut,
-            //       )
-            //     : ListTile(
-            //         leading: Icon(Icons.vpn_key),
-            //         title: Text('로그인'),
-            //         onTap: onClickSignIn,
-            //       ),
+            isAuthenticated
+                ? ListTile(
+                    leading: Icon(Icons.exit_to_app),
+                    title: Text('로그아웃'),
+                    onTap: onSignOut,
+                  )
+                : ListTile(
+                    leading: Icon(Icons.vpn_key),
+                    title: Text('로그인'),
+                    onTap: onClickSignIn,
+                  ),
           ],
         ),
       );
