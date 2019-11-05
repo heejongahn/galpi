@@ -25,7 +25,7 @@ dependencies:
   sqflite: ^1.1.5
   path_provider: ^1.1.0
   tuple: ^1.0.2
-  intl: ^0.15.8
+  intl: ^0.16.0
   webview_flutter: ^0.3.10
   package_info: ^0.4.0
   shared_preferences: ^0.5.3+4
