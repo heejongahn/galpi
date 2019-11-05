@@ -30,7 +30,7 @@ matrix:
       script:
         - flutter doctor -v
         - bash scripts/populate_secret.sh
-        - flutter build appbundle --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
+        - flutter build appbundle --flavor=prod --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
         - cd android
         - bundle exec fastlane beta
     - name: iOS Build
@@ -50,6 +50,6 @@ matrix:
       script:
         - flutter doctor -v
         - bash scripts/populate_secret.sh
-        - flutter build ios --no-codesign --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
+        - flutter build ios --flavor=prod --no-codesign --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
         - cd ios
         - bundle exec fastlane beta

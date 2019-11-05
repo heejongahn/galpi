@@ -1,5 +1,14 @@
 const { execSync } = require("child_process");
 
+const flavors = ["dev", "prod"];
+
+const firebaseSecretFiles = flavors
+  .map(flavor => [
+    `android/app/src/${flavor}/google-services.json`,
+    `ios/config/${flavor}/GoogleService-Info.plist`
+  ])
+  .reduce((accm, curr) => accm.concat(curr), []);
+
 const secretFiles = [
   // Android build:
   "android/key.properties",
@@ -7,8 +16,7 @@ const secretFiles = [
   "android/app/upload.keystore",
 
   //Firebase:
-  "android/app/google-services.json",
-  "ios/GoogleService-Info.plist"
+  ...firebaseSecretFiles
 ];
 
 async function archiveSecrets() {

@@ -21,7 +21,7 @@ platform :android do
     begin
       upload_to_play_store(
         track: 'internal',
-        aab: '../build/app/outputs/bundle/release/app.aab',
+        aab: '../build/app/outputs/bundle/prodRelease/app.aab',
       )
       rescue => exception
         raise exception unless exception.message.include?('apkUpgradeVersionConflict')
