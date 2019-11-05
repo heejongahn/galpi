@@ -22,8 +22,8 @@ Firebase:
 For CI build, these files should also be uploaded to travis after encryption.
 
 ```sh
-tar cvf secrets.tar android/key.properties android/app/serviceAccount.json android/app/upload.keystore android/app/google-services.json ios/GoogleService-Info.plist
-travis encrypt-file secrets.tar
+yarn secrets:archive
+yarn secrets:sync
 ```
 
 ## Deployment

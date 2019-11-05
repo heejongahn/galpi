@@ -1,0 +1,10 @@
+{
+  "name": "galpi",
+  "version": "1.0.0",
+  "description": "scripts for galpi app development environment",
+  "main": "index.js",
+  "scripts": {
+    "secrets:archive": "tar cvf secrets.tar android/key.properties android/app/serviceAccount.json android/app/upload.keystore android/app/google-services.json ios/GoogleService-Info.plist",
+    "secrets:sync": "travis encrypt-file secrets.tar"
+  }
+}
