@@ -6,20 +6,12 @@ Book logging app made with Flutter.
 
 ## Build
 
-Following secret files are required for build.
+There are some secret files required for the build.
+These files include credentials for android build, firebase and more.
+For CI build, they should also be uploaded to travis CI (as env variables) after encryption.
 
-Android build:
-
-- `android/key.properties`
-- `android/app/serviceAccount.json`
-- `android/app/upload.keystore`
-
-Firebase:
-
-- `android/app/google-services.json`
-- `ios/GoogleService-Info.plist`
-
-For CI build, these files should also be uploaded to travis after encryption.
+Encryption and upload of secrets are done by npm scripts. (Node and Travis CI is needed)
+For more details, see `scripts/archive_secrets.js` file.
 
 ```sh
 yarn secrets:archive

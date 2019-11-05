@@ -4,7 +4,7 @@
   "description": "scripts for galpi app development environment",
   "main": "index.js",
   "scripts": {
-    "secrets:archive": "tar cvf secrets.tar android/key.properties android/app/serviceAccount.json android/app/upload.keystore android/app/google-services.json ios/GoogleService-Info.plist",
+    "secrets:archive": "node scripts/archive_secrets.js",
     "secrets:sync": "travis encrypt-file secrets.tar"
   }
 }
