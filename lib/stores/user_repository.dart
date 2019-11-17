@@ -129,4 +129,10 @@ class UserRepository extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> reload() {
+    if (_user != null) {
+      _user.reload();
+    }
+  }
 }

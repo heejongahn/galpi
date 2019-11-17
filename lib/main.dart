@@ -47,6 +47,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    UserRepository.instance().reload();
     PackageInfo.fromPlatform().then((info) async {
       final prefs = await SharedPreferences.getInstance();
       final versionFromPrefs = prefs.getString(SHARED_PREFERENCE_VERSION_KEY);
