@@ -60,5 +60,10 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+		<string>https://galpi.page.link</string>
+		<string>https://galpidev.page.link</string>
+	</array>
 </dict>
 </plist>

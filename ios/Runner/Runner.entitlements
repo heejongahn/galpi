@@ -7,6 +7,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:galpi.page.link</string>
+		<string>applinks:galpidev.page.link</string>
 	</array>
 </dict>
 </plist>
