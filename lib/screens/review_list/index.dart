@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/main_drawer/index.dart';
-import 'package:galpi/screens/phone_auth/index.dart';
 import 'package:tuple/tuple.dart';
 
 import 'package:galpi/screens/add_review/index.dart';

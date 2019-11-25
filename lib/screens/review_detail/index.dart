@@ -43,7 +43,6 @@ class ReviewDetail extends StatelessWidget {
   }
 
   Padding getReviewDetail(BuildContext context) {
-    print(review.readingStatus);
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Column(
