@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:package_info/package_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:galpi/constants.dart';
 
 typedef Future<String> RequestSms(String PhoneNumber);
 typedef Future<bool> SignIn(String verificationId, String smsCode);
@@ -25,108 +29,91 @@ class SendSmsResult {
 }
 
 enum AuthStatus {
-  Uninitialized,
+  Unauthenticated,
   Authenticated,
-  Authenticating,
-  Unauthenticated
 }
 
 class UserRepository extends ChangeNotifier {
-  FirebaseAuth _auth;
+  FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser _user;
-  AuthStatus _status = AuthStatus.Uninitialized;
 
-  UserRepository.instance() : _auth = FirebaseAuth.instance {
-    _auth.onAuthStateChanged.listen(_onAuthStateChanged);
-  }
-
-  AuthStatus get authStatus => _status;
   FirebaseUser get user => _user;
-  bool get isAuthenticated => _status == AuthStatus.Authenticated;
 
-  Future<SendSmsResult> requestSms({String phoneNumber}) {
-    Completer<SendSmsResult> _completer = new Completer();
-
-    codeSent(String verificationId, [int forceResendingToken]) {
-      _completer.complete(SendSmsResult(
-          status: SendSmsStatus.CodeSent, verificationId: verificationId));
-    }
-
-    verificationCompleted(AuthCredential authCredential) {
-      _completer.complete(SendSmsResult(
-          status: SendSmsStatus.AlreadyVerified,
-          authCredential: authCredential));
-    }
-
-    verificationFailed(AuthException authException) {
-      _completer.complete(SendSmsResult(
-          status: SendSmsStatus.Error, authException: authException));
-    }
-
-    _auth.verifyPhoneNumber(
-      phoneNumber: '${KR_DIAL_CODE}${phoneNumber}',
-      timeout: Duration(seconds: 2 * 60),
-      codeSent: codeSent,
-      verificationCompleted: verificationCompleted,
-      verificationFailed: verificationFailed,
-      /** 
-       * TODO:
-       * codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-      */
-    );
-
-    return _completer.future;
+  UserRepository() {
+    initialize();
   }
 
-  Future<bool> signInWithPhone({String verificationId, String smsCode}) async {
-    _status = AuthStatus.Authenticating;
-    notifyListeners();
-    final AuthCredential credential = PhoneAuthProvider.getCredential(
-      verificationId: verificationId,
-      smsCode: smsCode,
-    );
+  initialize() async {
+    _auth.onAuthStateChanged.listen(_onAuthStateChanged);
+    _user = await _auth.currentUser();
 
-    return signinWithCredential(credential);
+    if (_user != null) {
+      _user.reload();
+    }
   }
 
-  Future<bool> signinWithCredential(AuthCredential credential) async {
+  AuthStatus get authStatus {
+    if (_user == null) {
+      return AuthStatus.Unauthenticated;
+    }
+
+    return AuthStatus.Authenticated;
+  }
+
+  bool get isLoggedIn => authStatus == AuthStatus.Authenticated;
+
+  Future<bool> sendLoginEmail({
+    String email,
+  }) async {
     try {
-      await _auth.signInWithCredential(credential);
-      notifyListeners();
+      final packageInfo = await PackageInfo.fromPlatform();
+      final packageName = packageInfo.packageName;
+      final isDev = packageName.endsWith('.dev');
+      final sharedPreference = await SharedPreferences.getInstance();
+
+      await sharedPreference.setString(
+        SHARED_PREFERENCE_LOGIN_EMAIL,
+        email,
+      );
+
+      await _auth.sendSignInWithEmailLink(
+        handleCodeInApp: true,
+        email: email,
+        url: 'https://${isDev ? 'galpi-dev' : 'galpi'}.firebaseapp.com/',
+        iOSBundleID: packageName,
+        androidPackageName: packageName,
+        androidInstallIfNotAvailable: true,
+        androidMinimumVersion: '4.4',
+      );
       return true;
     } catch (e) {
-      _status = AuthStatus.Unauthenticated;
-      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> loginWithEmail({
+    String email,
+    String link,
+  }) async {
+    try {
+      final sharedPreference = await SharedPreferences.getInstance();
+
+      await _auth.signInWithEmailAndLink(email: email, link: link);
+      await sharedPreference.remove(SHARED_PREFERENCE_LOGIN_EMAIL);
+      return true;
+    } catch (e) {
+      print(e);
       return false;
     }
   }
 
   Future signOut() async {
     await _auth.signOut();
-    _status = AuthStatus.Unauthenticated;
-    notifyListeners();
     return Future.delayed(Duration.zero);
   }
 
-  Future onSetDisplayName({String displayName}) async {
-    if (_user == null) {
-      return;
-    }
-
-    final UserUpdateInfo userUpdateInfo = UserUpdateInfo();
-    userUpdateInfo.displayName = displayName;
-    await _user.updateProfile(userUpdateInfo);
-    _user = await _auth.currentUser();
-    notifyListeners();
-  }
-
   Future<void> _onAuthStateChanged(FirebaseUser firebaseUser) async {
-    if (firebaseUser == null) {
-      _status = AuthStatus.Unauthenticated;
-    } else {
-      _user = firebaseUser;
-      _status = AuthStatus.Authenticated;
-    }
+    _user = firebaseUser;
     notifyListeners();
   }
 
@@ -136,3 +123,5 @@ class UserRepository extends ChangeNotifier {
     }
   }
 }
+
+final userRepository = new UserRepository();
