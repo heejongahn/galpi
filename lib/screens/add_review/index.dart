@@ -26,9 +26,14 @@ class _AddReviewState extends State<AddReview> {
   }
 
   _onBookClick(Book book) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => WriteReview(
-            review: Review(stars: 2), book: book, onSave: _onCreate)));
+    Navigator.of(context).pushNamed(
+      '/review/write',
+      arguments: WriteReviewArgument(
+        review: Review(stars: 2),
+        book: book,
+        onSave: _onCreate,
+      ),
+    );
   }
 
   Future<void> _onCreate(Review review, Book book) async {

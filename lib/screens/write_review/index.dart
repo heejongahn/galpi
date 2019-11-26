@@ -8,15 +8,25 @@ import 'package:galpi/models/review.dart';
 
 typedef Future<void> OnSave(Review review, Book book);
 
-class WriteReview extends StatefulWidget {
+class WriteReviewArgument {
   final OnSave onSave;
   final Book book;
   final Review review;
   final bool isEditing;
 
+  WriteReviewArgument({
+    this.book,
+    this.review,
+    this.onSave,
+    this.isEditing = false,
+  });
+}
+
+class WriteReview extends StatefulWidget {
+  final WriteReviewArgument arguments;
   _WriteReviewState createState() => _WriteReviewState();
 
-  WriteReview({this.book, this.review, this.onSave, this.isEditing = false});
+  WriteReview({@required this.arguments});
 }
 
 class _WriteReviewState extends State<WriteReview> {
@@ -26,7 +36,7 @@ class _WriteReviewState extends State<WriteReview> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.isEditing ? '독후감 수정' : '독후감 작성'),
+          title: Text(widget.arguments.isEditing ? '독후감 수정' : '독후감 작성'),
           centerTitle: false,
           actions: <Widget>[
             IconButton(
@@ -47,7 +57,7 @@ class _WriteReviewState extends State<WriteReview> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     BookInfo(
-                      book: widget.book,
+                      book: widget.arguments.book,
                     ),
                     getTitleFormField(),
                     getBodyFormField(),
@@ -65,7 +75,9 @@ class _WriteReviewState extends State<WriteReview> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 24, 0, 8),
       child: TextFormField(
-        initialValue: widget.review != null ? widget.review.title : null,
+        initialValue: widget.arguments.review != null
+            ? widget.arguments.review.title
+            : null,
         decoration: InputDecoration(
             alignLabelWithHint: true,
             labelText: '독후감 제목',
@@ -76,7 +88,7 @@ class _WriteReviewState extends State<WriteReview> {
           }
         },
         onSaved: (val) => setState(() {
-          widget.review.title = val;
+          widget.arguments.review.title = val;
         }),
       ),
     );
@@ -86,7 +98,9 @@ class _WriteReviewState extends State<WriteReview> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
-        initialValue: widget.review != null ? widget.review.body : null,
+        initialValue: widget.arguments.review != null
+            ? widget.arguments.review.body
+            : null,
         decoration: InputDecoration(
           alignLabelWithHint: true,
           labelText: '내용',
@@ -99,7 +113,7 @@ class _WriteReviewState extends State<WriteReview> {
           }
         },
         onSaved: (val) => setState(() {
-          widget.review.body = val;
+          widget.arguments.review.body = val;
         }),
       ),
     );
@@ -124,7 +138,8 @@ class _WriteReviewState extends State<WriteReview> {
             ]
                 .map((status) => ReadingStatusChip(
                       readingStatus: status,
-                      isSelected: widget.review.readingStatus == status,
+                      isSelected:
+                          widget.arguments.review.readingStatus == status,
                       onTap: _onReadingStatusBadgeClick,
                     ))
                 .toList(),
@@ -149,7 +164,7 @@ class _WriteReviewState extends State<WriteReview> {
             children: [1, 2, 3]
                 .map((score) => ScoreChip(
                       score: score,
-                      isSelected: widget.review.stars == score,
+                      isSelected: widget.arguments.review.stars == score,
                       onTap: _onScoreBadgeClick,
                     ))
                 .toList(),
@@ -161,13 +176,13 @@ class _WriteReviewState extends State<WriteReview> {
 
   _onScoreBadgeClick(int score) {
     setState(() {
-      widget.review.stars = score;
+      widget.arguments.review.stars = score;
     });
   }
 
   _onReadingStatusBadgeClick(ReadingStatus readingStatus) {
     setState(() {
-      widget.review.readingStatus = readingStatus;
+      widget.arguments.review.readingStatus = readingStatus;
     });
   }
 
@@ -178,7 +193,8 @@ class _WriteReviewState extends State<WriteReview> {
     }
 
     form.save();
-    await widget.onSave(widget.review, widget.book);
+    await widget.arguments
+        .onSave(widget.arguments.review, widget.arguments.book);
   }
 
   _onBlur() {

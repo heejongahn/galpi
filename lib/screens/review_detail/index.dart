@@ -10,11 +10,17 @@ import 'package:galpi/screens/review_list/index.dart';
 import 'package:galpi/screens/write_review/index.dart';
 import 'package:galpi/utils/database_helpers.dart';
 
-class ReviewDetail extends StatelessWidget {
+class ReviewDetailArguments {
   final Review review;
   final Book book;
 
-  const ReviewDetail({Key key, this.review, this.book}) : super(key: key);
+  ReviewDetailArguments(this.review, this.book);
+}
+
+class ReviewDetail extends StatelessWidget {
+  final ReviewDetailArguments arguments;
+
+  const ReviewDetail({Key key, @required this.arguments}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,17 +31,18 @@ class ReviewDetail extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () => _onEditReview(review, book, context),
+            onPressed: () =>
+                _onEditReview(arguments.review, arguments.book, context),
           ),
           IconButton(
             icon: Icon(Icons.delete),
-            onPressed: () => _onDeleteReview(review, context),
+            onPressed: () => _onDeleteReview(arguments.review, context),
           ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          BookInfo(book: book),
+          BookInfo(book: arguments.book),
           getReviewDetail(context),
         ]),
       ),
@@ -49,25 +56,26 @@ class ReviewDetail extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              review.title,
+              arguments.review.title,
               style: Theme.of(context)
                   .textTheme
                   .display3
                   .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
             ),
-            DateInfo(review: review),
+            DateInfo(review: arguments.review),
             Wrap(
               spacing: 16,
               children: <Widget>[
-                ReadingStatusChip(readingStatus: review.readingStatus),
+                ReadingStatusChip(
+                    readingStatus: arguments.review.readingStatus),
                 ScoreChip(
-                  score: review.stars,
+                  score: arguments.review.stars,
                 ),
               ],
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
-              child: Text(review.body,
+              child: Text(arguments.review.body,
                   style:
                       Theme.of(context).textTheme.body1.copyWith(fontSize: 16)),
             )
@@ -106,17 +114,16 @@ class ReviewDetail extends StatelessWidget {
   }
 
   void _onEditReview(Review review, Book book, BuildContext context) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => WriteReview(
-          isEditing: true,
-          review: review,
-          book: book,
-          onSave: (Review newReview, Book _) async {
-            await DatabaseHelper.instance.updateReview(newReview, book);
-            Navigator.of(context).pop();
-          },
-        ),
+    await Navigator.of(context).pushNamed(
+      '/review/write',
+      arguments: new WriteReviewArgument(
+        isEditing: true,
+        review: review,
+        book: book,
+        onSave: (Review newReview, Book _) async {
+          await DatabaseHelper.instance.updateReview(newReview, book);
+          Navigator.of(context).pop();
+        },
       ),
     );
   }

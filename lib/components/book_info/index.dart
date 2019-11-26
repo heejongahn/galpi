@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/main.dart';
 import 'package:galpi/models/book.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class BookInfo extends StatelessWidget {
   final Book book;
@@ -79,18 +79,9 @@ class BookInfo extends StatelessWidget {
   }
 
   _onClickBookDetail(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext ctx) {
-          return Scaffold(
-            appBar: AppBar(title: Text('책 정보')),
-            body: WebView(
-              initialUrl: book.linkUri,
-              javascriptMode: JavascriptMode.unrestricted,
-            ),
-          );
-        },
-      ),
+    Navigator.of(context).pushNamed(
+      '/webview',
+      arguments: new WebviewArgument('책 정보', book.linkUri),
     );
   }
 }

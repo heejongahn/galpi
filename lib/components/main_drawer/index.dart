@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/input_dialog/index.dart';
-import 'package:galpi/screens/auth/email_login/index.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
@@ -86,14 +85,8 @@ class MainDrawer extends StatelessWidget {
   }
 
   onClickLogin(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return EmailLogin();
-        },
-        fullscreenDialog: true,
-      ),
-    );
+    Navigator.of(context)
+        .pushNamed('/auth/email-login', arguments: {'fullscreenDialog': true});
   }
 
   GestureDetector _buildNicknameSettingButton({

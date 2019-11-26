@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:galpi/components/main_drawer/index.dart';
 import 'package:tuple/tuple.dart';
 
-import 'package:galpi/screens/add_review/index.dart';
 import 'package:galpi/screens/review_detail/index.dart';
 import 'package:galpi/components/review_card/main.dart';
 import 'package:galpi/models/book.dart';
@@ -87,17 +86,12 @@ class ReviewsState extends State<Reviews> {
   }
 
   void _onOpenReviewDetail(Review review, Book book) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ReviewDetail(review: review, book: book),
-      ),
-    );
+    final args = new ReviewDetailArguments(review, book);
+    Navigator.of(context).pushNamed('/review/detail', arguments: args);
   }
 
   void _onOpenNewReview() async {
-    await Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => AddReview()));
-
+    await Navigator.of(context).pushNamed('/review/add');
     setState(() {});
   }
 }
