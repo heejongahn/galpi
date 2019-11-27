@@ -79,7 +79,7 @@ class UserRepository extends ChangeNotifier {
       await _auth.sendSignInWithEmailLink(
         handleCodeInApp: true,
         email: email,
-        url: 'https://${isDev ? 'galpi-dev' : 'galpi'}.firebaseapp.com/',
+        url: 'https://${isDev ? 'galpi-dev' : 'galpi-f7dd7'}.firebaseapp.com/',
         iOSBundleID: packageName,
         androidPackageName: packageName,
         androidInstallIfNotAvailable: true,
