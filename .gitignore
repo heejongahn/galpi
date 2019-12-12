@@ -29,5 +29,7 @@
 /build/
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
-secrets/keys.json
 secrets.tar
+
+.env.prod
+.env.dev

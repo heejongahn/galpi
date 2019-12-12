@@ -16,7 +16,10 @@ const secretFiles = [
   "android/app/upload.keystore",
 
   //Firebase:
-  ...firebaseSecretFiles
+  ...firebaseSecretFiles,
+
+  // Environment:
+  ...flavors.map(flavor => `.env.${flavor}`)
 ];
 
 async function archiveSecrets() {

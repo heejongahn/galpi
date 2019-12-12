@@ -2,6 +2,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:galpi/utils/env.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   int _pageIndex = 1;
+  bool isInitialized = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final homeItem = const BottomNavigationBarItem(
@@ -73,6 +75,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       }
       prefs.setString(SHARED_PREFERENCE_VERSION_KEY, info.version);
     });
+
+    loadEnvForCurrentFlavor().then((_) {
+      setState(() {
+        isInitialized = true;
+      });
+
+      return;
+    }).catchError((_) {
+      setState(() {
+        isInitialized = true;
+      });
+    });
   }
 
   @override
@@ -90,6 +104,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    if (!isInitialized) {
+      return Container(
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return ChangeNotifierProvider.value(
       value: userRepository,
       child: Scaffold(

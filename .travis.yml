@@ -29,7 +29,6 @@ matrix:
         - gem install bundler && cd android && bundle install && cd ..
       script:
         - flutter doctor -v
-        - bash scripts/populate_secret.sh
         - flutter build appbundle --flavor=prod --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
         - cd android
         - bundle exec fastlane beta
@@ -49,7 +48,6 @@ matrix:
         - cd ios && bundle install && cd ..
       script:
         - flutter doctor -v
-        - bash scripts/populate_secret.sh
         - flutter build ios --flavor=prod --no-codesign --build-number=$(( $VERSION_CODE_BASE + $TRAVIS_BUILD_NUMBER ))
         - cd ios
         - bundle exec fastlane beta
