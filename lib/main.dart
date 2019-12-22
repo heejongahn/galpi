@@ -87,19 +87,29 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         isInitialized = true;
       });
     });
+
+    final firebaseDLInstance = FirebaseDynamicLinks.instance;
+
+    firebaseDLInstance.getInitialLink().then((data) {
+      if (data != null) {
+        _loginIfAvailable(data.link);
+      }
+    });
+
+    firebaseDLInstance.onLink(
+      onSuccess: (data) async {
+        _loginIfAvailable(data.link);
+      },
+      onError: (error) async {
+        print(error);
+      },
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _loginIfAvailable();
-    }
   }
 
   @override
@@ -190,15 +200,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 
-  _loginIfAvailable() async {
-    final link = (await FirebaseDynamicLinks.instance.getInitialLink()).link;
+  _loginIfAvailable(Uri link) async {
     final sharedPreference = await SharedPreferences.getInstance();
-
     final email = sharedPreference.getString(SHARED_PREFERENCE_LOGIN_EMAIL);
 
     if (email == null) {
       return;
     }
+
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text('${email}으로 로그인 중'),
+    ));
 
     try {
       final success = await userRepository.loginWithEmail(
@@ -213,6 +225,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       }
     } catch (e) {
       print(e);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('로그인 실패'),
+      ));
     }
   }
 }

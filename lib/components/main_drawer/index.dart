@@ -13,7 +13,7 @@ class MainDrawer extends StatelessWidget {
       final isAuthenticated = userRepository.isLoggedIn;
 
       final onSignOutConfirm = (BuildContext dialogContext) async {
-        await userRepository.signOut();
+        await userRepository.logout();
         Navigator.of(dialogContext).pop();
         Navigator.of(context).pop();
         Scaffold.of(context).showSnackBar(SnackBar(

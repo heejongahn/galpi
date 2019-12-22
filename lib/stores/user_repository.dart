@@ -1,32 +1,18 @@
 import 'dart:async';
-
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:package_info/package_info.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:galpi/models/user.dart';
+import 'package:galpi/remotes/me.dart';
+import 'package:galpi/remotes/register.dart';
+import 'package:galpi/utils/flavor.dart';
+import 'package:galpi/utils/http_client.dart';
+import 'package:package_info/package_info.dart';
 import 'package:galpi/constants.dart';
 
-typedef Future<String> RequestSms(String PhoneNumber);
-typedef Future<bool> SignIn(String verificationId, String smsCode);
-
-const KR_DIAL_CODE = '+82';
-
-enum SendSmsStatus { CodeSent, AlreadyVerified, Error }
-
-class SendSmsResult {
-  @required
-  SendSmsStatus status;
-  String verificationId;
-  AuthCredential authCredential;
-  AuthException authException;
-
-  SendSmsResult(
-      {this.status,
-      this.verificationId,
-      this.authCredential,
-      this.authException});
-}
+final secureStorage = new FlutterSecureStorage();
 
 enum AuthStatus {
   Unauthenticated,
@@ -35,25 +21,17 @@ enum AuthStatus {
 
 class UserRepository extends ChangeNotifier {
   FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser _user;
 
-  FirebaseUser get user => _user;
+  User _user;
 
-  UserRepository() {
-    initialize();
-  }
-
-  initialize() async {
-    _auth.onAuthStateChanged.listen(_onAuthStateChanged);
-    _user = await _auth.currentUser();
-
-    if (_user != null) {
-      _user.reload();
-    }
+  User get user => _user;
+  set user(User user) {
+    _user = user;
+    notifyListeners();
   }
 
   AuthStatus get authStatus {
-    if (_user == null) {
+    if (user == null) {
       return AuthStatus.Unauthenticated;
     }
 
@@ -62,20 +40,32 @@ class UserRepository extends ChangeNotifier {
 
   bool get isLoggedIn => authStatus == AuthStatus.Authenticated;
 
+  UserRepository() {
+    _initialize();
+  }
+
+  _initialize() async {
+    String loginToken = await secureStorage.read(key: AUTH_LOGIN_TOKEN_KEY);
+
+    if (loginToken != null) {
+      await _login(loginToken);
+    }
+  }
+
   Future<bool> sendLoginEmail({
     String email,
   }) async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    final packageName = packageInfo.packageName;
+    final isDev = await isFlavorDev();
+    final sharedPreference = await SharedPreferences.getInstance();
+
+    await sharedPreference.setString(
+      SHARED_PREFERENCE_LOGIN_EMAIL,
+      email,
+    );
+
     try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      final packageName = packageInfo.packageName;
-      final isDev = packageName.endsWith('.dev');
-      final sharedPreference = await SharedPreferences.getInstance();
-
-      await sharedPreference.setString(
-        SHARED_PREFERENCE_LOGIN_EMAIL,
-        email,
-      );
-
       await _auth.sendSignInWithEmailLink(
         handleCodeInApp: true,
         email: email,
@@ -96,31 +86,46 @@ class UserRepository extends ChangeNotifier {
     String link,
   }) async {
     try {
-      final sharedPreference = await SharedPreferences.getInstance();
+      final authResult =
+          await _auth.signInWithEmailAndLink(email: email, link: link);
 
-      await _auth.signInWithEmailAndLink(email: email, link: link);
-      await sharedPreference.remove(SHARED_PREFERENCE_LOGIN_EMAIL);
-      return true;
+      if (authResult.user == null) {
+        return false;
+      }
+
+      final firebaseToken = (await authResult.user.getIdToken()).token;
+      final token = await registerWithFirebase(token: firebaseToken);
+      return _login(token);
     } catch (e) {
       print(e);
       return false;
     }
   }
 
-  Future signOut() async {
-    await _auth.signOut();
-    return Future.delayed(Duration.zero);
-  }
+  _login(String token) async {
+    final sharedPreference = await SharedPreferences.getInstance();
 
-  Future<void> _onAuthStateChanged(FirebaseUser firebaseUser) async {
-    _user = firebaseUser;
-    notifyListeners();
-  }
+    try {
+      httpClient.token = token;
+      user = await me();
 
-  Future<void> reload() {
-    if (_user != null) {
-      _user.reload();
+      await Future.wait([
+        secureStorage.write(key: AUTH_LOGIN_TOKEN_KEY, value: token),
+        sharedPreference.remove(SHARED_PREFERENCE_LOGIN_EMAIL),
+      ]);
+
+      return true;
+    } catch (e) {
+      await logout();
+      return false;
     }
+  }
+
+  logout() async {
+    await _auth.signOut();
+    httpClient.token = null;
+    user = null;
+    secureStorage.delete(key: AUTH_LOGIN_TOKEN_KEY);
   }
 }
 
