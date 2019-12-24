@@ -38,3 +38,5 @@ fastlane/report.xml
 !**/default.perspectivev3
 
 GoogleService-Info.plist
+
+Flutter.podspec
