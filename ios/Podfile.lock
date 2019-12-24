@@ -111,7 +111,7 @@ DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_dynamic_links (from `.symlinks/plugins/firebase_dynamic_links/ios`)
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `Flutter`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
@@ -148,7 +148,7 @@ EXTERNAL SOURCES:
   firebase_dynamic_links:
     :path: ".symlinks/plugins/firebase_dynamic_links/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: Flutter
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   package_info:
@@ -191,6 +191,6 @@ SPEC CHECKSUMS:
   sqflite: ff1d9da63c06588cc8d1faf7256d741f16989d5a
   webview_flutter: 1aa7604e6cdb451a9b7ed2c37d5454c0b440246b
 
-PODFILE CHECKSUM: 83b97472a238ba01dcd433f8ba0366e73af588ed
+PODFILE CHECKSUM: 3dbe063e9c90a5d7c9e4e76e70a821b9e2c1d271
 
 COCOAPODS: 1.8.4
