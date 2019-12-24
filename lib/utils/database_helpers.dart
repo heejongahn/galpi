@@ -74,7 +74,7 @@ class DatabaseHelper {
       return book.id;
     }
 
-    int id = await db.insert(Book.table, book.toMap());
+    int id = await db.insert(Book.table, book.toLegacyMap());
     return id;
   }
 

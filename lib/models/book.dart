@@ -9,8 +9,10 @@ class Book {
 
   static final table = 'Book';
   static final columnId = 'id';
+  // FIXME
   static final columnIsbn = 'stars';
   static final columnTitle = 'title';
+  // FIXME
   static final columnAuthor = 'body';
   static final columnPublisher = 'publisher';
   static final columnLinkUri = 'linkUri';
@@ -61,6 +63,15 @@ class Book {
   }
 
   Map<String, dynamic> toMap() {
+    var map = this.toLegacyMap();
+    // FIXME
+    map['isbn'] = map[columnIsbn];
+    map['author'] = map[columnAuthor];
+
+    return map;
+  }
+
+  Map<String, dynamic> toLegacyMap() {
     var map = <String, dynamic>{
       columnIsbn: isbn,
       columnTitle: title,
