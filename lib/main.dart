@@ -2,8 +2,8 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:galpi/migrations/index.dart';
 import 'package:galpi/utils/env.dart';
-import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -63,47 +63,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-
-    PackageInfo.fromPlatform().then((info) async {
-      final prefs = await SharedPreferences.getInstance();
-      final versionFromPrefs = prefs.getString(SHARED_PREFERENCE_VERSION_KEY);
-      final lastVersion = versionFromPrefs != null ? versionFromPrefs : '1.0.0';
-
-      if (lastVersion != info.version) {
-        // TODO: 버전 업데이트 로직
-      }
-      prefs.setString(SHARED_PREFERENCE_VERSION_KEY, info.version);
-    });
-
-    loadEnvForCurrentFlavor().then((_) {
-      setState(() {
-        isInitialized = true;
-      });
-
-      return;
-    }).catchError((_) {
-      setState(() {
-        isInitialized = true;
-      });
-    });
-
-    final firebaseDLInstance = FirebaseDynamicLinks.instance;
-
-    firebaseDLInstance.getInitialLink().then((data) {
-      if (data != null) {
-        _loginIfAvailable(data.link);
-      }
-    });
-
-    firebaseDLInstance.onLink(
-      onSuccess: (data) async {
-        _loginIfAvailable(data.link);
-      },
-      onError: (error) async {
-        print(error);
-      },
-    );
+    _initialize();
   }
 
   @override
@@ -197,6 +157,38 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         //   },
         // ),
       ),
+    );
+  }
+
+  _initialize() async {
+    WidgetsBinding.instance.addObserver(this);
+
+    await loadEnvForCurrentFlavor();
+    await runAllNeededMigrations();
+
+    setState(() {
+      isInitialized = true;
+    });
+
+    _initializeFirebaseDynamicLinks();
+  }
+
+  _initializeFirebaseDynamicLinks() {
+    final firebaseDLInstance = FirebaseDynamicLinks.instance;
+
+    firebaseDLInstance.getInitialLink().then((data) {
+      if (data != null) {
+        _loginIfAvailable(data.link);
+      }
+    });
+
+    firebaseDLInstance.onLink(
+      onSuccess: (data) async {
+        _loginIfAvailable(data.link);
+      },
+      onError: (error) async {
+        print(error);
+      },
     );
   }
 
