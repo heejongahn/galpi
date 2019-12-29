@@ -70,23 +70,12 @@ class MainDrawer extends StatelessWidget {
                       onTap: onSignOut,
                     )
                   ]
-                : [
-                    ListTile(
-                      leading: Icon(Icons.vpn_key),
-                      title: Text('로그인'),
-                      onTap: () => onClickLogin(context),
-                    ),
-                  ]),
+                : []),
             _buildAboutListTile(),
           ],
         ),
       );
     });
-  }
-
-  onClickLogin(BuildContext context) {
-    Navigator.of(context)
-        .pushNamed('/auth/email-login', arguments: {'fullscreenDialog': true});
   }
 
   GestureDetector _buildNicknameSettingButton({
