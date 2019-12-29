@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/components/main_drawer/index.dart';
 import 'package:tuple/tuple.dart';
 
@@ -53,10 +54,7 @@ class ReviewsState extends State<Reviews> {
       key: scaffoldKey,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          'galpi',
-          style: TextStyle(fontFamily: 'Abril-Fatface'),
-        ),
+        title: Logo(),
         centerTitle: false,
       ),
       body: Padding(
