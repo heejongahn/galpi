@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:galpi/main.dart';
 import 'package:galpi/models/book.dart';
+import 'package:galpi/screens/webview/index.dart';
 
 class BookInfo extends StatelessWidget {
   final Book book;
