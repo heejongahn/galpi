@@ -11,6 +11,11 @@ final theme = ThemeData(
       textTheme:
           TextTheme(title: TextStyle(color: Colors.white, fontSize: 18))),
   iconTheme: IconThemeData(color: primaryColor),
+  textTheme: TextTheme(
+    title: TextStyle(
+      fontWeight: FontWeight.bold,
+    ),
+  ),
   // buttonTheme:
   //     ButtonThemeData(colorScheme: ColorScheme.light(primary: primaryColor)),
 );
