@@ -102,7 +102,7 @@ class UserRepository extends ChangeNotifier {
     }
   }
 
-  _login(String token) async {
+  Future<bool> _login(String token) async {
     final sharedPreference = await SharedPreferences.getInstance();
 
     try {
