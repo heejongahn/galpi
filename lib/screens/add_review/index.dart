@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/remotes/create_book.dart';
 
 import 'package:galpi/screens/review_list/index.dart';
 import 'package:galpi/screens/write_review/index.dart';
@@ -18,14 +19,17 @@ class _AddReviewState extends State<AddReview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('새 독후감 작성'),
-          centerTitle: false,
-        ),
-        body: SearchView(onSelectBook: _onBookClick));
+      appBar: AppBar(
+        title: Text('새 독후감 작성'),
+        centerTitle: false,
+      ),
+      body: SearchView(onSelectBook: _onBookClick),
+    );
   }
 
-  _onBookClick(Book book) {
+  _onBookClick(Book book) async {
+    await createBook(book: book);
+
     Navigator.of(context).pushNamed(
       '/review/write',
       arguments: WriteReviewArgument(
