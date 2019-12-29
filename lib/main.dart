@@ -2,31 +2,16 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:galpi/migrations/index.dart';
+import 'package:galpi/app.dart';
+import 'package:galpi/constants.dart';
 import 'package:galpi/utils/env.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
-import 'package:galpi/constants.dart';
 import 'package:galpi/stores/user_repository.dart';
-import 'package:galpi/components/screen_with_navigator/index.dart';
-import 'package:galpi/screens/write_review/index.dart';
-import 'package:galpi/screens/book_list/index.dart';
-import 'package:galpi/screens/review_list/index.dart';
-import 'package:galpi/screens/add_review/index.dart';
-import 'package:galpi/screens/auth/email_login/index.dart';
-import 'package:galpi/screens/review_detail/index.dart';
 import 'package:galpi/utils/theme.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final primaryColor = Color.fromRGBO(0xff, 0x74, 0x73, 1);
-
-class WebviewArgument {
-  final String title;
-  final String link;
-
-  WebviewArgument(this.title, this.link);
-}
 
 void main() => runApp(MaterialApp(
       home: MyApp(),
@@ -48,7 +33,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  int _pageIndex = 1;
   bool isInitialized = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -85,77 +69,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       value: userRepository,
       child: Scaffold(
         key: _scaffoldKey,
-        body: IndexedStack(index: _pageIndex, children: [
-          ScreenWithNavigator(
-            child: Books(),
-          ),
-          ScreenWithNavigator(
-            child: Reviews(),
-            onGenerateRoute: (RouteSettings settings) {
-              return new MaterialPageRoute(
-                builder: (_) {
-                  switch (settings.name) {
-                    case '/':
-                      {
-                        return Reviews();
-                      }
-                    case '/review/add':
-                      {
-                        return AddReview();
-                      }
-                    case '/review/write':
-                      {
-                        final WriteReviewArgument args = settings.arguments;
-                        return WriteReview(arguments: args);
-                      }
-                    case '/review/detail':
-                      {
-                        final ReviewDetailArguments args = settings.arguments;
-                        return ReviewDetail(arguments: args);
-                      }
-                    case '/auth/email-login':
-                      {
-                        return EmailLogin();
-                      }
-                    case '/webview':
-                      {
-                        final WebviewArgument args = settings.arguments;
-
-                        return Scaffold(
-                          appBar: AppBar(title: Text(args.title)),
-                          body: WebView(
-                            initialUrl: args.link,
-                            javascriptMode: JavascriptMode.unrestricted,
-                          ),
-                        );
-                      }
-                  }
-                },
-                // FIXME: 더 나은 방법을 찾아보자
-                fullscreenDialog: settings.name.startsWith('/auth'),
-              );
-            },
-            onUnknownRoute: (_) {
-              return MaterialPageRoute(
-                builder: (context) {
-                  return Reviews();
-                },
-              );
-            },
-          )
-        ]),
-        // bottomNavigationBar: BottomNavigationBar(
-        //   items: [
-        //     homeItem,
-        //     myItem,
-        //   ],
-        //   currentIndex: _pageIndex,
-        //   onTap: (int index) {
-        //     setState(() {
-        //       _pageIndex = index;
-        //     });
-        //   },
-        // ),
+        body: App(),
       ),
     );
   }
@@ -164,19 +78,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     await loadEnvForCurrentFlavor();
-    await runAllNeededMigrations();
+    await userRepository.initialize();
+    await _initializeFirebaseDynamicLinks();
 
     setState(() {
       isInitialized = true;
     });
-
-    _initializeFirebaseDynamicLinks();
   }
 
-  _initializeFirebaseDynamicLinks() {
+  _initializeFirebaseDynamicLinks() async {
     final firebaseDLInstance = FirebaseDynamicLinks.instance;
 
-    firebaseDLInstance.getInitialLink().then((data) {
+    await firebaseDLInstance.getInitialLink().then((data) {
       if (data != null) {
         _loginIfAvailable(data.link);
       }
@@ -193,6 +106,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   _loginIfAvailable(Uri link) async {
+    if (userRepository.user != null) {
+      return;
+    }
+
     final sharedPreference = await SharedPreferences.getInstance();
     final email = sharedPreference.getString(SHARED_PREFERENCE_LOGIN_EMAIL);
 
@@ -214,6 +131,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text('${email}으로 로그인 되었습니다.'),
         ));
+      } else {
+        throw new Error();
       }
     } catch (e) {
       print(e);

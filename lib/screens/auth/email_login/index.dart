@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/common_form/index.dart';
+import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +28,6 @@ class _EmailLoginState extends State<EmailLogin> {
 
           if (success) {
             _showSnackbar('${_email}로 인증 메일을 발송했습니다. 메일을 확인해주세요.');
-            _closeScreen();
           } else {
             _showSnackbar('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
           }
@@ -35,18 +35,26 @@ class _EmailLoginState extends State<EmailLogin> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text('로그인'),
+            title: Logo(),
             centerTitle: false,
           ),
           body: Container(
-            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
             child: CommonForm(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  // Text(
-                  //   '로그인',
-                  //   style: Theme.of(context).textTheme.title,
-                  // ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      '환영합니다!',
+                      style: Theme.of(context).textTheme.title,
+                    ),
+                  ),
+                  Text(
+                    '이메일 주소로 간편하게 로그인하고\n아름다운 독서 기록을 남기세요',
+                    style: Theme.of(context).textTheme.subtitle,
+                  ),
                   buildEmailRow(),
                   buildConfirmButton(onConfirm: onSignIn),
                 ],
@@ -62,14 +70,12 @@ class _EmailLoginState extends State<EmailLogin> {
     AuthStatus authStatus,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 12),
+      padding: EdgeInsets.only(top: 24, bottom: 32),
       child: TextField(
         autofocus: true,
         decoration: InputDecoration(
           border: UnderlineInputBorder(),
-          labelText: '이메일',
-          prefixIcon: Icon(Icons.email),
-          filled: true,
+          labelText: '이메일 주소',
         ),
         onChanged: (String email) {
           setState(() {
@@ -81,17 +87,19 @@ class _EmailLoginState extends State<EmailLogin> {
   }
 
   buildConfirmButton({OnConfirm onConfirm}) {
-    return Container(
-      alignment: Alignment.centerRight,
-      child: RaisedButton(
-        onPressed: onConfirm,
-        child: Text('로그인'),
+    return Row(children: [
+      Expanded(
+        child: SizedBox(
+          height: 48,
+          child: RaisedButton(
+            onPressed: onConfirm,
+            child: Text('로그인'),
+            color: Colors.black,
+            textColor: Colors.white,
+          ),
+        ),
       ),
-    );
-  }
-
-  _closeScreen() {
-    Navigator.of(context).pop();
+    ]);
   }
 
   _showSnackbar(String message) {

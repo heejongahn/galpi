@@ -40,11 +40,7 @@ class UserRepository extends ChangeNotifier {
 
   bool get isLoggedIn => authStatus == AuthStatus.Authenticated;
 
-  UserRepository() {
-    _initialize();
-  }
-
-  _initialize() async {
+  initialize() async {
     String loginToken = await secureStorage.read(key: AUTH_LOGIN_TOKEN_KEY);
 
     if (loginToken != null) {
