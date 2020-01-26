@@ -64,40 +64,6 @@ class DatabaseHelper {
       ''');
   }
 
-  Future<int> getOrCreateBook(Book book) async {
-    Database db = await database;
-    List<Map> maps = await db.query(Book.table,
-        where: '${Book.columnIsbn} = ?', whereArgs: [book.isbn]);
-
-    if (maps.length > 0) {
-      Book book = Book.fromMap(maps.first);
-      return book.id;
-    }
-
-    int id = await db.insert(Book.table, book.toLegacyMap());
-    return id;
-  }
-
-  Future<int> insertReview(Review review, Book book) async {
-    Database db = await database;
-    final bookId = await getOrCreateBook(book);
-    int id = await db.insert(Review.table, review.toMap(bookId));
-    return id;
-  }
-
-  Future<int> updateReview(Review review, Book book) async {
-    Database db = await database;
-    int id = await db.update(Review.table, review.toMap(book.id),
-        where: '${Review.columnId} = ?', whereArgs: [review.id]);
-    return id;
-  }
-
-  Future<void> deleteReview(int id) async {
-    Database db = await database;
-    await db
-        .delete(Review.table, where: '${Review.columnId} = ?', whereArgs: [id]);
-  }
-
   Future<Tuple2<List<Review>, List<Book>>> queryAllReviews() async {
     Database db = await database;
     final bookColumns = [
