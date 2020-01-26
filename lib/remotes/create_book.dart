@@ -5,11 +5,12 @@ import 'package:galpi/models/book.dart';
 import 'package:galpi/utils/http_client.dart';
 import 'package:galpi/utils/env.dart';
 
-abstract class CreateBookResponse {
-  String bookId;
-}
+// TODO: 이 타입을 어떻게 써야할까?
+// class CreateBookResponse {
+//   String bookId;
+// }
 
-Future<CreateBookResponse> createBook({Book book}) async {
+Future<String> createBook({Book book}) async {
   final url = '${env.apiEndpoint}/book/create';
 
   final body = JsonEncoder().convert({'bookPayload': book.toMap()});
@@ -22,8 +23,7 @@ Future<CreateBookResponse> createBook({Book book}) async {
 
   try {
     final decoded = json.decode(response.body);
-
-    return decoded;
+    return decoded['bookId'];
   } catch (e) {
     return null;
   }
