@@ -1,6 +1,5 @@
 class Book {
-  // FIXME: 삭제하고 서버에서 주는 id로 대체
-  int _id;
+  final String id;
   final String isbn;
   final String title;
   final String author;
@@ -8,6 +7,57 @@ class Book {
   final String linkUri;
   final String imageUri;
 
+  Book(
+      {this.id,
+      this.author,
+      this.imageUri,
+      this.isbn,
+      this.publisher,
+      this.linkUri,
+      this.title});
+
+  static fromKakaoPayload(Map<String, dynamic> json) {
+    return Book(
+      isbn: json['isbn'],
+      title: json['title'],
+      author: (json['authors'].cast<String>()).join(", "),
+      publisher: json['publisher'],
+      linkUri: json['url'],
+      imageUri: json['thumbnail'],
+    );
+  }
+
+  static fromPayload(Map<String, dynamic> json) {
+    return Book(
+      id: json['id'],
+      isbn: json['isbn'],
+      title: json['title'],
+      author: json['author'],
+      publisher: json['publisher'],
+      linkUri: json['linkUri'],
+      imageUri: json['imageUri'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    var map = {};
+    // FIXME
+    map['isbn'] = isbn;
+    map['title'] = title;
+    map['author'] = author;
+    map['publisher'] = publisher;
+    map['linkUri'] = linkUri;
+    map['imageUri'] = imageUri;
+
+    return map;
+  }
+
+  // LEGACY
+  // 로컬 DB를 없애도 될 때가 되면 지운다
+
+  int _id;
+
+  // legacy
   static final table = 'Book';
   static final columnId = 'id';
   // FIXME
@@ -19,26 +69,7 @@ class Book {
   static final columnLinkUri = 'linkUri';
   static final columnImageUri = 'imageUri';
 
-  Book(
-      {this.author,
-      this.imageUri,
-      this.isbn,
-      this.publisher,
-      this.linkUri,
-      this.title});
-
-  static fromPayload(Map<String, dynamic> json) {
-    return Book(
-      isbn: json['isbn'],
-      title: json['title'],
-      author: (json['authors'].cast<String>()).join(", "),
-      publisher: json['publisher'],
-      linkUri: json['url'],
-      imageUri: json['thumbnail'],
-    );
-  }
-
-  static fromMap(Map<String, dynamic> map) {
+  static legacy_fromMap(Map<String, dynamic> map) {
     return Book(
       isbn: map[columnIsbn],
       title: map[columnTitle],
@@ -49,7 +80,7 @@ class Book {
     );
   }
 
-  static fromJoinedMap(Map<String, dynamic> map) {
+  static legacy_fromJoinedMap(Map<String, dynamic> map) {
     return Book(
       isbn: map['${table}_${columnIsbn}'],
       title: map['${table}_${columnTitle}'],
@@ -60,16 +91,7 @@ class Book {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    var map = this.toLegacyMap();
-    // FIXME
-    map['isbn'] = map[columnIsbn];
-    map['author'] = map[columnAuthor];
-
-    return map;
-  }
-
-  Map<String, dynamic> toLegacyMap() {
+  Map<String, dynamic> legacy_toMap() {
     var map = <String, dynamic>{
       columnIsbn: isbn,
       columnTitle: title,

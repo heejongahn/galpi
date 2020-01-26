@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/components/main_drawer/index.dart';
+import 'package:galpi/remotes/fetch_reviews.dart';
+import 'package:galpi/stores/user_repository.dart';
+import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 import 'package:galpi/screens/review_detail/index.dart';
 import 'package:galpi/components/review_card/main.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
-import 'package:galpi/utils/database_helpers.dart';
 
 class ReviewsState extends State<Reviews> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -28,19 +30,19 @@ class ReviewsState extends State<Reviews> {
     );
   }
 
-  Widget _buildRows(List<Review> reviews, List<Book> books) {
+  Widget _buildRows(List<Tuple2<Review, Book>> data) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 24),
-      itemCount: reviews.length,
+      itemCount: data.length,
       itemBuilder: (context, i) {
-        final review = reviews[i];
-        final book = books[i];
+        final review = data[i].item1;
+        final book = data[i].item2;
 
         return Container(
           margin: EdgeInsets.symmetric(vertical: 12),
           child: ReviewCard(
-            review: reviews[i],
-            book: books[i],
+            review: review,
+            book: book,
             onTap: () => _onOpenReviewDetail(review, book),
           ),
         );
@@ -50,36 +52,38 @@ class ReviewsState extends State<Reviews> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Logo(),
-        centerTitle: false,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-        child: FutureBuilder<Tuple2<List<Review>, List<Book>>>(
-            future: DatabaseHelper.instance.queryAllReviews(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final reviews = snapshot.data.item1;
-                final books = snapshot.data.item2;
-                return reviews.length > 0
-                    ? _buildRows(reviews, books)
-                    : _buildEmptyScreen();
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
+    return Consumer<UserRepository>(
+      builder: (context, userRepository, _) {
+        return Scaffold(
+          key: scaffoldKey,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Logo(),
+            centerTitle: false,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+            child: FutureBuilder<List<Tuple2<Review, Book>>>(
+                future: fetchReviews(userId: userRepository.user.id),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data.length > 0
+                        ? _buildRows(snapshot.data)
+                        : _buildEmptyScreen();
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
 
-              return Center(child: CircularProgressIndicator());
-            }),
-      ),
-      endDrawer: MainDrawer(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onOpenNewReview,
-        child: Icon(Icons.add),
-      ),
+                  return Center(child: CircularProgressIndicator());
+                }),
+          ),
+          endDrawer: MainDrawer(),
+          floatingActionButton: FloatingActionButton(
+            onPressed: _onOpenNewReview,
+            child: Icon(Icons.add),
+          ),
+        );
+      },
     );
   }
 

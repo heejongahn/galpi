@@ -1,4 +1,6 @@
+import 'package:galpi/models/book.dart';
 import 'package:intl/intl.dart';
+import 'package:tuple/tuple.dart';
 
 final formatter = DateFormat('yyyy-MM-dd');
 
@@ -18,7 +20,8 @@ Map<String, ReadingStatus> readingStatusInverseMap =
     readingStatusMap.map((k, v) => MapEntry(v, k));
 
 class Review {
-  final int id;
+  String id;
+  final int legacyId;
   int stars;
   String title;
   String body;
@@ -43,6 +46,7 @@ class Review {
 
   Review(
       {this.id,
+      this.legacyId,
       this.stars,
       this.title,
       this.body,
@@ -62,7 +66,7 @@ class Review {
         : DateTime.tryParse(map[columnReadingFinishedAt]);
 
     return Review(
-        id: map[columnId],
+        legacyId: map[columnId],
         stars: map[columnStars],
         title: map[columnTitle],
         body: map[columnBody],
@@ -74,6 +78,32 @@ class Review {
         bookId: map[columnBookId]);
   }
 
+  static Tuple2<Review, Book> fromPayload(Map<String, dynamic> map) {
+    final readingStartedAt = map[columnReadingStartedAt] == null
+        ? null
+        : DateTime.tryParse(map[columnReadingStartedAt]);
+    final readingFinishedAt = map[columnReadingFinishedAt] == null
+        ? null
+        : DateTime.tryParse(map[columnReadingFinishedAt]);
+
+    final review = Review(
+      id: map['id'],
+      stars: map['stars'],
+      title: map['title'],
+      body: map['body'],
+      readingStatus: readingStatusInverseMap[map['readingStatus']],
+      readingStartedAt: readingStartedAt,
+      readingFinishedAt: readingFinishedAt,
+      createdAt: DateTime.parse(map['createdAt']),
+      lastModifiedAt: DateTime.parse(map['lastModifiedAt']),
+      bookId: map['bookId'],
+    );
+
+    final book = Book.fromPayload(map['book']);
+
+    return Tuple2(review, book);
+  }
+
   static fromJoinedMap(Map<String, dynamic> map) {
     final readingStartedAt = map['${table}_${columnReadingStartedAt}'] == null
         ? null
@@ -83,7 +113,7 @@ class Review {
         : DateTime.tryParse(map['${table}_${columnReadingFinishedAt}']);
 
     return Review(
-        id: map['${table}_${columnId}'],
+        legacyId: map['${table}_${columnId}'],
         stars: map['${table}_${columnStars}'],
         title: map['${table}_${columnTitle}'],
         body: map['${table}_${columnBody}'],

@@ -113,7 +113,7 @@ class DatabaseHelper {
         .toList();
 
     final books =
-        maps.map((map) => Book.fromJoinedMap(map)).cast<Book>().toList();
+        maps.map((map) => Book.legacy_fromJoinedMap(map)).cast<Book>().toList();
 
     return Tuple2(reviews, books);
   }

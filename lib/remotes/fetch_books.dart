@@ -17,7 +17,7 @@ Future<List<Book>> fetchBooks({String query}) async {
 
   final books = json.decode(response.body)['documents'];
 
-  final bookIterable = books.map((data) => Book.fromPayload(data));
+  final bookIterable = books.map((data) => Book.fromKakaoPayload(data));
   final bookList = bookIterable.toList().cast<Book>();
 
   return bookList;
