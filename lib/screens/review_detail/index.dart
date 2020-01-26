@@ -101,10 +101,11 @@ class ReviewDetail extends StatelessWidget {
                 child: Text("삭제"),
                 onPressed: () {
                   // FIXME
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (ctx) {
-                    return Reviews();
-                  }), (Route r) => false);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (Route r) => false,
+                  );
                 },
               ),
             ],
