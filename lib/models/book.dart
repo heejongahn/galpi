@@ -1,5 +1,6 @@
 class Book {
-  final int id;
+  // FIXME: 삭제하고 서버에서 주는 id로 대체
+  int _id;
   final String isbn;
   final String title;
   final String author;
@@ -19,8 +20,7 @@ class Book {
   static final columnImageUri = 'imageUri';
 
   Book(
-      {this.id,
-      this.author,
+      {this.author,
       this.imageUri,
       this.isbn,
       this.publisher,
@@ -40,7 +40,6 @@ class Book {
 
   static fromMap(Map<String, dynamic> map) {
     return Book(
-      id: map[columnId],
       isbn: map[columnIsbn],
       title: map[columnTitle],
       author: map[columnAuthor],
@@ -52,7 +51,6 @@ class Book {
 
   static fromJoinedMap(Map<String, dynamic> map) {
     return Book(
-      id: map['${table}_${columnId}'],
       isbn: map['${table}_${columnIsbn}'],
       title: map['${table}_${columnTitle}'],
       author: map['${table}_${columnAuthor}'],
@@ -80,10 +78,6 @@ class Book {
       columnLinkUri: linkUri,
       columnImageUri: imageUri,
     };
-
-    if (id != null) {
-      map[columnId] = id;
-    }
 
     return map;
   }

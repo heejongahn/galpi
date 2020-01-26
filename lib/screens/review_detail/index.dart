@@ -8,7 +8,6 @@ import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/screens/review_list/index.dart';
 import 'package:galpi/screens/write_review/index.dart';
-import 'package:galpi/utils/database_helpers.dart';
 
 class ReviewDetailArguments {
   final Review review;
@@ -101,7 +100,7 @@ class ReviewDetail extends StatelessWidget {
                 textColor: Colors.red,
                 child: Text("삭제"),
                 onPressed: () {
-                  DatabaseHelper.instance.deleteReview(review.id);
+                  // FIXME
                   Navigator.pushAndRemoveUntil(context,
                       MaterialPageRoute(builder: (ctx) {
                     return Reviews();
@@ -117,14 +116,19 @@ class ReviewDetail extends StatelessWidget {
     await Navigator.of(context).pushNamed(
       '/review/write',
       arguments: new WriteReviewArgument(
-        isEditing: true,
-        review: review,
-        book: book,
-        onSave: (Review newReview, Book _) async {
-          await DatabaseHelper.instance.updateReview(newReview, book);
-          Navigator.of(context).pop();
-        },
-      ),
+          isEditing: true,
+          review: review,
+          book: book,
+          bookId: 'FIXME',
+          onSave: (Review newReview, String bookId) async {
+            // FIXME
+            return;
+          }
+          // onSave: (Review newReview, Book _) async {
+          //   await DatabaseHelper.instance.updateReview(newReview, book);
+          //   Navigator.of(context).pop();
+          // },
+          ),
     );
   }
 }

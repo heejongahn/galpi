@@ -6,16 +6,18 @@ import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 
-typedef Future<void> OnSave(Review review, Book book);
+typedef Future<void> OnSave(Review review, String bookId);
 
 class WriteReviewArgument {
   final OnSave onSave;
   final Book book;
+  final String bookId;
   final Review review;
   final bool isEditing;
 
   WriteReviewArgument({
     this.book,
+    this.bookId,
     this.review,
     this.onSave,
     this.isEditing = false,
@@ -193,8 +195,10 @@ class _WriteReviewState extends State<WriteReview> {
     }
 
     form.save();
-    await widget.arguments
-        .onSave(widget.arguments.review, widget.arguments.book);
+    await widget.arguments.onSave(
+      widget.arguments.review,
+      widget.arguments.bookId,
+    );
   }
 
   _onBlur() {

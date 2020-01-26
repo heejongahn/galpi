@@ -96,7 +96,7 @@ class Review {
         bookId: map['${table}_${columnBookId}']);
   }
 
-  Map<String, dynamic> toMap(int bookId) {
+  Map<String, dynamic> toMap(String bookId) {
     final now = DateTime.now().toIso8601String();
 
     var map = <String, dynamic>{
