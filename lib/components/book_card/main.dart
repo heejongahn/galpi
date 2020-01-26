@@ -20,7 +20,7 @@ class BookCard extends StatelessWidget {
           child: Align(
             alignment: Alignment.topRight,
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              book.imageUri != ''
+              book.imageUri != null && book.imageUri != ''
                   ? Image.network(book.imageUri, width: 100, fit: BoxFit.cover)
                   : Container(width: 0, height: 0),
               Flexible(
