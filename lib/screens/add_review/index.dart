@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/remotes/create_book.dart';
-import 'package:galpi/remotes/create_review.dart';
+import 'package:galpi/remotes/review/create.dart';
 
 import 'package:galpi/screens/write_review/index.dart';
 import 'package:galpi/models/book.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/components/main_drawer/index.dart';
-import 'package:galpi/remotes/fetch_reviews.dart';
+import 'package:galpi/remotes/review/list.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';

@@ -6,7 +6,7 @@ import 'package:galpi/utils/http_client.dart';
 import 'package:galpi/utils/env.dart';
 
 class CreateReviewResponse {
-  String reviewId;
+  Review review;
 }
 
 Future<CreateReviewResponse> createReview(
@@ -14,7 +14,7 @@ Future<CreateReviewResponse> createReview(
   final url = '${env.apiEndpoint}/review/create';
 
   final body = JsonEncoder().convert({
-    'reviewPayload': review.toMap(bookId),
+    'reviewPayload': review.toMap(),
     'bookId': bookId,
   });
 
