@@ -1,8 +1,12 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:galpi/components/common_form/index.dart';
 import 'package:galpi/components/logo/index.dart';
+import 'package:galpi/constants.dart';
 import 'package:galpi/stores/user_repository.dart';
-import 'package:provider/provider.dart';
 
 class EmailLogin extends StatefulWidget {
   @override
@@ -23,30 +27,36 @@ class _EmailLoginState extends State<EmailLogin> {
   LoginStatus _status = LoginStatus.idle;
 
   @override
+  void initState() {
+    super.initState();
+    _initializeFirebaseDynamicLinks();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<UserRepository>(
       builder: (context, userRepository, child) {
         onSignIn() async {
           final isResending = _status != LoginStatus.idle;
 
-          _showSnackbar('인증 메일을 ${isResending ? '다시 ' : ''}발송합니다.');
+          _showSnackBar('인증 메일을 ${isResending ? '다시 ' : ''}발송합니다.');
 
           setState(() {
             _status = LoginStatus.sendingEmail;
           });
 
           final success = await userRepository.sendLoginEmail(email: _email);
-          _removeCurrentSnackbar();
+          _removeCurrentSnackBar();
 
           if (success) {
-            _showSnackbar(
+            _showSnackBar(
               '${_email}로 인증 메일을 ${isResending ? '다시 ' : ''}발송했습니다.\n메일 애플리케이션 또는 사이트를 확인하세요.',
             );
             setState(() {
               _status = LoginStatus.sentEmail;
             });
           } else {
-            _showSnackbar('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+            _showSnackBar('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
             setState(() {
               _status = LoginStatus.idle;
             });
@@ -92,6 +102,7 @@ class _EmailLoginState extends State<EmailLogin> {
     return Container(
       padding: EdgeInsets.only(top: 24, bottom: 32),
       child: TextField(
+        enabled: _status != LoginStatus.verifying,
         autofocus: true,
         decoration: InputDecoration(
             border: UnderlineInputBorder(),
@@ -138,13 +149,74 @@ class _EmailLoginState extends State<EmailLogin> {
     );
   }
 
-  _showSnackbar(String message) {
+  _showSnackBar(String message) {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
     ));
   }
 
-  _removeCurrentSnackbar() {
+  _removeCurrentSnackBar() {
     Scaffold.of(context).removeCurrentSnackBar();
+  }
+
+  _initializeFirebaseDynamicLinks() async {
+    final firebaseDLInstance = FirebaseDynamicLinks.instance;
+
+    await firebaseDLInstance.getInitialLink().then((data) {
+      if (data != null) {
+        _loginIfAvailable(data.link);
+      }
+    });
+
+    firebaseDLInstance.onLink(
+      onSuccess: (data) async {
+        _loginIfAvailable(data.link);
+      },
+      onError: (error) async {
+        print(error);
+      },
+    );
+  }
+
+  _loginIfAvailable(Uri link) async {
+    if (userRepository.user != null) {
+      return;
+    }
+
+    final sharedPreference = await SharedPreferences.getInstance();
+    final email = sharedPreference.getString(SHARED_PREFERENCE_LOGIN_EMAIL);
+
+    if (email == null) {
+      return;
+    }
+
+    setState(() {
+      _status = LoginStatus.verifying;
+    });
+
+    _showSnackBar(
+      '${email}으로 로그인 중',
+    );
+
+    try {
+      final success = await userRepository.loginWithEmail(
+        email: email,
+        link: link.toString(),
+      );
+
+      _removeCurrentSnackBar();
+      if (success) {
+        _showSnackBar('${email}으로 로그인 되었습니다.');
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      print(e);
+      _showSnackBar('로그인에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setState(() {
+        _status = LoginStatus.idle;
+      });
+    }
   }
 }
