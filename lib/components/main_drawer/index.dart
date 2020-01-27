@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/input_dialog/index.dart';
+import 'package:galpi/models/user.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +57,9 @@ class MainDrawer extends StatelessWidget {
               child: ListTile(
                 leading: Icon(Icons.account_circle, size: 32),
                 title: Text(
-                    this._getProfileSectionTitle(userRepository.authStatus)),
+                  this._getProfileSectionTitle(
+                      userRepository.authStatus, userRepository.user),
+                ),
                 subtitle: Text(
                   this._getProfileSectionSubtitle(userRepository.authStatus),
                 ),
@@ -85,7 +88,7 @@ class MainDrawer extends StatelessWidget {
   }) {
     return GestureDetector(
       child: Text(
-        '설정',
+        '닉네임 설정',
         style: Theme.of(context).textTheme.button.copyWith(fontSize: 12),
       ),
       onTap: () {
@@ -124,7 +127,7 @@ class MainDrawer extends StatelessWidget {
     );
   }
 
-  _getProfileSectionTitle(AuthStatus authStatus) {
+  _getProfileSectionTitle(AuthStatus authStatus, User user) {
     switch (authStatus) {
       case AuthStatus.Unauthenticated:
         {
@@ -132,10 +135,7 @@ class MainDrawer extends StatelessWidget {
         }
       case AuthStatus.Authenticated:
         {
-          return (userRepository.user != null &&
-                  userRepository.user.displayName != null)
-              ? userRepository.user.displayName
-              : '프로필 없음';
+          return user.displayName ?? user.email;
         }
     }
   }
