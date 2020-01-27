@@ -1,12 +1,13 @@
 import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
+import 'package:galpi/remotes/review/delete.dart';
+import 'package:galpi/remotes/review/edit.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 import 'package:galpi/components/book_info/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
-import 'package:galpi/screens/review_list/index.dart';
 import 'package:galpi/screens/write_review/index.dart';
 
 class ReviewDetailArguments {
@@ -99,8 +100,8 @@ class ReviewDetail extends StatelessWidget {
               FlatButton(
                 textColor: Colors.red,
                 child: Text("삭제"),
-                onPressed: () {
-                  // FIXME
+                onPressed: () async {
+                  await deleteReview(reviewId: review.id);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     '/',
@@ -117,19 +118,16 @@ class ReviewDetail extends StatelessWidget {
     await Navigator.of(context).pushNamed(
       '/review/write',
       arguments: new WriteReviewArgument(
-          isEditing: true,
-          review: review,
-          book: book,
-          bookId: 'FIXME',
-          onSave: (Review newReview, String bookId) async {
-            // FIXME
-            return;
-          }
-          // onSave: (Review newReview, Book _) async {
-          //   await DatabaseHelper.instance.updateReview(newReview, book);
-          //   Navigator.of(context).pop();
-          // },
-          ),
+        isEditing: true,
+        review: review,
+        book: book,
+        bookId: 'FIXME',
+        onSave: (Review updatedReview, _) async {
+          await editReview(review: updatedReview);
+          Navigator.of(context).pop();
+          return;
+        },
+      ),
     );
   }
 }
