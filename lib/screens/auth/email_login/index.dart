@@ -11,25 +11,45 @@ class EmailLogin extends StatefulWidget {
 
 typedef void OnConfirm();
 
+enum LoginStatus {
+  idle,
+  sendingEmail,
+  sentEmail,
+  verifying,
+}
+
 class _EmailLoginState extends State<EmailLogin> {
   String _email = '';
-  bool isVerificationMailSent = false;
+  LoginStatus _status = LoginStatus.idle;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<UserRepository>(
       builder: (context, userRepository, child) {
         onSignIn() async {
+          final isResending = _status != LoginStatus.idle;
+
+          _showSnackbar('인증 메일을 ${isResending ? '다시 ' : ''}발송합니다.');
+
           setState(() {
-            isVerificationMailSent = true;
+            _status = LoginStatus.sendingEmail;
           });
 
           final success = await userRepository.sendLoginEmail(email: _email);
+          _removeCurrentSnackbar();
 
           if (success) {
-            _showSnackbar('${_email}로 인증 메일을 발송했습니다. 메일을 확인해주세요.');
+            _showSnackbar(
+              '${_email}로 인증 메일을 ${isResending ? '다시 ' : ''}발송했습니다.\n메일 애플리케이션 또는 사이트를 확인하세요.',
+            );
+            setState(() {
+              _status = LoginStatus.sentEmail;
+            });
           } else {
             _showSnackbar('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+            setState(() {
+              _status = LoginStatus.idle;
+            });
           }
         }
 
@@ -74,12 +94,16 @@ class _EmailLoginState extends State<EmailLogin> {
       child: TextField(
         autofocus: true,
         decoration: InputDecoration(
-          border: UnderlineInputBorder(),
-          labelText: '이메일 주소',
-        ),
+            border: UnderlineInputBorder(),
+            labelText: '이메일 주소',
+            helperText: _status == LoginStatus.idle ||
+                    _status == LoginStatus.sendingEmail
+                ? ''
+                : '${_email}로 인증 메일이 발송되었습니다.'),
         onChanged: (String email) {
           setState(() {
             _email = email;
+            _status = LoginStatus.idle;
           });
         },
       ),
@@ -87,24 +111,40 @@ class _EmailLoginState extends State<EmailLogin> {
   }
 
   buildConfirmButton({OnConfirm onConfirm}) {
-    return Row(children: [
-      Expanded(
-        child: SizedBox(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
           height: 48,
           child: RaisedButton(
-            onPressed: onConfirm,
-            child: Text('로그인'),
+            onPressed: _status == LoginStatus.idle ? onConfirm : null,
+            child: Text('인증 메일 발송'),
             color: Colors.black,
             textColor: Colors.white,
           ),
         ),
-      ),
-    ]);
+        _status != LoginStatus.idle
+            ? Container(
+                margin: EdgeInsets.only(top: 12),
+                height: 48,
+                child: FlatButton(
+                  onPressed:
+                      _status != LoginStatus.sendingEmail ? onConfirm : null,
+                  child: Text('메일을 받지 못하셨나요?'),
+                ),
+              )
+            : Container(width: 0, height: 0),
+      ],
+    );
   }
 
   _showSnackbar(String message) {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
     ));
+  }
+
+  _removeCurrentSnackbar() {
+    Scaffold.of(context).removeCurrentSnackBar();
   }
 }
