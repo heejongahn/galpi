@@ -107,7 +107,7 @@ class DatabaseHelper {
 
     final reviews = maps
         .map((map) {
-          return Review.fromJoinedMap(map);
+          return Review.legacy_fromJoinedMap(map);
         })
         .cast<Review>()
         .toList();
@@ -116,17 +116,5 @@ class DatabaseHelper {
         maps.map((map) => Book.legacy_fromJoinedMap(map)).cast<Book>().toList();
 
     return Tuple2(reviews, books);
-  }
-
-  Future<Review> queryReview(int id) async {
-    Database db = await database;
-    List<Map> maps = await db
-        .query(Review.table, where: '${Review.columnId} = ?', whereArgs: [id]);
-
-    if (maps.length > 0) {
-      return Review.fromMap(maps.first);
-    }
-
-    return null;
   }
 }

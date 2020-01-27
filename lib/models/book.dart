@@ -40,7 +40,8 @@ class Book {
   }
 
   Map<String, dynamic> toMap() {
-    var map = {};
+    final map = new Map<String, dynamic>.from({});
+
     // FIXME
     map['isbn'] = isbn;
     map['title'] = title;
