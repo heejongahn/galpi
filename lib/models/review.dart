@@ -30,6 +30,7 @@ class Review {
   DateTime readingFinishedAt;
   final DateTime createdAt;
   final DateTime lastModifiedAt;
+  bool isPublic;
 
   Review({
     this.id,
@@ -42,6 +43,7 @@ class Review {
     this.readingFinishedAt,
     this.createdAt,
     this.lastModifiedAt,
+    this.isPublic,
   });
 
   static Tuple2<Review, Book> fromPayload(Map<String, dynamic> map) {
@@ -62,6 +64,7 @@ class Review {
       readingFinishedAt: readingFinishedAt,
       createdAt: DateTime.parse(map['createdAt']),
       lastModifiedAt: DateTime.parse(map['lastModifiedAt']),
+      isPublic: map['isPublic'],
     );
 
     final book = Book.fromPayload(map['book']);
@@ -73,13 +76,13 @@ class Review {
     final now = DateTime.now().toIso8601String();
 
     var map = <String, dynamic>{
-      columnStars: stars,
-      columnTitle: title,
-      columnBody: body,
-      columnReadingStatus: readingStatusMap[readingStatus],
-      columnReadingStartedAt: readingStartedAt?.toIso8601String(),
-      columnReadingFinishedAt: readingFinishedAt?.toIso8601String(),
-      columnLastModifiedAt: now,
+      'stars': stars,
+      'title': title,
+      'body': body,
+      'readingStatus': readingStatusMap[readingStatus],
+      'readingStartedAt': readingStartedAt?.toIso8601String(),
+      'readingFinishedAt': readingFinishedAt?.toIso8601String(),
+      'isPublic': isPublic
     };
 
     map[columnCreatedAt] =

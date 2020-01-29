@@ -63,7 +63,7 @@ class _WriteReviewState extends State<WriteReview> {
                     ),
                     getTitleFormField(),
                     getBodyFormField(),
-                    getReadingStatusFormFields(),
+                    getReadingStatusAndIsPublicFormFields(),
                     getScoreFormField(),
                   ],
                 ),
@@ -121,34 +121,55 @@ class _WriteReviewState extends State<WriteReview> {
     );
   }
 
-  Padding getReadingStatusFormFields() {
+  Padding getReadingStatusAndIsPublicFormFields() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            '독서 상태',
-            style: Theme.of(context).textTheme.caption,
-          ),
-          Wrap(
-            spacing: 16,
-            children: [
-              ReadingStatus.hasntStarted,
-              ReadingStatus.reading,
-              ReadingStatus.finishedReading
-            ]
-                .map((status) => ReadingStatusChip(
-                      readingStatus: status,
-                      isSelected:
-                          widget.arguments.review.readingStatus == status,
-                      onTap: _onReadingStatusBadgeClick,
-                    ))
-                .toList(),
-          ),
-        ],
-      ),
-    );
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '전체 공개 여부',
+                  style: Theme.of(context).textTheme.caption,
+                ),
+                Switch(
+                  onChanged: (isPublic) {
+                    setState(() {
+                      widget.arguments.review.isPublic = isPublic;
+                    });
+                  },
+                  value: widget.arguments.review.isPublic,
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '독서 상태',
+                  style: Theme.of(context).textTheme.caption,
+                ),
+                Wrap(
+                  spacing: 16,
+                  children: [
+                    ReadingStatus.hasntStarted,
+                    ReadingStatus.reading,
+                    ReadingStatus.finishedReading
+                  ]
+                      .map((status) => ReadingStatusChip(
+                            readingStatus: status,
+                            isSelected:
+                                widget.arguments.review.readingStatus == status,
+                            onTap: _onReadingStatusBadgeClick,
+                          ))
+                      .toList(),
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 
   Padding getScoreFormField() {
