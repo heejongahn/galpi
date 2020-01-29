@@ -43,7 +43,7 @@ class Review {
     this.readingFinishedAt,
     this.createdAt,
     this.lastModifiedAt,
-    this.isPublic,
+    this.isPublic = false,
   });
 
   static Tuple2<Review, Book> fromPayload(Map<String, dynamic> map) {
