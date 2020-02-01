@@ -25,17 +25,29 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    runAllNeededMigrations().then((_) {
-      setState(() {
-        isMigrationFinished = true;
-      });
-    });
+    Future.delayed(
+      Duration.zero,
+      () {
+        runAllNeededMigrations(showSnackBar).then(
+          (_) {
+            setState(() {
+              isMigrationFinished = true;
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     if (!isMigrationFinished) {
-      return Center(child: CircularProgressIndicator());
+      return Scaffold(
+        key: _scaffoldKey,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
 
     return Scaffold(
@@ -108,5 +120,15 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
       //   },
       // ),
     );
+  }
+
+  showSnackBar(String message) {
+    if (_scaffoldKey.currentState != null) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(
+          message,
+        ),
+      ));
+    }
   }
 }
