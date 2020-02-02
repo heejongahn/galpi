@@ -10,9 +10,13 @@ import 'package:tuple/tuple.dart';
 Future<List<Tuple2<Review, Book>>> fetchReviews({String userId}) async {
   final response = await httpClient.get(
     '${env.apiEndpoint}/review/list?userId=${userId}',
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
   );
 
-  final reviews = json.decode(response.body)['reviews'];
+  // final reviews = json.decode(utf8.decode(response.bodyBytes))['reviews'];
+  final reviews = httpClient.decodeBody(response.bodyBytes)['reviews'];
 
   final reviewIterable = reviews.map((data) => Review.fromPayload(data));
   final reviewList = reviewIterable.toList().cast<Tuple2<Review, Book>>();

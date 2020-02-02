@@ -12,7 +12,7 @@ Future<User> me() async {
     headers: {"Content-Type": "application/json"},
   );
 
-  final decoded = json.decode(response.body);
+  final decoded = httpClient.decodeBody(response.bodyBytes);
 
   return User.fromPayload(decoded['user']);
 }

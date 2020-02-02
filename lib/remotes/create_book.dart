@@ -22,7 +22,7 @@ Future<String> createBook({Book book}) async {
   );
 
   try {
-    final decoded = json.decode(response.body);
+    final decoded = httpClient.decodeBody(response.bodyBytes);
     return decoded['bookId'];
   } catch (e) {
     return null;
