@@ -13,6 +13,7 @@ import 'package:galpi/models/review.dart';
 
 class ReviewsState extends State<Reviews> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+  var fetchReviewFuture = fetchReviews(userId: userRepository.user.id);
 
   Widget _buildEmptyScreen() {
     return Align(
@@ -61,21 +62,30 @@ class ReviewsState extends State<Reviews> {
             title: Logo(),
             centerTitle: false,
           ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-            child: FutureBuilder<List<Tuple2<Review, Book>>>(
-                future: fetchReviews(userId: userRepository.user.id),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data.length > 0
-                        ? _buildRows(snapshot.data)
-                        : _buildEmptyScreen();
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
+          body: RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                fetchReviewFuture =
+                    fetchReviews(userId: userRepository.user.id);
+              });
+              return Future.value(true);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+              child: FutureBuilder<List<Tuple2<Review, Book>>>(
+                  future: fetchReviewFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return snapshot.data.length > 0
+                          ? _buildRows(snapshot.data)
+                          : _buildEmptyScreen();
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
 
-                  return Center(child: CircularProgressIndicator());
-                }),
+                    return Center(child: CircularProgressIndicator());
+                  }),
+            ),
           ),
           endDrawer: MainDrawer(),
           floatingActionButton: FloatingActionButton(
