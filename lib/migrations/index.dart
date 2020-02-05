@@ -5,16 +5,13 @@ import 'package:galpi/migrations/v1_0_4_upload_to_server.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuple/tuple.dart';
 
-typedef void ShowSnackBar(String message);
-typedef Future<void> Migration(ShowSnackBar showSnackBar);
+typedef Future<void> Migration();
 
 final List<Tuple2<String, Migration>> migrationInfoList = [
   Tuple2.fromList(['1.0.4', v1_0_4_uploadToServer]),
 ];
 
-Future<void> runAllNeededMigrations(
-  ShowSnackBar showSnackBar,
-) async {
+Future<void> runAllNeededMigrations() async {
   final prefs = await SharedPreferences.getInstance();
   final rawLastVersion = prefs.getString(SHARED_PREFERENCE_VERSION_KEY);
 
@@ -31,10 +28,7 @@ Future<void> runAllNeededMigrations(
       final version = Version.parse(rawVersion);
 
       if (lastVersion < version && version <= currentVersion) {
-        showSnackBar(
-          'Running migraition for $rawVersion. rawLastVersion: $rawLastVersion',
-        );
-        await migration(showSnackBar);
+        await migration();
       }
     }
   }
