@@ -21,10 +21,6 @@ Future<String> createBook({Book book}) async {
     body: body,
   );
 
-  try {
-    final decoded = httpClient.decodeBody(response.bodyBytes);
-    return decoded['bookId'];
-  } catch (e) {
-    return null;
-  }
+  final decoded = httpClient.decodeBody(response.bodyBytes);
+  return decoded['bookId'];
 }

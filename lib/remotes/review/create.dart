@@ -1,17 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 
 import 'package:galpi/models/review.dart';
 import 'package:galpi/utils/http_client.dart';
 import 'package:galpi/utils/env.dart';
 
-class CreateReviewResponse {
-  Review review;
-}
-
-Future<CreateReviewResponse> createReview({
+Future<Review> createReview({
   Review review,
   String bookId,
 }) async {
@@ -27,10 +21,9 @@ Future<CreateReviewResponse> createReview({
     body: body,
   );
 
-  try {
-    final decoded = httpClient.decodeBody(response.bodyBytes);
-    return decoded;
-  } catch (e) {
-    return null;
-  }
+  final decoded = httpClient.decodeBody(response.bodyBytes);
+  final createdReviewPayload = decoded['review'];
+
+  final createdReview = Review.fromPayload(createdReviewPayload).item1;
+  return createdReview;
 }

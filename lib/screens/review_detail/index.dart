@@ -2,6 +2,7 @@ import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/remotes/review/delete.dart';
 import 'package:galpi/remotes/review/edit.dart';
+import 'package:galpi/utils/show_error_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
@@ -123,9 +124,12 @@ class ReviewDetail extends StatelessWidget {
         book: book,
         bookId: 'FIXME',
         onSave: (Review updatedReview, _) async {
-          await editReview(review: updatedReview);
-          Navigator.of(context).pop();
-          return;
+          try {
+            await editReview(review: updatedReview);
+            Navigator.of(context).pop();
+          } catch (e) {
+            showErrorDialog(context: context, message: '독후감 수정 중 오류가 발생했습니다.');
+          }
         },
       ),
     );

@@ -5,11 +5,7 @@ import 'package:galpi/models/review.dart';
 import 'package:galpi/utils/http_client.dart';
 import 'package:galpi/utils/env.dart';
 
-class EditReviewResponse {
-  String reviewId;
-}
-
-Future<EditReviewResponse> editReview({Review review}) async {
+Future<String> editReview({Review review}) async {
   final url = '${env.apiEndpoint}/review/edit';
 
   final body = JsonEncoder().convert({
@@ -22,10 +18,6 @@ Future<EditReviewResponse> editReview({Review review}) async {
     body: body,
   );
 
-  try {
-    final decoded = httpClient.decodeBody(response.bodyBytes);
-    return decoded;
-  } catch (e) {
-    return null;
-  }
+  final decoded = httpClient.decodeBody(response.bodyBytes);
+  return decoded['reviewId'];
 }
