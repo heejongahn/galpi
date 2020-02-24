@@ -11,9 +11,20 @@ import 'package:galpi/components/review_card/main.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 
+const PAGE_SIZE = 20;
+
+enum Status {
+  idle,
+  loading,
+  fetchedAll,
+}
+
 class ReviewsState extends State<Reviews> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   var fetchReviewFuture = fetchReviews(userId: userRepository.user.id);
+
+  var status = Status.idle;
+  List<Tuple2<Review, Book>> data = [];
 
   Widget _buildEmptyScreen() {
     return Align(
@@ -34,8 +45,34 @@ class ReviewsState extends State<Reviews> {
   Widget _buildRows(List<Tuple2<Review, Book>> data) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 24),
-      itemCount: data.length,
+      itemCount: status == Status.fetchedAll ? data.length : null,
       itemBuilder: (context, i) {
+        if (i > data.length) {
+          return null;
+        }
+
+        if (i == data.length) {
+          _fetchItems();
+
+          if (data.length == 0) {
+            return Container();
+          }
+
+          return Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 48,
+            ),
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+              ),
+            ),
+          );
+        }
+
         final review = data[i].item1;
         final book = data[i].item2;
 
@@ -65,26 +102,18 @@ class ReviewsState extends State<Reviews> {
           body: RefreshIndicator(
             onRefresh: () async {
               setState(() {
-                fetchReviewFuture =
-                    fetchReviews(userId: userRepository.user.id);
+                data = [];
               });
+
+              await _fetchItems();
+
               return Future.value(true);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-              child: FutureBuilder<List<Tuple2<Review, Book>>>(
-                  future: fetchReviewFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return snapshot.data.length > 0
-                          ? _buildRows(snapshot.data)
-                          : _buildEmptyScreen();
-                    } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    }
-
-                    return Center(child: CircularProgressIndicator());
-                  }),
+              child: status == Status.fetchedAll && data.length == 0
+                  ? _buildEmptyScreen()
+                  : _buildRows(data),
             ),
           ),
           endDrawer: MainDrawer(),
@@ -105,6 +134,28 @@ class ReviewsState extends State<Reviews> {
   void _onOpenNewReview() async {
     await Navigator.of(context).pushNamed('/review/add');
     setState(() {});
+  }
+
+  Future<void> _fetchItems() async {
+    if (status == Status.loading) {
+      return;
+    }
+
+    // setState(() {
+    status = Status.loading;
+    // });
+
+    final items = await fetchReviews(
+      userId: userRepository.user.id,
+      skip: data.length,
+      take: PAGE_SIZE,
+    );
+
+    status = items.length == PAGE_SIZE ? Status.idle : Status.fetchedAll;
+
+    setState(() {
+      data = data + items;
+    });
   }
 }
 
