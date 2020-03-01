@@ -130,9 +130,30 @@ class _WriteReviewState extends State<WriteReview> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  '전체 공개 여부',
-                  style: Theme.of(context).textTheme.caption,
+                Row(
+                  children: [
+                    Text(
+                      '전체 공개 여부',
+                      style: Theme.of(context).textTheme.caption,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 4),
+                      child: Tooltip(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .caption
+                            .copyWith(color: Colors.white),
+                        message: '곧 추가될 피드 및 공유 기능에서\n다른 사람에게 공개할지 여부입니다.',
+                        child: Icon(
+                          Icons.help_outline,
+                          color: Colors.grey,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Switch(
                   onChanged: (isPublic) {
