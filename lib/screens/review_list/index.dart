@@ -21,8 +21,8 @@ enum Status {
 
 class ReviewsState extends State<Reviews> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
-  var fetchReviewFuture = fetchReviews(userId: userRepository.user.id);
 
+  var isInitialized = false;
   var status = Status.idle;
   List<Tuple2<Review, Book>> data = [];
 
@@ -44,7 +44,7 @@ class ReviewsState extends State<Reviews> {
 
   Widget _buildRows(List<Tuple2<Review, Book>> data) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: EdgeInsets.zero,
       itemCount: status == Status.fetchedAll ? data.length : null,
       itemBuilder: (context, i) {
         if (i > data.length) {
@@ -53,6 +53,18 @@ class ReviewsState extends State<Reviews> {
 
         if (i == data.length) {
           _fetchItems();
+
+          if (!isInitialized) {
+            final screenSize = MediaQuery.of(context).size;
+
+            return SizedBox(
+              width: screenSize.width,
+              height: screenSize.height,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
 
           if (data.length == 0) {
             return Container();
@@ -77,7 +89,6 @@ class ReviewsState extends State<Reviews> {
         final book = data[i].item2;
 
         return Container(
-          margin: EdgeInsets.symmetric(vertical: 12),
           child: ReviewCard(
             review: review,
             book: book,
@@ -103,18 +114,17 @@ class ReviewsState extends State<Reviews> {
             onRefresh: () async {
               setState(() {
                 data = [];
+                status = Status.idle;
+                isInitialized = false;
               });
 
               await _fetchItems();
 
               return Future.value(true);
             },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-              child: status == Status.fetchedAll && data.length == 0
-                  ? _buildEmptyScreen()
-                  : _buildRows(data),
-            ),
+            child: status == Status.fetchedAll && data.length == 0
+                ? _buildEmptyScreen()
+                : _buildRows(data),
           ),
           endDrawer: MainDrawer(),
           floatingActionButton: FloatingActionButton(
@@ -141,9 +151,7 @@ class ReviewsState extends State<Reviews> {
       return;
     }
 
-    // setState(() {
     status = Status.loading;
-    // });
 
     final items = await fetchReviews(
       userId: userRepository.user.id,
@@ -155,6 +163,7 @@ class ReviewsState extends State<Reviews> {
 
     setState(() {
       data = data + items;
+      isInitialized = true;
     });
   }
 }

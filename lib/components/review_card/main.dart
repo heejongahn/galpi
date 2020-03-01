@@ -19,16 +19,24 @@ class ReviewCard extends StatelessWidget {
 
   buildBookDescription(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12.0),
+      padding: const EdgeInsets.only(
+        left: 12,
+        right: 12,
+        bottom: 8,
+      ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(
-            child: ListTile(
-          contentPadding: EdgeInsets.all(0),
-          title: Text(review.title, style: Theme.of(context).textTheme.title),
-          subtitle: Text(review.displayCreatedDate,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.caption),
-        )),
+          child: ListTile(
+            contentPadding: EdgeInsets.all(0),
+            title: Text(
+              review.title,
+              style: Theme.of(context).textTheme.title,
+            ),
+            subtitle: Text(review.displayCreatedDate,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.caption),
+          ),
+        ),
       ]),
     );
   }
@@ -40,8 +48,12 @@ class ReviewCard extends StatelessWidget {
     }
 
     return GestureDetector(
-      child: Card(
-        elevation: 2,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.black12),
+          ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
