@@ -37,40 +37,47 @@ class _WriteReviewState extends State<WriteReview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.arguments.isEditing ? '독후감 수정' : '독후감 작성'),
-          centerTitle: false,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.done),
-              onPressed: _onSave,
-            )
-          ],
-        ),
-        body: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: _onBlur,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    BookInfo(
-                      book: widget.arguments.book,
-                    ),
-                    getTitleFormField(),
-                    getBodyFormField(),
-                    getReadingStatusAndIsPublicFormFields(),
-                    getScoreFormField(),
-                  ],
+      appBar: AppBar(
+        title: Text(widget.arguments.isEditing ? '독후감 수정' : '독후감 작성'),
+        centerTitle: false,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.done),
+            onPressed: _onSave,
+          )
+        ],
+      ),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _onBlur,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                BookInfo(
+                  book: widget.arguments.book,
                 ),
-              ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      getTitleFormField(),
+                      getBodyFormField(),
+                      getReadingStatusAndIsPublicFormFields(),
+                      getScoreFormField(),
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
-        ));
+        ),
+      ),
+      // ),
+    );
   }
 
   Padding getTitleFormField() {
@@ -81,9 +88,12 @@ class _WriteReviewState extends State<WriteReview> {
             ? widget.arguments.review.title
             : null,
         decoration: InputDecoration(
-            alignLabelWithHint: true,
-            labelText: '독후감 제목',
-            border: OutlineInputBorder()),
+          alignLabelWithHint: true,
+          labelText: '제목',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
         validator: (value) {
           if (value.isEmpty) {
             return '내용을 입력해주세요.';
@@ -98,7 +108,9 @@ class _WriteReviewState extends State<WriteReview> {
 
   Padding getBodyFormField() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(
+        vertical: 8.0,
+      ),
       child: TextFormField(
         initialValue: widget.arguments.review != null
             ? widget.arguments.review.body
@@ -106,7 +118,9 @@ class _WriteReviewState extends State<WriteReview> {
         decoration: InputDecoration(
           alignLabelWithHint: true,
           labelText: '내용',
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.zero,
+          ),
         ),
         maxLines: 10,
         validator: (value) {
