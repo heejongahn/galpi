@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/components/main_drawer/index.dart';
+import 'package:galpi/models/user.dart';
 import 'package:galpi/remotes/review/list.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,7 @@ class ReviewsState extends State<Reviews> {
     );
   }
 
-  Widget _buildRows(List<Tuple2<Review, Book>> data) {
+  Widget _buildRows(List<Tuple2<Review, Book>> data, User user) {
     return ListView.builder(
       padding: EdgeInsets.zero,
       itemCount: status == Status.fetchedAll ? data.length : null,
@@ -90,6 +91,7 @@ class ReviewsState extends State<Reviews> {
 
         return Container(
           child: ReviewCard(
+            profileImageUrl: user.profileImageUrl,
             review: review,
             book: book,
             onTap: () => _onOpenReviewDetail(review, book),
@@ -124,7 +126,7 @@ class ReviewsState extends State<Reviews> {
             },
             child: status == Status.fetchedAll && data.length == 0
                 ? _buildEmptyScreen()
-                : _buildRows(data),
+                : _buildRows(data, userRepository.user),
           ),
           endDrawer: MainDrawer(),
           floatingActionButton: FloatingActionButton(
