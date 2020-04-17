@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/components/avatar/index.dart';
 import 'package:galpi/components/input_dialog/index.dart';
 import 'package:galpi/models/user.dart';
 import 'package:galpi/stores/user_repository.dart';
@@ -55,7 +56,9 @@ class MainDrawer extends StatelessWidget {
               ),
               padding: EdgeInsets.fromLTRB(0, 60, 0, 24),
               child: ListTile(
-                leading: Icon(Icons.account_circle, size: 32),
+                leading: Avatar(
+                  profileImageUrl: userRepository.user?.profileImageUrl,
+                ),
                 title: Text(
                   this._getProfileSectionTitle(
                       userRepository.authStatus, userRepository.user),
