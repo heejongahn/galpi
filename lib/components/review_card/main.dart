@@ -47,23 +47,39 @@ class ReviewCard extends StatelessWidget {
       return Container(width: 0, height: 0);
     }
 
-    return GestureDetector(
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Colors.black12),
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 24,
+      ),
+      child: GestureDetector(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(32, 33, 36, 0.28),
+                blurRadius: 6.0,
+                spreadRadius: 0,
+                offset: Offset(0, 1),
+              )
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                BookInfo(book: book),
+                buildBookDescription(context),
+                // moreIcon
+              ],
+            ),
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            BookInfo(book: book),
-            buildBookDescription(context),
-            // moreIcon
-          ],
-        ),
+        onTap: onTap,
       ),
-      onTap: onTap,
     );
   }
 }
