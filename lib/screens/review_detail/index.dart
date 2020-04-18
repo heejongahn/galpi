@@ -76,9 +76,13 @@ class ReviewDetail extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
-              child: Text(arguments.review.body,
-                  style:
-                      Theme.of(context).textTheme.body1.copyWith(fontSize: 16)),
+              child: Text(
+                arguments.review.body,
+                style: Theme.of(context).textTheme.body1.copyWith(
+                      fontSize: 16,
+                      height: 1.6,
+                    ),
+              ),
             )
           ],
         ));

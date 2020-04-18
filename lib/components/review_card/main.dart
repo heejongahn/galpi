@@ -3,18 +3,19 @@ import 'package:galpi/components/avatar/index.dart';
 import 'package:galpi/components/book_info/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
+import 'package:galpi/models/user.dart';
 import 'package:intl/intl.dart';
 
 final formatter = DateFormat('yyyy-MM-dd');
 
 class ReviewCard extends StatelessWidget {
-  final String profileImageUrl;
+  final User user;
   final Review review;
   final Book book;
   final GestureTapCallback onTap;
 
   ReviewCard({
-    this.profileImageUrl,
+    this.user,
     this.review,
     this.book,
     this.onTap,
@@ -32,14 +33,14 @@ class ReviewCard extends StatelessWidget {
           child: ListTile(
             contentPadding: EdgeInsets.all(0),
             leading: Avatar(
-              profileImageUrl: profileImageUrl,
+              profileImageUrl: user.profileImageUrl,
             ),
             title: Text(
               review.title,
               style: Theme.of(context).textTheme.title,
             ),
             subtitle: Text(
-              review.displayCreatedDate,
+              '${user.displayName ?? user.email}',
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.caption,
             ),

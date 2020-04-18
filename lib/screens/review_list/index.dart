@@ -45,7 +45,7 @@ class ReviewsState extends State<Reviews> {
 
   Widget _buildRows(List<Tuple2<Review, Book>> data, User user) {
     return ListView.builder(
-      padding: EdgeInsets.zero,
+      padding: EdgeInsets.only(bottom: 72),
       itemCount: status == Status.fetchedAll ? data.length : null,
       itemBuilder: (context, i) {
         if (i > data.length) {
@@ -91,7 +91,7 @@ class ReviewsState extends State<Reviews> {
 
         return Container(
           child: ReviewCard(
-            profileImageUrl: user.profileImageUrl,
+            user: user,
             review: review,
             book: book,
             onTap: () => _onOpenReviewDetail(review, book),
