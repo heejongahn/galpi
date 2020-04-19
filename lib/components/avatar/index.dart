@@ -2,22 +2,24 @@ import 'package:flutter/material.dart';
 
 class Avatar extends StatelessWidget {
   final String profileImageUrl;
+  final double size;
 
-  const Avatar({Key key, this.profileImageUrl}) : super(key: key);
+  const Avatar({Key key, this.profileImageUrl, this.size = 32})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return profileImageUrl != null && profileImageUrl != ''
         ? ClipRRect(
             borderRadius: BorderRadius.circular(
-              16,
+              size / 2,
             ),
             child: Image.network(
               profileImageUrl,
-              width: 32,
-              height: 32,
+              width: size,
+              height: size,
             ),
           )
-        : Icon(Icons.account_circle, size: 32);
+        : Icon(Icons.account_circle, size: size);
   }
 }
