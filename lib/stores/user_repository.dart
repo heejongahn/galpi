@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:galpi/remotes/edit_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:galpi/models/user.dart';
@@ -122,6 +123,10 @@ class UserRepository extends ChangeNotifier {
     httpClient.token = null;
     user = null;
     secureStorage.delete(key: AUTH_LOGIN_TOKEN_KEY);
+  }
+
+  updateUser(User updatedUser) async {
+    user = await editProfile(updatedUser);
   }
 }
 

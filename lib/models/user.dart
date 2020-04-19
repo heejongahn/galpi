@@ -22,4 +22,16 @@ class User {
       profileImageUrl: json['profileImageUrl'],
     );
   }
+
+  Map<String, dynamic> toMap() {
+    final map = new Map<String, dynamic>.from({});
+
+    map['id'] = id;
+    map['email'] = email;
+    map['phoneNumber'] = phoneNumber;
+    map['displayName'] = displayName;
+    map['profileImageUrl'] = profileImageUrl;
+
+    return map;
+  }
 }
