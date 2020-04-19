@@ -4,6 +4,7 @@ import 'package:galpi/components/screen_with_navigator/index.dart';
 
 import 'package:galpi/migrations/index.dart';
 
+import 'package:galpi/screens/edit_profile/index.dart';
 import 'package:galpi/screens/webview/index.dart';
 import 'package:galpi/screens/write_review/index.dart';
 import 'package:galpi/screens/book_list/index.dart';
@@ -72,6 +73,10 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
                     {
                       return EmailLogin();
                     }
+                  case '/profile/edit':
+                    {
+                      return EditProfile();
+                    }
                   case '/webview':
                     {
                       final WebviewArgument args = settings.arguments;
@@ -83,7 +88,7 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
                 }
               },
               // FIXME: 더 나은 방법을 찾아보자
-              // fullscreenDialog: settings.name.startsWith('/auth'),
+              fullscreenDialog: settings.name.startsWith('/profile'),
             );
           },
           onUnknownRoute: (_) {
