@@ -60,6 +60,10 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>프로필 사진 설정을 위해 앨범 접근 권한이 필요합니다.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>프로필 사진 설정을 위해 카메라 접근 권한이 필요합니다.</string>
 	<key>FirebaseDynamicLinksCustomDomains</key>
 	<array>
 		<string>https://galpi.page.link</string>
