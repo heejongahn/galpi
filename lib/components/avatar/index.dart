@@ -18,6 +18,7 @@ class Avatar extends StatelessWidget {
               profileImageUrl,
               width: size,
               height: size,
+              fit: BoxFit.cover,
             ),
           )
         : Icon(Icons.account_circle, size: size);
