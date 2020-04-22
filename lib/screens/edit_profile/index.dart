@@ -128,8 +128,18 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future getImage() async {
-    final image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    final key = 'profile/${p.basename(image.path)}';
+    final image = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+      maxHeight: 140,
+      maxWidth: 140,
+    );
+
+    final filename = p.basename(image.path).replaceAll(
+          'image_picker_',
+          '',
+        );
+
+    final key = 'profile/$filename';
 
     final signResult = await getSignedUrl(key: key);
 
