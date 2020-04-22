@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/components/infinite_scroll_list_view/index.dart';
 import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/components/main_drawer/index.dart';
-import 'package:galpi/models/user.dart';
 import 'package:galpi/remotes/review/list.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:provider/provider.dart';
@@ -22,9 +22,9 @@ enum Status {
 
 class ReviewsState extends State<Reviews> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+  UniqueKey listViewKey = new UniqueKey();
 
   var isInitialized = false;
-  var status = Status.idle;
   List<Tuple2<Review, Book>> data = [];
 
   Widget _buildEmptyScreen() {
@@ -43,64 +43,6 @@ class ReviewsState extends State<Reviews> {
     );
   }
 
-  Widget _buildRows(List<Tuple2<Review, Book>> data, User user) {
-    return ListView.builder(
-      padding: EdgeInsets.only(bottom: 72),
-      itemCount: status == Status.fetchedAll ? data.length : null,
-      itemBuilder: (context, i) {
-        if (i > data.length) {
-          return null;
-        }
-
-        if (i == data.length) {
-          _fetchItems();
-
-          if (!isInitialized) {
-            final screenSize = MediaQuery.of(context).size;
-
-            return SizedBox(
-              width: screenSize.width,
-              height: screenSize.height,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-
-          if (data.length == 0) {
-            return Container();
-          }
-
-          return Container(
-            padding: EdgeInsets.symmetric(
-              vertical: 48,
-            ),
-            alignment: Alignment.center,
-            child: SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-              ),
-            ),
-          );
-        }
-
-        final review = data[i].item1;
-        final book = data[i].item2;
-
-        return Container(
-          child: ReviewCard(
-            user: user,
-            review: review,
-            book: book,
-            onTap: () => _onOpenReviewDetail(review, book),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<UserRepository>(
@@ -116,17 +58,21 @@ class ReviewsState extends State<Reviews> {
             onRefresh: () async {
               setState(() {
                 data = [];
-                status = Status.idle;
                 isInitialized = false;
+                listViewKey = new UniqueKey();
               });
 
               await _fetchItems();
 
               return Future.value(true);
             },
-            child: status == Status.fetchedAll && data.length == 0
-                ? _buildEmptyScreen()
-                : _buildRows(data, userRepository.user),
+            child: InfiniteScrollListView<Tuple2<Review, Book>>(
+              key: listViewKey,
+              data: data,
+              fetchMore: _fetchItems,
+              emptyWidget: _buildEmptyScreen(),
+              itemBuilder: _itemBuilder,
+            ),
           ),
           endDrawer: MainDrawer(),
           floatingActionButton: FloatingActionButton(
@@ -148,25 +94,33 @@ class ReviewsState extends State<Reviews> {
     setState(() {});
   }
 
-  Future<void> _fetchItems() async {
-    if (status == Status.loading) {
-      return;
-    }
+  Widget _itemBuilder(Tuple2<Review, Book> pair) {
+    final review = pair.item1;
+    final book = pair.item2;
 
-    status = Status.loading;
+    return Container(
+      child: ReviewCard(
+        user: userRepository.user,
+        review: review,
+        book: book,
+        onTap: () => _onOpenReviewDetail(review, book),
+      ),
+    );
+  }
 
+  Future<bool> _fetchItems() async {
     final items = await fetchReviews(
       userId: userRepository.user.id,
       skip: data.length,
       take: PAGE_SIZE,
     );
 
-    status = items.length == PAGE_SIZE ? Status.idle : Status.fetchedAll;
-
     setState(() {
       data = data + items;
       isInitialized = true;
     });
+
+    return items.length == PAGE_SIZE;
   }
 }
 
