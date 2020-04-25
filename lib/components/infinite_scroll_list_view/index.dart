@@ -83,10 +83,10 @@ class InfiniteScrollListView<T> extends StatefulWidget {
 
   const InfiniteScrollListView({
     Key key,
-    this.data,
-    this.fetchMore,
-    this.itemBuilder,
-    this.emptyWidget,
+    @required this.data,
+    @required this.fetchMore,
+    @required this.itemBuilder,
+    @required this.emptyWidget,
   }) : super(key: key);
 
   @override

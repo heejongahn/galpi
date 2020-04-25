@@ -26,7 +26,7 @@ class BooksState extends State<Books> {
     return Scaffold(
       key: scaffoldKey,
       body: FutureBuilder<List<Book>>(
-          future: fetchBooks(query: '프로그래밍'),
+          future: fetchBooks(query: '프로그래밍', page: 1, size: 10),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return _buildRows(snapshot.data);

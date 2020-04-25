@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart';
 
+import 'package:galpi/components/infinite_scroll_list_view/index.dart';
 import 'package:galpi/components/book_card/main.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/remotes/fetch_books.dart';
@@ -18,8 +19,11 @@ class SearchView extends StatefulWidget {
   _SearchViewState createState() => _SearchViewState();
 }
 
+const PAGE_SIZE = 20;
+
 class _SearchViewState extends State<SearchView> {
   final FocusNode _focusNode = FocusNode();
+  List<Book> books = [];
 
   String query = '';
   final StreamController<String> _queryStreamController = StreamController();
@@ -84,19 +88,31 @@ class _SearchViewState extends State<SearchView> {
       return _buildPlaceholder();
     }
 
-    return FutureBuilder(
-        future: fetchBooks(query: query),
-        builder: (context, AsyncSnapshot<List<Book>> snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data == null || snapshot.data.isEmpty
-                ? _buildPlaceholder()
-                : _buildRows(snapshot.data);
-          } else if (snapshot.hasError) {
-            return Flexible(child: Text("${snapshot.error}"));
-          }
+    return InfiniteScrollListView(
+      data: books,
+      fetchMore: _fetchMore,
+      itemBuilder: (Book book) {
+        return BookCard(
+          book: book,
+          onTap: () => widget.onSelectBook(book),
+        );
+      },
+      emptyWidget: _buildPlaceholder(),
+    );
+  }
 
-          return Container(width: 0, height: 0);
-        });
+  Future<bool> _fetchMore() async {
+    final fetchedBooks = await fetchBooks(
+      query: query,
+      page: (books.length ~/ PAGE_SIZE) + 1,
+      size: PAGE_SIZE,
+    );
+
+    setState(() {
+      books = books + fetchedBooks;
+    });
+
+    return fetchedBooks.length >= PAGE_SIZE;
   }
 
   Widget _buildPlaceholder() {
@@ -104,19 +120,5 @@ class _SearchViewState extends State<SearchView> {
       alignment: Alignment.center,
       child: const Text('검색 결과가 없습니다.'),
     );
-  }
-
-  Widget _buildRows(List<Book> books) {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        padding: const EdgeInsets.all(16.0),
-        itemCount: books.length,
-        itemBuilder: (context, index) {
-          final book = books[index];
-          return BookCard(
-            book: book,
-            onTap: () => widget.onSelectBook(book),
-          );
-        });
   }
 }
