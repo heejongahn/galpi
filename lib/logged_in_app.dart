@@ -19,9 +19,9 @@ class LoggedInApp extends StatefulWidget {
 }
 
 class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
-  int _pageIndex = 1;
+  final int _pageIndex = 1;
   bool isMigrationFinished = false;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -36,7 +36,9 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     if (!isMigrationFinished) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
     }
 
     return Scaffold(
@@ -48,7 +50,7 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
         ScreenWithNavigator(
           child: Reviews(),
           onGenerateRoute: (RouteSettings settings) {
-            return new MaterialPageRoute(
+            return MaterialPageRoute<dynamic>(
               builder: (_) {
                 switch (settings.name) {
                   case '/':
@@ -61,12 +63,12 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
                     }
                   case '/review/write':
                     {
-                      final WriteReviewArgument args = settings.arguments;
+                      final args = settings.arguments as WriteReviewArgument;
                       return WriteReview(arguments: args);
                     }
                   case '/review/detail':
                     {
-                      final ReviewDetailArguments args = settings.arguments;
+                      final args = settings.arguments as ReviewDetailArguments;
                       return ReviewDetail(arguments: args);
                     }
                   case '/auth/email-login':
@@ -79,20 +81,23 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
                     }
                   case '/webview':
                     {
-                      final WebviewArgument args = settings.arguments;
+                      final args = settings.arguments as WebviewArgument;
 
                       return Webview(
                         args: args,
                       );
                     }
                 }
+
+                // FIXME: Not Found Page?
+                return Container();
               },
               // FIXME: 더 나은 방법을 찾아보자
               fullscreenDialog: settings.name.startsWith('/profile'),
             );
           },
           onUnknownRoute: (_) {
-            return MaterialPageRoute(
+            return MaterialPageRoute<dynamic>(
               builder: (context) {
                 return Reviews();
               },

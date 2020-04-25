@@ -49,25 +49,26 @@ class Review {
   static Tuple2<Review, Book> fromPayload(Map<String, dynamic> map) {
     final readingStartedAt = map[columnReadingStartedAt] == null
         ? null
-        : DateTime.tryParse(map[columnReadingStartedAt]);
+        : DateTime.tryParse(map[columnReadingStartedAt] as String);
+
     final readingFinishedAt = map[columnReadingFinishedAt] == null
         ? null
-        : DateTime.tryParse(map[columnReadingFinishedAt]);
+        : DateTime.tryParse(map[columnReadingFinishedAt] as String);
 
     final review = Review(
-      id: map['id'],
-      stars: map['stars'],
-      title: map['title'],
-      body: map['body'],
+      id: map['id'] as String,
+      stars: map['stars'] as int,
+      title: map['title'] as String,
+      body: map['body'] as String,
       readingStatus: readingStatusInverseMap[map['readingStatus']],
       readingStartedAt: readingStartedAt,
       readingFinishedAt: readingFinishedAt,
-      createdAt: DateTime.parse(map['createdAt']),
-      lastModifiedAt: DateTime.parse(map['lastModifiedAt']),
-      isPublic: map['isPublic'],
+      createdAt: DateTime.parse(map['createdAt'] as String),
+      lastModifiedAt: DateTime.parse(map['lastModifiedAt'] as String),
+      isPublic: map['isPublic'] as bool,
     );
 
-    final book = Book.fromPayload(map['book']);
+    final book = Book.fromPayload(map['book'] as Map<String, dynamic>);
 
     return Tuple2(review, book);
   }
@@ -75,7 +76,7 @@ class Review {
   Map<String, dynamic> toMap() {
     final now = DateTime.now().toIso8601String();
 
-    var map = <String, dynamic>{
+    final map = <String, dynamic>{
       'stars': stars,
       'title': title,
       'body': body,
@@ -96,7 +97,7 @@ class Review {
   }
 
   String get displayReadingStatus {
-    switch (this.readingStatus) {
+    switch (readingStatus) {
       case ReadingStatus.reading:
         {
           return '읽는 중';
@@ -110,67 +111,72 @@ class Review {
           return '읽음';
         }
     }
+
+    return null;
   }
 
   String get displayCreatedDate {
-    return formatter.format(this.createdAt);
+    return formatter.format(createdAt);
   }
 
   // LEGACY
   // 로컬 DB를 없애도 될 때가 되면 지운다
 
-  static final table = 'Review';
-  static final columnId = 'id';
-  static final columnStars = 'stars';
-  static final columnTitle = 'title';
-  static final columnBody = 'body';
-  static final columnReadingStatus = 'readingStatus';
-  static final columnReadingStartedAt = 'readingStartedAt';
-  static final columnReadingFinishedAt = 'readingFinishedAt';
-  static final columnCreatedAt = 'createdAt';
-  static final columnLastModifiedAt = 'lastModifiedAt';
-  static final columnBookId = 'bookId';
+  static const table = 'Review';
+  static const columnId = 'id';
+  static const columnStars = 'stars';
+  static const columnTitle = 'title';
+  static const columnBody = 'body';
+  static const columnReadingStatus = 'readingStatus';
+  static const columnReadingStartedAt = 'readingStartedAt';
+  static const columnReadingFinishedAt = 'readingFinishedAt';
+  static const columnCreatedAt = 'createdAt';
+  static const columnLastModifiedAt = 'lastModifiedAt';
+  static const columnBookId = 'bookId';
 
-  static legacy_fromMap(Map<String, dynamic> map) {
+  static Review legacy_fromMap(Map<String, dynamic> map) {
     final readingStartedAt = map[columnReadingStartedAt] == null
         ? null
-        : DateTime.tryParse(map[columnReadingStartedAt]);
+        : DateTime.tryParse(map[columnReadingStartedAt] as String);
     final readingFinishedAt = map[columnReadingFinishedAt] == null
         ? null
-        : DateTime.tryParse(map[columnReadingFinishedAt]);
+        : DateTime.tryParse(map[columnReadingFinishedAt] as String);
 
     return Review(
-      legacyId: map[columnId],
-      stars: map[columnStars],
-      title: map[columnTitle],
-      body: map[columnBody],
+      legacyId: map[columnId] as int,
+      stars: map[columnStars] as int,
+      title: map[columnTitle] as String,
+      body: map[columnBody] as String,
       readingStatus: readingStatusInverseMap[map[columnReadingStatus]],
       readingStartedAt: readingStartedAt,
       readingFinishedAt: readingFinishedAt,
-      createdAt: DateTime.parse(map[columnCreatedAt]),
-      lastModifiedAt: DateTime.parse(map[columnLastModifiedAt]),
+      createdAt: DateTime.parse(map[columnCreatedAt] as String),
+      lastModifiedAt: DateTime.parse(map[columnLastModifiedAt] as String),
     );
   }
 
-  static legacy_fromJoinedMap(Map<String, dynamic> map) {
+  static Review legacy_fromJoinedMap(Map<String, dynamic> map) {
     final readingStartedAt = map['${table}_${columnReadingStartedAt}'] == null
         ? null
-        : DateTime.tryParse(map['${table}_${columnReadingStartedAt}']);
+        : DateTime.tryParse(
+            map['${table}_${columnReadingStartedAt}'] as String);
     final readingFinishedAt = map['${table}_${columnReadingFinishedAt}'] == null
         ? null
-        : DateTime.tryParse(map['${table}_${columnReadingFinishedAt}']);
+        : DateTime.tryParse(
+            map['${table}_${columnReadingFinishedAt}'] as String);
 
     return Review(
-      legacyId: map['${table}_${columnId}'],
-      stars: map['${table}_${columnStars}'],
-      title: map['${table}_${columnTitle}'],
-      body: map['${table}_${columnBody}'],
+      legacyId: map['${table}_${columnId}'] as int,
+      stars: map['${table}_${columnStars}'] as int,
+      title: map['${table}_${columnTitle}'] as String,
+      body: map['${table}_${columnBody}'] as String,
       readingStatus:
           readingStatusInverseMap[map['${table}_${columnReadingStatus}']],
       readingStartedAt: readingStartedAt,
       readingFinishedAt: readingFinishedAt,
-      createdAt: DateTime.parse(map['${table}_${columnCreatedAt}']),
-      lastModifiedAt: DateTime.parse(map['${table}_${columnLastModifiedAt}']),
+      createdAt: DateTime.parse(map['${table}_${columnCreatedAt}'] as String),
+      lastModifiedAt:
+          DateTime.parse(map['${table}_${columnLastModifiedAt}'] as String),
     );
   }
 }

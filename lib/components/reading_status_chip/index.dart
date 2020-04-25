@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/models/review.dart';
 
-typedef void OnTap(ReadingStatus readingStatus);
+typedef OnTap = void Function(ReadingStatus readingStatus);
 
 class ReadingStatusChip extends StatelessWidget {
   @required
   final ReadingStatus readingStatus;
+
   @required
   final bool isSelected;
 
   final OnTap onTap;
 
-  ReadingStatusChip({this.readingStatus, this.isSelected = true, this.onTap});
+  const ReadingStatusChip({
+    this.readingStatus,
+    this.isSelected = true,
+    this.onTap,
+  });
 
-  get label {
+  String get label {
     switch (readingStatus) {
       case ReadingStatus.reading:
         {
@@ -28,10 +33,12 @@ class ReadingStatusChip extends StatelessWidget {
           return '읽음';
         }
     }
+
+    return null;
   }
 
   @override
-  build(BuildContext context) {
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => onTap(readingStatus),
       child: Opacity(

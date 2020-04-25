@@ -3,7 +3,7 @@ import 'package:galpi/remotes/review/create.dart';
 import 'package:galpi/utils/database_helpers.dart';
 
 Future<void> v1_0_4_uploadToServer() async {
-  final List<Future> futures = [];
+  final List<Future<void>> futures = [];
   final queryResult = await DatabaseHelper.instance.queryAllReviews();
 
   final size = queryResult.item1.length;

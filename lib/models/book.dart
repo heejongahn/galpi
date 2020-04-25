@@ -16,31 +16,35 @@ class Book {
       this.linkUri,
       this.title});
 
-  static fromKakaoPayload(Map<String, dynamic> json) {
+  static Book fromKakaoPayload(Map<String, dynamic> json) {
+    final List<String> authors =
+        List<String>.from(json['authors'] as List<dynamic>);
+    final String author = authors.join(", ");
+
     return Book(
-      isbn: json['isbn'],
-      title: json['title'],
-      author: (json['authors'].cast<String>()).join(", "),
-      publisher: json['publisher'],
-      linkUri: json['url'],
-      imageUri: json['thumbnail'],
+      isbn: json['isbn'] as String,
+      title: json['title'] as String,
+      author: author,
+      publisher: json['publisher'] as String,
+      linkUri: json['url'] as String,
+      imageUri: json['thumbnail'] as String,
     );
   }
 
-  static fromPayload(Map<String, dynamic> json) {
+  static Book fromPayload(Map<String, dynamic> json) {
     return Book(
-      id: json['id'],
-      isbn: json['isbn'],
-      title: json['title'],
-      author: json['author'],
-      publisher: json['publisher'],
-      linkUri: json['linkUri'],
-      imageUri: json['imageUri'],
+      id: json['id'] as String,
+      isbn: json['isbn'] as String,
+      title: json['title'] as String,
+      author: json['author'] as String,
+      publisher: json['publisher'] as String,
+      linkUri: json['linkUri'] as String,
+      imageUri: json['imageUri'] as String,
     );
   }
 
   Map<String, dynamic> toMap() {
-    final map = new Map<String, dynamic>.from({});
+    final map = Map<String, dynamic>.from(<String, dynamic>{});
 
     // FIXME
     map['isbn'] = isbn;
@@ -56,44 +60,42 @@ class Book {
   // LEGACY
   // 로컬 DB를 없애도 될 때가 되면 지운다
 
-  int _id;
-
   // legacy
-  static final table = 'Book';
-  static final columnId = 'id';
+  static const table = 'Book';
+  static const columnId = 'id';
   // FIXME
-  static final columnIsbn = 'stars';
-  static final columnTitle = 'title';
+  static const columnIsbn = 'stars';
+  static const columnTitle = 'title';
   // FIXME
-  static final columnAuthor = 'body';
-  static final columnPublisher = 'publisher';
-  static final columnLinkUri = 'linkUri';
-  static final columnImageUri = 'imageUri';
+  static const columnAuthor = 'body';
+  static const columnPublisher = 'publisher';
+  static const columnLinkUri = 'linkUri';
+  static const columnImageUri = 'imageUri';
 
-  static legacy_fromMap(Map<String, dynamic> map) {
+  static Book legacy_fromMap(Map<String, dynamic> map) {
     return Book(
-      isbn: map[columnIsbn],
-      title: map[columnTitle],
-      author: map[columnAuthor],
-      publisher: map[columnPublisher],
-      linkUri: map[columnLinkUri],
-      imageUri: map[columnImageUri],
+      isbn: map[columnIsbn] as String,
+      title: map[columnTitle] as String,
+      author: map[columnAuthor] as String,
+      publisher: map[columnPublisher] as String,
+      linkUri: map[columnLinkUri] as String,
+      imageUri: map[columnImageUri] as String,
     );
   }
 
-  static legacy_fromJoinedMap(Map<String, dynamic> map) {
+  static Book legacy_fromJoinedMap(Map<String, dynamic> map) {
     return Book(
-      isbn: map['${table}_${columnIsbn}'],
-      title: map['${table}_${columnTitle}'],
-      author: map['${table}_${columnAuthor}'],
-      publisher: map['${table}_${columnPublisher}'],
-      linkUri: map['${table}_${columnLinkUri}'],
-      imageUri: map['${table}_${columnImageUri}'],
+      isbn: map['${table}_${columnIsbn}'] as String,
+      title: map['${table}_${columnTitle}'] as String,
+      author: map['${table}_${columnAuthor}'] as String,
+      publisher: map['${table}_${columnPublisher}'] as String,
+      linkUri: map['${table}_${columnLinkUri}'] as String,
+      imageUri: map['${table}_${columnImageUri}'] as String,
     );
   }
 
   Map<String, dynamic> legacy_toMap() {
-    var map = <String, dynamic>{
+    final map = <String, dynamic>{
       columnIsbn: isbn,
       columnTitle: title,
       columnAuthor: author,

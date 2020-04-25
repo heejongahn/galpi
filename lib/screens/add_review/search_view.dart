@@ -7,23 +7,24 @@ import 'package:galpi/components/book_card/main.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/remotes/fetch_books.dart';
 
-typedef void OnSelectBook(Book book);
+typedef OnSelectBook = void Function(Book book);
 
 class SearchView extends StatefulWidget {
   final OnSelectBook onSelectBook;
 
-  SearchView({this.onSelectBook});
+  const SearchView({this.onSelectBook});
 
+  @override
   _SearchViewState createState() => _SearchViewState();
 }
 
 class _SearchViewState extends State<SearchView> {
-  final FocusNode _focusNode = new FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   String query = '';
   final StreamController<String> _queryStreamController = StreamController();
 
-  Observable queryObservable;
+  Observable<String> queryObservable;
 
   _SearchViewState() {
     Observable(_queryStreamController.stream)
@@ -38,13 +39,15 @@ class _SearchViewState extends State<SearchView> {
       Container(
         padding: const EdgeInsets.all(20),
         child: TextField(
-          focusNode: this._focusNode,
+          focusNode: _focusNode,
           onChanged: (v) {
             _queryStreamController.sink.add(v);
           },
           textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-              labelText: '제목, 저자, 출판사', border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+            labelText: '제목, 저자, 출판사',
+            border: OutlineInputBorder(),
+          ),
         ),
       ),
       Expanded(child: _buildContent()),
@@ -64,13 +67,13 @@ class _SearchViewState extends State<SearchView> {
     _focusNode.addListener(_onOnFocusNodeEvent);
   }
 
-  _onOnFocusNodeEvent() {
+  void _onOnFocusNodeEvent() {
     setState(() {
       // Re-renders
     });
   }
 
-  _onQueryChange(String newQuery) {
+  void _onQueryChange(String newQuery) {
     setState(() {
       query = newQuery;
     });
@@ -85,7 +88,7 @@ class _SearchViewState extends State<SearchView> {
         future: fetchBooks(query: query),
         builder: (context, AsyncSnapshot<List<Book>> snapshot) {
           if (snapshot.hasData) {
-            return snapshot.data == null || snapshot.data.length == 0
+            return snapshot.data == null || snapshot.data.isEmpty
                 ? _buildPlaceholder()
                 : _buildRows(snapshot.data);
           } else if (snapshot.hasError) {
@@ -99,7 +102,7 @@ class _SearchViewState extends State<SearchView> {
   Widget _buildPlaceholder() {
     return Container(
       alignment: Alignment.center,
-      child: Text('검색 결과가 없습니다.'),
+      child: const Text('검색 결과가 없습니다.'),
     );
   }
 

@@ -4,8 +4,9 @@ import 'package:http/http.dart';
 
 class _HttpClient extends BaseClient {
   String token;
-  final Client _inner = new Client();
+  final Client _inner = Client();
 
+  @override
   Future<StreamedResponse> send(BaseRequest request) {
     if (token != null) {
       request.headers['Authorization'] = 'Bearer $token';
@@ -15,9 +16,9 @@ class _HttpClient extends BaseClient {
   }
 
   // FIXME: 매번 부르는 대신 자동으로 처리되었으면 좋겠다
-  decodeBody(List<int> bodyBytes) {
-    return json.decode(utf8.decode(bodyBytes));
+  T decodeBody<T>(List<int> bodyBytes) {
+    return json.decode(utf8.decode(bodyBytes)) as T;
   }
 }
 
-final httpClient = new _HttpClient();
+final httpClient = _HttpClient();

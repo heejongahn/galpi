@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CommonForm extends StatelessWidget {
   final Widget child;
 
-  CommonForm({this.child});
+  const CommonForm({this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class CommonForm extends StatelessWidget {
       child: Container(
         child: Form(
           child: Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               vertical: 8,
               horizontal: 12,
             ),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-class SafeAreaRoute extends MaterialPageRoute {
-  SafeAreaRoute({child, settings})
+class SafeAreaRoute extends MaterialPageRoute<dynamic> {
+  SafeAreaRoute({Widget child, RouteSettings settings})
       : super(
-            settings: settings,
-            builder: (BuildContext context) {
-              return SafeArea(child: child);
-            });
+          settings: settings,
+          builder: (BuildContext context) {
+            return SafeArea(child: child);
+          },
+        );
 }

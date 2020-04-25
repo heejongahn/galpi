@@ -5,7 +5,7 @@ class BookCard extends StatelessWidget {
   final Book book;
   final GestureTapCallback onTap;
 
-  BookCard({this.book, this.onTap});
+  const BookCard({this.book, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class BookCard extends StatelessWidget {
                   ),
                   subtitle: Text(
                     '${book.author} | ${book.publisher}',
-                    style: TextStyle(fontSize: 14.0),
+                    style: const TextStyle(fontSize: 14.0),
                   ),
                 )
               ]))

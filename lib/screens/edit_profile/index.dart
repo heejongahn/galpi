@@ -15,7 +15,7 @@ class EditProfile extends StatefulWidget {
   _EditProfileState createState() => _EditProfileState();
 }
 
-typedef void OnConfirm();
+typedef OnConfirm = void Function();
 
 class _EditProfileState extends State<EditProfile> {
   String _profileImageUrl = '';
@@ -43,7 +43,7 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('프로필 수정'),
+        title: const Text('프로필 수정'),
         centerTitle: false,
         actions: <Widget>[
           IconButton(
@@ -53,7 +53,7 @@ class _EditProfileState extends State<EditProfile> {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         child: CommonForm(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,7 +108,7 @@ class _EditProfileState extends State<EditProfile> {
       padding: const EdgeInsets.fromLTRB(0, 24, 0, 8),
       child: TextFormField(
         initialValue: user.displayName,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           alignLabelWithHint: true,
           labelText: '닉네임',
           border: UnderlineInputBorder(
@@ -119,6 +119,8 @@ class _EditProfileState extends State<EditProfile> {
           if (value.isEmpty) {
             return '내용을 입력해주세요.';
           }
+
+          return null;
         },
         onChanged: (val) => setState(() {
           _displayName = val;
@@ -127,7 +129,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Future getImage() async {
+  Future<void> getImage() async {
     final image = await ImagePicker.pickImage(
       source: ImageSource.gallery,
       maxHeight: 140,
@@ -145,15 +147,15 @@ class _EditProfileState extends State<EditProfile> {
 
     await uploadFileToS3(
       file: image,
-      url: signResult['signedUrl'],
+      url: signResult['signedUrl'] as String,
     );
 
     setState(() {
-      _profileImageUrl = signResult['objectUrl'];
+      _profileImageUrl = signResult['objectUrl'] as String;
     });
   }
 
-  _onSave() async {
+  Future<void> _onSave() async {
     final userRepository = Provider.of<UserRepository>(context);
 
     final map = userRepository.user.toMap();

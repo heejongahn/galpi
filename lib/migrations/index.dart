@@ -5,10 +5,10 @@ import 'package:galpi/migrations/v1_0_4_upload_to_server.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuple/tuple.dart';
 
-typedef Future<void> Migration();
+typedef Migration = Future<void> Function();
 
 final List<Tuple2<String, Migration>> migrationInfoList = [
-  Tuple2.fromList(['1.0.4', v1_0_4_uploadToServer]),
+  Tuple2.fromList(<dynamic>['1.0.4', v1_0_4_uploadToServer]),
 ];
 
 Future<void> runAllNeededMigrations() async {
@@ -21,7 +21,7 @@ Future<void> runAllNeededMigrations() async {
   if (rawLastVersion != null) {
     final lastVersion = Version.parse(rawLastVersion);
 
-    for (Tuple2<String, Migration> migrationInfo in migrationInfoList) {
+    for (final Tuple2<String, Migration> migrationInfo in migrationInfoList) {
       final rawVersion = migrationInfo.item1;
       final migration = migrationInfo.item2;
 

@@ -18,8 +18,11 @@ Future<List<Tuple2<Review, Book>>> fetchReviews({
     },
   );
 
-  // final reviews = json.decode(utf8.decode(response.bodyBytes))['reviews'];
-  final reviews = httpClient.decodeBody(response.bodyBytes)['reviews'];
+  final decoded =
+      httpClient.decodeBody<Map<String, dynamic>>(response.bodyBytes);
+
+  final reviews =
+      List<Map<String, dynamic>>.from(decoded['reviews'] as List<dynamic>);
 
   final reviewIterable = reviews.map((data) => Review.fromPayload(data));
   final reviewList = reviewIterable.toList().cast<Tuple2<Review, Book>>();

@@ -9,7 +9,7 @@ class Env {
   String apiEndpoint;
 }
 
-final env = new Env();
+final env = Env();
 
 final _dotEnv = DotEnv();
 const _vars = [

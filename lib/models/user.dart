@@ -13,18 +13,18 @@ class User {
     this.profileImageUrl,
   });
 
-  static fromPayload(Map<String, dynamic> json) {
+  static User fromPayload(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      email: json['email'],
-      phoneNumber: json['phoneNumber'],
-      displayName: json['displayName'],
-      profileImageUrl: json['profileImageUrl'],
+      id: json['id'] as String,
+      email: json['email'] as String,
+      phoneNumber: json['phoneNumber'] as String,
+      displayName: json['displayName'] as String,
+      profileImageUrl: json['profileImageUrl'] as String,
     );
   }
 
   Map<String, dynamic> toMap() {
-    final map = new Map<String, dynamic>.from({});
+    final Map<String, dynamic> map = <String, String>{};
 
     map['id'] = id;
     map['email'] = email;

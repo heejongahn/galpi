@@ -5,16 +5,16 @@ void showErrorDialog({
   String title = '앗!',
   String message,
 }) {
-  showDialog(
+  showDialog<void>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: new Text("앗!"),
-        content: new Text(message),
+        title: const Text("앗!"),
+        content: Text(message),
         actions: <Widget>[
-          new FlatButton(
+          FlatButton(
             textColor: Colors.black,
-            child: new Text("닫기"),
+            child: const Text("닫기"),
             onPressed: () {
               Navigator.of(context).pop();
             },

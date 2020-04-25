@@ -5,7 +5,7 @@ class Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    return const Text(
       'galpi',
       style: TextStyle(fontFamily: 'Abril-Fatface'),
     );

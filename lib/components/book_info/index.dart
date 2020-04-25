@@ -5,11 +5,11 @@ import 'package:galpi/screens/webview/index.dart';
 class BookInfo extends StatelessWidget {
   final Book book;
 
-  BookInfo({
+  const BookInfo({
     this.book,
   });
 
-  get bookImage {
+  Image get bookImage {
     return book.imageUri != ''
         ? Image.network(book.imageUri, height: 150, fit: BoxFit.cover)
         : null;
@@ -22,7 +22,7 @@ class BookInfo extends StatelessWidget {
             children: [
               Container(
                 alignment: Alignment.center,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color.fromARGB(15, 0x00, 0x00, 0x00),
                 ),
                 child: bookImage,
@@ -32,7 +32,7 @@ class BookInfo extends StatelessWidget {
                 right: 0,
                 bottom: 0,
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: Color.fromARGB(100, 0x1c, 0x23, 0x2e)),
                   child: buildOverlay(context),
                 ),
@@ -52,7 +52,7 @@ class BookInfo extends StatelessWidget {
 
   Widget buildOverlay(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -78,10 +78,10 @@ class BookInfo extends StatelessWidget {
     );
   }
 
-  _onClickBookDetail(BuildContext context) {
+  void _onClickBookDetail(BuildContext context) {
     Navigator.of(context).pushNamed(
       '/webview',
-      arguments: new WebviewArgument('책 정보', book.linkUri),
+      arguments: WebviewArgument('책 정보', book.linkUri),
     );
   }
 }

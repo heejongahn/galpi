@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-typedef void OnSaved(DateTime date);
+typedef OnSaved = void Function(DateTime dateTime);
 
 final formatter = DateFormat('yyyy-MM-dd');
 
@@ -12,7 +12,7 @@ class DatePickerFormField extends StatefulWidget {
   final DateTime firstDate;
   final DateTime lastDate;
 
-  DatePickerFormField({
+  const DatePickerFormField({
     Key key,
     this.onSaved,
     this.label,
@@ -21,6 +21,7 @@ class DatePickerFormField extends StatefulWidget {
     this.lastDate,
   }) : super(key: key);
 
+  @override
   _DatePickerFormFieldState createState() =>
       _DatePickerFormFieldState(initialDate);
 }
@@ -28,20 +29,18 @@ class DatePickerFormField extends StatefulWidget {
 class _DatePickerFormFieldState extends State<DatePickerFormField> {
   DateTime date;
 
-  _DatePickerFormFieldState(DateTime initialDate) {
-    date = initialDate;
-  }
+  _DatePickerFormFieldState(this.date);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       flex: 5,
       child: GestureDetector(
-        child: FormField(
+        child: FormField<String>(
           onSaved: _onSaved,
-          builder: (FormFieldState state) {
+          builder: (FormFieldState<String> state) {
             return Container(
-              padding: EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
                   border: Border(
                       bottom: BorderSide(width: 1, color: Colors.black12))),
@@ -62,7 +61,7 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
 
   Text buildDateText() {
     return Text(date != null ? formatter.format(date) : '-',
-        style: TextStyle(fontSize: 17));
+        style: const TextStyle(fontSize: 17));
   }
 
   Text buildLabel(BuildContext context) {
@@ -72,13 +71,13 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
     );
   }
 
-  _onSaved(_) {
+  void _onSaved(String _) {
     widget.onSaved(date);
   }
 
-  _onTap() async {
-    DateTime now = new DateTime.now();
-    DateTime today = new DateTime(now.year, now.month, now.day);
+  Future<void> _onTap() async {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
 
     final selectedDate = await showDatePicker(
 

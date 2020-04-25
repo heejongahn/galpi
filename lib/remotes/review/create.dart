@@ -11,7 +11,7 @@ Future<Review> createReview({
 }) async {
   final url = '${env.apiEndpoint}/review/create';
 
-  final body = JsonEncoder().convert({
+  final body = const JsonEncoder().convert({
     'reviewPayload': review.toMap(),
     'bookId': bookId,
   });
@@ -21,8 +21,10 @@ Future<Review> createReview({
     body: body,
   );
 
-  final decoded = httpClient.decodeBody(response.bodyBytes);
-  final createdReviewPayload = decoded['review'];
+  final decoded =
+      httpClient.decodeBody<Map<String, dynamic>>(response.bodyBytes);
+  final createdReviewPayload =
+      Map<String, dynamic>.from(decoded['review'] as Map<String, dynamic>);
 
   final createdReview = Review.fromPayload(createdReviewPayload).item1;
   return createdReview;

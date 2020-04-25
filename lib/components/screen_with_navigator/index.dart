@@ -10,7 +10,7 @@ class ScreenWithNavigatorState extends State<ScreenWithNavigator> {
       onUnknownRoute: widget.onUnknownRoute,
       onGenerateRoute: widget.onGenerateRoute ??
           (RouteSettings settings) {
-            return new MaterialPageRoute(builder: (context) {
+            return MaterialPageRoute<dynamic>(builder: (context) {
               return widget.child;
             });
           },
@@ -23,12 +23,12 @@ class ScreenWithNavigator extends StatefulWidget {
   final RouteFactory onGenerateRoute;
   final RouteFactory onUnknownRoute;
 
-  ScreenWithNavigator({
+  const ScreenWithNavigator({
     this.child,
     this.onGenerateRoute,
     this.onUnknownRoute,
   });
 
   @override
-  ScreenWithNavigatorState createState() => new ScreenWithNavigatorState();
+  ScreenWithNavigatorState createState() => ScreenWithNavigatorState();
 }

@@ -16,7 +16,7 @@ class InfiniteScrollListViewState<T> extends State<InfiniteScrollListView<T>> {
     final data = widget.data;
 
     return ListView.builder(
-      padding: EdgeInsets.only(bottom: 72),
+      padding: const EdgeInsets.only(bottom: 72),
       itemCount: status == Status.fetchedAll ? data.length : null,
       itemBuilder: (context, i) {
         if (i > data.length) {
@@ -26,16 +26,16 @@ class InfiniteScrollListViewState<T> extends State<InfiniteScrollListView<T>> {
         if (i == data.length) {
           _fetchItems();
 
-          if (data.length == 0) {
+          if (data.isEmpty) {
             return Container();
           }
 
           return Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               vertical: 48,
             ),
             alignment: Alignment.center,
-            child: SizedBox(
+            child: const SizedBox(
               width: 16,
               height: 16,
               child: CircularProgressIndicator(
@@ -56,7 +56,7 @@ class InfiniteScrollListViewState<T> extends State<InfiniteScrollListView<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return status == Status.fetchedAll && widget.data.length == 0
+    return status == Status.fetchedAll && widget.data.isEmpty
         ? widget.emptyWidget
         : _buildRows();
   }
@@ -90,5 +90,6 @@ class InfiniteScrollListView<T> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  InfiniteScrollListViewState createState() => InfiniteScrollListViewState<T>();
+  InfiniteScrollListViewState<T> createState() =>
+      InfiniteScrollListViewState<T>();
 }

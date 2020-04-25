@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-typedef Future<void> OnConfirm(String value);
-typedef void OnClose();
+typedef OnConfirm = Future<void> Function(String value);
+typedef OnClose = void Function();
 
 class InputDialog extends StatefulWidget {
   final String initialValue;
@@ -17,7 +17,7 @@ class InputDialog extends StatefulWidget {
   @required
   final OnClose onClose;
 
-  InputDialog({
+  const InputDialog({
     Key key,
     this.initialValue = '',
     this.title,
@@ -26,12 +26,13 @@ class InputDialog extends StatefulWidget {
     this.onClose,
   }) : super(key: key);
 
+  @override
   _InputDialogState createState() => _InputDialogState();
 }
 
 class _InputDialogState extends State<InputDialog> {
   String _value = '';
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -59,17 +60,17 @@ class _InputDialogState extends State<InputDialog> {
         ),
         actions: [
           FlatButton(
-            child: Text('취소'),
+            child: const Text('취소'),
             onPressed: widget.onClose,
           ),
           FlatButton(
-            child: Text('확인'),
+            child: const Text('확인'),
             onPressed: onConfirm,
           ),
         ]);
   }
 
-  void onConfirm() async {
+  Future<void> onConfirm() async {
     await widget.onConfirm(_value);
     widget.onClose();
   }

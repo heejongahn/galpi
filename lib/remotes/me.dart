@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
+import 'dart:developer';
 
 import 'package:galpi/models/user.dart';
 import 'package:galpi/utils/http_client.dart';
@@ -12,7 +12,8 @@ Future<User> me() async {
     headers: {"Content-Type": "application/json"},
   );
 
-  final decoded = httpClient.decodeBody(response.bodyBytes);
+  final decoded =
+      httpClient.decodeBody<Map<String, dynamic>>(response.bodyBytes);
 
-  return User.fromPayload(decoded['user']);
+  return User.fromPayload(decoded['user'] as Map<String, dynamic>);
 }

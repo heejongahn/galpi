@@ -21,8 +21,8 @@ enum Status {
 }
 
 class ReviewsState extends State<Reviews> {
-  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
-  UniqueKey listViewKey = new UniqueKey();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  UniqueKey listViewKey = UniqueKey();
 
   var isInitialized = false;
   List<Tuple2<Review, Book>> data = [];
@@ -32,7 +32,7 @@ class ReviewsState extends State<Reviews> {
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: const [
           Text(
             '작성한 독후감이 없습니다.\n시작하기 위해 첫 독후감을 작성해보세요.',
             textAlign: TextAlign.center,
@@ -51,7 +51,7 @@ class ReviewsState extends State<Reviews> {
           key: scaffoldKey,
           appBar: AppBar(
             automaticallyImplyLeading: false,
-            title: Logo(),
+            title: const Logo(),
             centerTitle: false,
           ),
           body: RefreshIndicator(
@@ -59,12 +59,12 @@ class ReviewsState extends State<Reviews> {
               setState(() {
                 data = [];
                 isInitialized = false;
-                listViewKey = new UniqueKey();
+                listViewKey = UniqueKey();
               });
 
               await _fetchItems();
 
-              return Future.value(true);
+              return true;
             },
             child: InfiniteScrollListView<Tuple2<Review, Book>>(
               key: listViewKey,
@@ -74,7 +74,7 @@ class ReviewsState extends State<Reviews> {
               itemBuilder: _itemBuilder,
             ),
           ),
-          endDrawer: MainDrawer(),
+          endDrawer: const MainDrawer(),
           floatingActionButton: FloatingActionButton(
             onPressed: _onOpenNewReview,
             child: Icon(Icons.add),
@@ -85,11 +85,11 @@ class ReviewsState extends State<Reviews> {
   }
 
   void _onOpenReviewDetail(Review review, Book book) {
-    final args = new ReviewDetailArguments(review, book);
+    final args = ReviewDetailArguments(review, book);
     Navigator.of(context).pushNamed('/review/detail', arguments: args);
   }
 
-  void _onOpenNewReview() async {
+  Future<void> _onOpenNewReview() async {
     await Navigator.of(context).pushNamed('/review/add');
     setState(() {});
   }

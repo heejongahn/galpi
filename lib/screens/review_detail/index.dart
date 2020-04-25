@@ -27,7 +27,7 @@ class ReviewDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('독후감'),
+        title: const Text('독후감'),
         centerTitle: false,
         actions: <Widget>[
           IconButton(
@@ -52,7 +52,7 @@ class ReviewDetail extends StatelessWidget {
 
   Padding getReviewDetail(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -75,7 +75,7 @@ class ReviewDetail extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 24),
+              padding: const EdgeInsets.symmetric(vertical: 24),
               child: Text(
                 arguments.review.body,
                 style: Theme.of(context).textTheme.body1.copyWith(
@@ -89,28 +89,28 @@ class ReviewDetail extends StatelessWidget {
   }
 
   void _onDeleteReview(Review review, BuildContext context) {
-    showDialog(
+    showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("정말 삭제하시겠습니까?"),
-            content: Text("삭제한 독후감는 다시 복구할 수 없습니다."),
+            title: const Text("정말 삭제하시겠습니까?"),
+            content: const Text("삭제한 독후감는 다시 복구할 수 없습니다."),
             actions: <Widget>[
               FlatButton(
-                child: Text("취소"),
+                child: const Text("취소"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               FlatButton(
                 textColor: Colors.red,
-                child: Text("삭제"),
+                child: const Text("삭제"),
                 onPressed: () async {
                   await deleteReview(reviewId: review.id);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     '/',
-                    (Route r) => false,
+                    (Route<dynamic> r) => false,
                   );
                 },
               ),
@@ -119,10 +119,11 @@ class ReviewDetail extends StatelessWidget {
         });
   }
 
-  void _onEditReview(Review review, Book book, BuildContext context) async {
+  Future<void> _onEditReview(
+      Review review, Book book, BuildContext context) async {
     await Navigator.of(context).pushNamed(
       '/review/write',
-      arguments: new WriteReviewArgument(
+      arguments: WriteReviewArgument(
         isEditing: true,
         review: review,
         book: book,
@@ -151,7 +152,7 @@ class DateInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
           review.createdAt != null

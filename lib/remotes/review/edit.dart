@@ -8,7 +8,7 @@ import 'package:galpi/utils/env.dart';
 Future<String> editReview({Review review}) async {
   final url = '${env.apiEndpoint}/review/edit';
 
-  final body = JsonEncoder().convert({
+  final body = const JsonEncoder().convert({
     'reviewPayload': review.toMap(),
   });
 
@@ -18,6 +18,8 @@ Future<String> editReview({Review review}) async {
     body: body,
   );
 
-  final decoded = httpClient.decodeBody(response.bodyBytes);
-  return decoded['reviewId'];
+  final decoded =
+      httpClient.decodeBody<Map<String, dynamic>>(response.bodyBytes);
+
+  return decoded['reviewId'] as String;
 }

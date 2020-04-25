@@ -14,13 +14,13 @@ Future<String> registerWithFirebase({String token}) async {
     ),
   );
 
-  final body = Map<String, dynamic>.from(
-    httpClient.decodeBody(
-      response.bodyBytes,
-    ),
-  );
+  final body =
+      Map<String, dynamic>.from(httpClient.decodeBody<Map<String, dynamic>>(
+    response.bodyBytes,
+  ));
+
   if (body['token'] != null) {
-    return body['token'];
+    return body['token'] as String;
   } else {
     throw 'registerWithFirebase failed';
   }

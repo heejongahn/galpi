@@ -13,7 +13,7 @@ class EmailLogin extends StatefulWidget {
   _EmailLoginState createState() => _EmailLoginState();
 }
 
-typedef void OnConfirm();
+typedef OnConfirm = void Function();
 
 enum LoginStatus {
   idle,
@@ -36,7 +36,7 @@ class _EmailLoginState extends State<EmailLogin> {
   Widget build(BuildContext context) {
     return Consumer<UserRepository>(
       builder: (context, userRepository, child) {
-        onSignIn() async {
+        Future<void> onSignIn() async {
           final isResending = _status != LoginStatus.idle;
 
           _showSnackBar('인증 메일을 ${isResending ? '다시 ' : ''}발송합니다.');
@@ -65,17 +65,17 @@ class _EmailLoginState extends State<EmailLogin> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Logo(),
+            title: const Logo(),
             centerTitle: false,
           ),
           body: Container(
-            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
             child: CommonForm(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(bottom: 12),
+                    margin: const EdgeInsets.only(bottom: 12),
                     child: Text(
                       '환영합니다!',
                       style: Theme.of(context).textTheme.title,
@@ -85,8 +85,8 @@ class _EmailLoginState extends State<EmailLogin> {
                     '이메일 주소로 간편하게 로그인하고\n아름다운 독서 기록을 남기세요',
                     style: Theme.of(context).textTheme.subtitle,
                   ),
-                  buildEmailRow(),
-                  buildConfirmButton(onConfirm: onSignIn),
+                  _buildEmailRow(),
+                  _buildConfirmButton(onConfirm: onSignIn),
                 ],
               ),
             ),
@@ -96,16 +96,16 @@ class _EmailLoginState extends State<EmailLogin> {
     );
   }
 
-  Widget buildEmailRow({
+  Widget _buildEmailRow({
     AuthStatus authStatus,
   }) {
     return Container(
-      padding: EdgeInsets.only(top: 24, bottom: 32),
+      padding: const EdgeInsets.only(top: 24, bottom: 32),
       child: TextField(
         enabled: _status != LoginStatus.verifying,
         autofocus: true,
         decoration: InputDecoration(
-            border: UnderlineInputBorder(),
+            border: const UnderlineInputBorder(),
             labelText: '이메일 주소',
             helperText: _status == LoginStatus.idle ||
                     _status == LoginStatus.sendingEmail
@@ -121,7 +121,7 @@ class _EmailLoginState extends State<EmailLogin> {
     );
   }
 
-  buildConfirmButton({OnConfirm onConfirm}) {
+  Widget _buildConfirmButton({OnConfirm onConfirm}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -129,19 +129,19 @@ class _EmailLoginState extends State<EmailLogin> {
           height: 48,
           child: RaisedButton(
             onPressed: _status == LoginStatus.idle ? onConfirm : null,
-            child: Text('인증 메일 발송'),
+            child: const Text('인증 메일 발송'),
             color: Colors.black,
             textColor: Colors.white,
           ),
         ),
         _status != LoginStatus.idle
             ? Container(
-                margin: EdgeInsets.only(top: 12),
+                margin: const EdgeInsets.only(top: 12),
                 height: 48,
                 child: FlatButton(
                   onPressed:
                       _status != LoginStatus.sendingEmail ? onConfirm : null,
-                  child: Text('메일을 받지 못하셨나요?'),
+                  child: const Text('메일을 받지 못하셨나요?'),
                 ),
               )
             : Container(width: 0, height: 0),
@@ -149,17 +149,17 @@ class _EmailLoginState extends State<EmailLogin> {
     );
   }
 
-  _showSnackBar(String message) {
+  void _showSnackBar(String message) {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
     ));
   }
 
-  _removeCurrentSnackBar() {
+  void _removeCurrentSnackBar() {
     Scaffold.of(context).removeCurrentSnackBar();
   }
 
-  _initializeFirebaseDynamicLinks() async {
+  Future<void> _initializeFirebaseDynamicLinks() async {
     final firebaseDLInstance = FirebaseDynamicLinks.instance;
 
     await firebaseDLInstance.getInitialLink().then((data) {
@@ -178,7 +178,7 @@ class _EmailLoginState extends State<EmailLogin> {
     );
   }
 
-  _loginIfAvailable(Uri link) async {
+  Future<void> _loginIfAvailable(Uri link) async {
     if (userRepository.user != null) {
       return;
     }
@@ -208,7 +208,7 @@ class _EmailLoginState extends State<EmailLogin> {
       if (success) {
         _showSnackBar('${email}으로 로그인 되었습니다.');
       } else {
-        throw new Error();
+        throw Error();
       }
     } catch (e) {
       print(e);

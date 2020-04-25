@@ -14,14 +14,14 @@ class ReviewCard extends StatelessWidget {
   final Book book;
   final GestureTapCallback onTap;
 
-  ReviewCard({
+  const ReviewCard({
     this.user,
     this.review,
     this.book,
     this.onTap,
   });
 
-  buildBookDescription(BuildContext context) {
+  Widget _buildBookDescription(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
         left: 12,
@@ -31,7 +31,7 @@ class ReviewCard extends StatelessWidget {
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(
           child: ListTile(
-            contentPadding: EdgeInsets.all(0),
+            contentPadding: const EdgeInsets.all(0),
             leading: Avatar(
               profileImageUrl: user.profileImageUrl,
             ),
@@ -57,7 +57,7 @@ class ReviewCard extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 24,
       ),
@@ -66,7 +66,7 @@ class ReviewCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Color.fromRGBO(32, 33, 36, 0.28),
                 blurRadius: 6.0,
@@ -81,7 +81,7 @@ class ReviewCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 BookInfo(book: book),
-                buildBookDescription(context),
+                _buildBookDescription(context),
                 // moreIcon
               ],
             ),

@@ -23,34 +23,34 @@ class MainDrawer extends StatelessWidget {
                   bottom: Divider.createBorderSide(context),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(0, 60, 0, 24),
+              padding: const EdgeInsets.fromLTRB(0, 60, 0, 24),
               child: ListTile(
                 leading: Avatar(
                   profileImageUrl: userRepository.user?.profileImageUrl,
                 ),
                 title: Text(
-                  this._getProfileSectionTitle(
+                  _getProfileSectionTitle(
                       userRepository.authStatus, userRepository.user),
                 ),
                 subtitle: Text(
-                  this._getProfileSectionSubtitle(userRepository.authStatus),
+                  _getProfileSectionSubtitle(userRepository.authStatus),
                 ),
               ),
             ),
-            ...(isAuthenticated
+            ...isAuthenticated
                 ? [
                     ListTile(
                       leading: Icon(Icons.edit),
-                      title: Text('프로필 수정'),
+                      title: const Text('프로필 수정'),
                       onTap: () => _onEditProfile(context),
                     ),
                     ListTile(
                       leading: Icon(Icons.exit_to_app),
-                      title: Text('로그아웃'),
+                      title: const Text('로그아웃'),
                       onTap: () => _onSignOut(context),
                     )
                   ]
-                : []),
+                : [],
             _buildAboutListTile(),
           ],
         ),
@@ -78,7 +78,7 @@ class MainDrawer extends StatelessWidget {
     );
   }
 
-  _getProfileSectionTitle(AuthStatus authStatus, User user) {
+  String _getProfileSectionTitle(AuthStatus authStatus, User user) {
     switch (authStatus) {
       case AuthStatus.Unauthenticated:
         {
@@ -89,9 +89,11 @@ class MainDrawer extends StatelessWidget {
           return user.displayName ?? user.email;
         }
     }
+
+    return null;
   }
 
-  _getProfileSectionSubtitle(AuthStatus authStatus) {
+  String _getProfileSectionSubtitle(AuthStatus authStatus) {
     switch (authStatus) {
       case AuthStatus.Unauthenticated:
         {
@@ -102,40 +104,45 @@ class MainDrawer extends StatelessWidget {
           return '';
         }
     }
+
+    return null;
   }
 
-  _onEditProfile(BuildContext context) {
+  void _onEditProfile(BuildContext context) {
     Navigator.of(context).pushNamed('/profile/edit');
   }
 
-  _onSignOut(BuildContext context) async {
+  Future<void> _onSignOut(BuildContext context) async {
     final onSignOutConfirm = (BuildContext dialogContext) async {
       await userRepository.logout();
       Navigator.of(dialogContext).pop();
       Navigator.of(context).pop();
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('로그아웃 되었습니다.'),
-      ));
+      Scaffold.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('로그아웃 되었습니다.'),
+        ),
+      );
     };
 
-    showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: Text("정말 로그아웃합니까?"),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("취소"),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              ),
-              FlatButton(
-                child: Text("확인"),
-                onPressed: () => onSignOutConfirm(ctx),
-              ),
-            ],
-          );
-        });
+    showDialog<dynamic>(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text("정말 로그아웃합니까?"),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text("취소"),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
+              child: const Text("확인"),
+              onPressed: () => onSignOutConfirm(ctx),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -6,7 +6,7 @@ import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 
-typedef Future<void> OnSave(Review review, String bookId);
+typedef OnSave = Future<void> Function(Review review, String bookId);
 
 class WriteReviewArgument {
   final OnSave onSave;
@@ -26,9 +26,11 @@ class WriteReviewArgument {
 
 class WriteReview extends StatefulWidget {
   final WriteReviewArgument arguments;
-  _WriteReviewState createState() => _WriteReviewState();
 
-  WriteReview({@required this.arguments});
+  const WriteReview({@required this.arguments});
+
+  @override
+  _WriteReviewState createState() => _WriteReviewState();
 }
 
 class _WriteReviewState extends State<WriteReview> {
@@ -60,7 +62,7 @@ class _WriteReviewState extends State<WriteReview> {
                   book: widget.arguments.book,
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -98,6 +100,8 @@ class _WriteReviewState extends State<WriteReview> {
           if (value.isEmpty) {
             return '내용을 입력해주세요.';
           }
+
+          return null;
         },
         onSaved: (val) => setState(() {
           widget.arguments.review.title = val;
@@ -127,6 +131,8 @@ class _WriteReviewState extends State<WriteReview> {
           if (value.isEmpty) {
             return '내용을 입력해주세요.';
           }
+
+          return null;
         },
         onSaved: (val) => setState(() {
           widget.arguments.review.body = val;
@@ -151,10 +157,10 @@ class _WriteReviewState extends State<WriteReview> {
                       style: Theme.of(context).textTheme.caption,
                     ),
                     Container(
-                      margin: EdgeInsets.only(left: 4),
+                      margin: const EdgeInsets.only(left: 4),
                       child: Tooltip(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 8),
                         textStyle: Theme.of(context)
                             .textTheme
                             .caption
@@ -232,19 +238,19 @@ class _WriteReviewState extends State<WriteReview> {
     );
   }
 
-  _onScoreBadgeClick(int score) {
+  void _onScoreBadgeClick(int score) {
     setState(() {
       widget.arguments.review.stars = score;
     });
   }
 
-  _onReadingStatusBadgeClick(ReadingStatus readingStatus) {
+  void _onReadingStatusBadgeClick(ReadingStatus readingStatus) {
     setState(() {
       widget.arguments.review.readingStatus = readingStatus;
     });
   }
 
-  _onSave() async {
+  Future<void> _onSave() async {
     final form = _formKey.currentState;
     if (!form.validate()) {
       return;
@@ -257,7 +263,7 @@ class _WriteReviewState extends State<WriteReview> {
     );
   }
 
-  _onBlur() {
+  void _onBlur() {
     FocusScope.of(context).unfocus();
   }
 }

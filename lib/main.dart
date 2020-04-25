@@ -8,21 +8,21 @@ import 'package:provider/provider.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:galpi/utils/theme.dart';
 
-final primaryColor = Color.fromRGBO(0xff, 0x74, 0x73, 1);
-
-void main() => runApp(MaterialApp(
-      home: MyApp(),
-      theme: theme,
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        const Locale('ko', 'KR'),
-      ],
-    ));
+void main() => runApp(
+      MaterialApp(
+        home: MyApp(),
+        theme: theme,
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ko', 'KR'),
+        ],
+      ),
+    );
 
 class MyApp extends StatefulWidget {
   @override
@@ -31,7 +31,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool isInitialized = false;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final homeItem = const BottomNavigationBarItem(
     icon: Icon(Icons.list),
@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (!isInitialized) {
       return Container(
         alignment: Alignment.center,
-        child: CircularProgressIndicator(),
+        child: const CircularProgressIndicator(),
       );
     }
 
@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 
-  _initialize() async {
+  Future<void> _initialize() async {
     WidgetsBinding.instance.addObserver(this);
 
     await loadEnvForCurrentFlavor();

@@ -7,8 +7,8 @@ import 'package:galpi/models/review.dart';
 import 'package:galpi/models/book.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "MyDatabase.db";
-  static final _databaseVersion = 1;
+  static const _databaseName = "MyDatabase.db";
+  static const _databaseVersion = 1;
 
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -24,17 +24,22 @@ class DatabaseHelper {
   }
 
   // open the database
-  _initDatabase() async {
+  Future<Database> _initDatabase() async {
     // The path_provider plugin gets the right directory for Android or iOS.
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, _databaseName);
+    final Directory documentsDirectory =
+        await getApplicationDocumentsDirectory();
+    final String path = join(documentsDirectory.path, _databaseName);
+
     // Open the database. Can also add an onUpdate callback parameter.
-    return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(
+      path,
+      version: _databaseVersion,
+      onCreate: _onCreate,
+    );
   }
 
   // SQL string to create the database
-  Future _onCreate(Database db, int version) async {
+  Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE ${Book.table} (
         ${Book.columnId} INTEGER PRIMARY KEY,
@@ -65,7 +70,7 @@ class DatabaseHelper {
   }
 
   Future<Tuple2<List<Review>, List<Book>>> queryAllReviews() async {
-    Database db = await database;
+    final Database db = await database;
     final bookColumns = [
       Book.columnId,
       Book.columnIsbn,
@@ -96,14 +101,17 @@ class DatabaseHelper {
         .map((col) => '${Review.table}.${col} as ${Review.table}_${col}')
         .join(',');
 
-    List<Map> maps = await db.rawQuery('''
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      '''
     SELECT
     ${bookQuery},
     ${reviewQuery}
     FROM ${Review.table}
     INNER JOIN ${Book.table} ON ${Review.table}.${Review.columnBookId} = ${Book.table}.${Book.columnId}
     ORDER BY ${Review.table}.${Review.columnCreatedAt} DESC;
-    ''', []);
+    ''',
+      <dynamic>[],
+    );
 
     final reviews = maps
         .map((map) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-typedef void OnScoreBadgeTap(int score);
+typedef OnScoreBadgeTap = void Function(int score);
 
 class ScoreChip extends StatelessWidget {
   @required
@@ -10,9 +10,9 @@ class ScoreChip extends StatelessWidget {
 
   final OnScoreBadgeTap onTap;
 
-  ScoreChip({this.score, this.isSelected = true, this.onTap});
+  const ScoreChip({this.score, this.isSelected = true, this.onTap});
 
-  get avatarIcon {
+  IconData get avatarIcon {
     switch (score) {
       case 0:
         return Icons.sentiment_very_dissatisfied;
@@ -29,7 +29,7 @@ class ScoreChip extends StatelessWidget {
     }
   }
 
-  get label {
+  String get label {
     switch (score) {
       case 0:
         return '최악이에요';
@@ -47,7 +47,7 @@ class ScoreChip extends StatelessWidget {
   }
 
   @override
-  build(BuildContext context) {
+  GestureDetector build(BuildContext context) {
     return GestureDetector(
       onTap: () => onTap(score),
       child: Opacity(

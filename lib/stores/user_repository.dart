@@ -13,7 +13,7 @@ import 'package:galpi/utils/http_client.dart';
 import 'package:package_info/package_info.dart';
 import 'package:galpi/constants.dart';
 
-final secureStorage = new FlutterSecureStorage();
+const secureStorage = FlutterSecureStorage();
 
 enum AuthStatus {
   Unauthenticated,
@@ -21,7 +21,7 @@ enum AuthStatus {
 }
 
 class UserRepository extends ChangeNotifier {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User _user;
 
@@ -41,8 +41,9 @@ class UserRepository extends ChangeNotifier {
 
   bool get isLoggedIn => authStatus == AuthStatus.Authenticated;
 
-  initialize() async {
-    String loginToken = await secureStorage.read(key: AUTH_LOGIN_TOKEN_KEY);
+  Future<void> initialize() async {
+    final String loginToken =
+        await secureStorage.read(key: AUTH_LOGIN_TOKEN_KEY);
 
     if (loginToken != null) {
       await _login(loginToken);
@@ -113,21 +114,22 @@ class UserRepository extends ChangeNotifier {
 
       return true;
     } catch (e) {
+      print(e);
       await logout();
       return false;
     }
   }
 
-  logout() async {
+  Future<void> logout() async {
     await _auth.signOut();
     httpClient.token = null;
     user = null;
     secureStorage.delete(key: AUTH_LOGIN_TOKEN_KEY);
   }
 
-  updateUser(User updatedUser) async {
+  Future<void> updateUser(User updatedUser) async {
     user = await editProfile(updatedUser);
   }
 }
 
-final userRepository = new UserRepository();
+final userRepository = UserRepository();
