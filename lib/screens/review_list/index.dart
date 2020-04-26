@@ -62,8 +62,6 @@ class ReviewsState extends State<Reviews> {
                 listViewKey = UniqueKey();
               });
 
-              await _fetchItems();
-
               return true;
             },
             child: InfiniteScrollListView<Tuple2<Review, Book>>(
