@@ -15,17 +15,17 @@ class ScoreChip extends StatelessWidget {
   IconData get avatarIcon {
     switch (score) {
       case 0:
-        return Icons.sentiment_very_dissatisfied;
+        return Icons.clear;
       case 1:
-        return Icons.sentiment_dissatisfied;
+        return Icons.thumb_down;
       case 2:
-        return Icons.sentiment_neutral;
+        return Icons.thumbs_up_down;
       case 3:
-        return Icons.sentiment_satisfied;
+        return Icons.thumb_up;
       case 4:
-        return Icons.sentiment_very_satisfied;
+        return Icons.favorite;
       default:
-        return Icons.sentiment_neutral;
+        return Icons.thumbs_up_down;
     }
   }
 
@@ -53,8 +53,21 @@ class ScoreChip extends StatelessWidget {
       child: Opacity(
         opacity: isSelected ? 1 : 0.6,
         child: Chip(
-          avatar: Icon(avatarIcon),
-          label: Text(label),
+          shape: const RoundedRectangleBorder(
+            side: BorderSide(color: Colors.black87),
+            borderRadius: BorderRadius.all(
+              Radius.circular(4),
+            ),
+          ),
+          visualDensity: VisualDensity.compact,
+          avatar: Icon(
+            avatarIcon,
+            size: 16,
+          ),
+          label: Text(
+            label,
+            style: const TextStyle(fontSize: 14),
+          ),
           backgroundColor: Colors.white,
           elevation: isSelected ? 2 : 1,
         ),
