@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,8 +9,13 @@ import 'package:provider/provider.dart';
 
 import 'package:galpi/stores/user_repository.dart';
 import 'package:galpi/utils/theme.dart';
+import 'package:sentry/sentry.dart' show SentryClient;
 
-void main() => runApp(
+final SentryClient sentry = SentryClient(dsn: env.sentryDSN);
+
+void main() {
+  runZoned(
+    () => runApp(
       MaterialApp(
         home: MyApp(),
         theme: theme,
@@ -22,7 +29,21 @@ void main() => runApp(
           Locale('ko', 'KR'),
         ],
       ),
-    );
+    ),
+    onError: (Object error, StackTrace stackTrace) {
+      try {
+        sentry.captureException(
+          exception: error,
+          stackTrace: stackTrace,
+        );
+        print('Error sent to sentry.io: $error');
+      } catch (e) {
+        print('Sending report to sentry.io failed: $e');
+        print('Original error: $error');
+      }
+    },
+  );
+}
 
 class MyApp extends StatefulWidget {
   @override

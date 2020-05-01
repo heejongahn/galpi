@@ -3,10 +3,12 @@ import 'package:galpi/utils/flavor.dart';
 
 const _KEY_kakaoRestApiKey = 'KAKAO_REST_API_KEY';
 const _KEY_apiEndpoint = 'API_ENDPOINT';
+const _KEY_sentryDSN = 'SENTRY_DSN';
 
 class Env {
   String kakaoRestApiKey;
   String apiEndpoint;
+  String sentryDSN;
 }
 
 final env = Env();
@@ -15,6 +17,7 @@ final _dotEnv = DotEnv();
 const _vars = [
   _KEY_kakaoRestApiKey,
   _KEY_apiEndpoint,
+  _KEY_sentryDSN,
 ];
 
 String _getEnvFileName(Flavor flavor) {
@@ -46,4 +49,5 @@ Future<void> loadEnvForCurrentFlavor() async {
 
   env.kakaoRestApiKey = _dotEnv.env[_KEY_kakaoRestApiKey];
   env.apiEndpoint = _dotEnv.env[_KEY_apiEndpoint];
+  env.sentryDSN = _dotEnv.env[_KEY_sentryDSN];
 }
