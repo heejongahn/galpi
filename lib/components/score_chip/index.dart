@@ -49,7 +49,9 @@ class ScoreChip extends StatelessWidget {
   @override
   GestureDetector build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onTap(score),
+      onTap: () {
+        onTap?.call(score);
+      },
       child: Opacity(
         opacity: isSelected ? 1 : 0.6,
         child: Chip(

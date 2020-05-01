@@ -59,7 +59,9 @@ class ReadingStatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onTap(readingStatus),
+      onTap: () {
+        onTap?.call(readingStatus);
+      },
       child: Opacity(
         opacity: isSelected ? 1 : 0.6,
         child: Chip(
