@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show FlutterError;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:galpi/app.dart';
 import 'package:galpi/utils/env.dart';
+import 'package:galpi/utils/is_debug_mode.dart';
 import 'package:provider/provider.dart';
 
 import 'package:galpi/stores/user_repository.dart';
@@ -14,6 +16,14 @@ import 'package:sentry/sentry.dart' show SentryClient;
 final SentryClient sentry = SentryClient(dsn: env.sentryDSN);
 
 void main() {
+  FlutterError.onError = (details, {bool forceReport = false}) {
+    if (isInDebugMode) {
+      FlutterError.dumpErrorToConsole(details, forceReport: forceReport);
+    } else {
+      Zone.current.handleUncaughtError(details.exception, details.stack);
+    }
+  };
+
   runZoned(
     () => runApp(
       MaterialApp(
@@ -32,6 +42,10 @@ void main() {
     ),
     onError: (Object error, StackTrace stackTrace) {
       try {
+        if (isInDebugMode) {
+          print(stackTrace);
+        }
+
         sentry.captureException(
           exception: error,
           stackTrace: stackTrace,
