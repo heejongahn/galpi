@@ -6,7 +6,7 @@ enum Status {
   fetchedAll,
 }
 
-typedef ItemBuilder<T> = Widget Function(T);
+typedef ItemBuilder<T> = Widget Function(T, {int index});
 typedef FetchMore<T> = Future<bool> Function();
 
 class InfiniteScrollListViewState<T> extends State<InfiniteScrollListView<T>> {
@@ -45,7 +45,7 @@ class InfiniteScrollListViewState<T> extends State<InfiniteScrollListView<T>> {
           );
         }
 
-        final Widget child = widget.itemBuilder(data[i]);
+        final Widget child = widget.itemBuilder(data[i], index: i);
 
         return Container(
           child: child,

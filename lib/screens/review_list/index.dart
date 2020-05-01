@@ -3,6 +3,7 @@ import 'package:galpi/components/infinite_scroll_list_view/index.dart';
 import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/components/main_drawer/index.dart';
 import 'package:galpi/remotes/review/list.dart';
+import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
@@ -14,18 +15,11 @@ import 'package:galpi/models/review.dart';
 
 const PAGE_SIZE = 20;
 
-enum Status {
-  idle,
-  loading,
-  fetchedAll,
-}
-
 class ReviewsState extends State<Reviews> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   UniqueKey listViewKey = UniqueKey();
 
   var isInitialized = false;
-  List<Tuple2<Review, Book>> data = [];
 
   Widget _buildEmptyScreen() {
     return Align(
@@ -45,6 +39,8 @@ class ReviewsState extends State<Reviews> {
 
   @override
   Widget build(BuildContext context) {
+    final reviewRepository = Provider.of<ReviewRepository>(context);
+
     return Consumer<UserRepository>(
       builder: (context, userRepository, _) {
         return Scaffold(
@@ -57,7 +53,7 @@ class ReviewsState extends State<Reviews> {
           body: RefreshIndicator(
             onRefresh: () async {
               setState(() {
-                data = [];
+                reviewRepository.data = [];
                 isInitialized = false;
                 listViewKey = UniqueKey();
               });
@@ -66,7 +62,7 @@ class ReviewsState extends State<Reviews> {
             },
             child: InfiniteScrollListView<Tuple2<Review, Book>>(
               key: listViewKey,
-              data: data,
+              data: reviewRepository.data,
               fetchMore: _fetchItems,
               emptyWidget: _buildEmptyScreen(),
               itemBuilder: _itemBuilder,
@@ -82,8 +78,8 @@ class ReviewsState extends State<Reviews> {
     );
   }
 
-  void _onOpenReviewDetail(Review review, Book book) {
-    final args = ReviewDetailArguments(review, book);
+  void _onOpenReviewDetail(Review review, Book book, int index) {
+    final args = ReviewDetailArguments(review.id);
     Navigator.of(context).pushNamed('/review/detail', arguments: args);
   }
 
@@ -92,7 +88,7 @@ class ReviewsState extends State<Reviews> {
     setState(() {});
   }
 
-  Widget _itemBuilder(Tuple2<Review, Book> pair) {
+  Widget _itemBuilder(Tuple2<Review, Book> pair, {int index}) {
     final review = pair.item1;
     final book = pair.item2;
 
@@ -101,20 +97,22 @@ class ReviewsState extends State<Reviews> {
         user: userRepository.user,
         review: review,
         book: book,
-        onTap: () => _onOpenReviewDetail(review, book),
+        onTap: () => _onOpenReviewDetail(review, book, index),
       ),
     );
   }
 
   Future<bool> _fetchItems() async {
+    final reviewRepository = Provider.of<ReviewRepository>(context);
+
     final items = await fetchReviews(
       userId: userRepository.user.id,
-      skip: data.length,
+      skip: reviewRepository.data.length,
       take: PAGE_SIZE,
     );
 
     setState(() {
-      data = data + items;
+      reviewRepository.data = reviewRepository.data + items;
       isInitialized = true;
     });
 

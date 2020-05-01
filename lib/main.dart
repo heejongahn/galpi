@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:galpi/app.dart';
+import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/utils/env.dart';
 import 'package:galpi/utils/is_debug_mode.dart';
 import 'package:provider/provider.dart';
@@ -97,11 +98,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       );
     }
 
-    return ChangeNotifierProvider.value(
-      value: userRepository,
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: App(),
+    return ChangeNotifierProvider(
+      builder: (_) {
+        return ReviewRepository();
+      },
+      child: ChangeNotifierProvider.value(
+        value: userRepository,
+        child: Scaffold(
+          key: _scaffoldKey,
+          body: App(),
+        ),
       ),
     );
   }
