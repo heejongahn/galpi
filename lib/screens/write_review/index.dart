@@ -6,7 +6,7 @@ import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 
-typedef OnSave = Future<void> Function(Review review, String bookId);
+typedef OnSave = Future<void> Function(Review review, {String bookId});
 
 class WriteReviewArgument {
   final OnSave onSave;
@@ -68,7 +68,7 @@ class _WriteReviewState extends State<WriteReview> {
                     children: [
                       getTitleFormField(),
                       getBodyFormField(),
-                      getReadingStatusAndIsPublicFormFields(),
+                      getReadingStatusField(),
                       getScoreFormField(),
                     ],
                   ),
@@ -141,76 +141,34 @@ class _WriteReviewState extends State<WriteReview> {
     );
   }
 
-  Padding getReadingStatusAndIsPublicFormFields() {
+  Padding getReadingStatusField() {
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: [
-                    Text(
-                      '전체 공개 여부',
-                      style: Theme.of(context).textTheme.caption,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 4),
-                      child: Tooltip(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 8),
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .caption
-                            .copyWith(color: Colors.white),
-                        message: '곧 추가될 피드 및 공유 기능에서\n다른 사람에게 공개할지 여부입니다.',
-                        child: Icon(
-                          Icons.help_outline,
-                          color: Colors.grey,
-                          size: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Switch(
-                  onChanged: (isPublic) {
-                    setState(() {
-                      widget.arguments.review.isPublic = isPublic;
-                    });
-                  },
-                  value: widget.arguments.review.isPublic,
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  '독서 상태',
-                  style: Theme.of(context).textTheme.caption,
-                ),
-                Wrap(
-                  spacing: 16,
-                  children: [
-                    ReadingStatus.hasntStarted,
-                    ReadingStatus.reading,
-                    ReadingStatus.finishedReading
-                  ]
-                      .map((status) => ReadingStatusChip(
-                            readingStatus: status,
-                            isSelected:
-                                widget.arguments.review.readingStatus == status,
-                            onTap: _onReadingStatusBadgeClick,
-                          ))
-                      .toList(),
-                ),
-              ],
-            ),
-          ],
-        ));
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '독서 상태',
+            style: Theme.of(context).textTheme.caption,
+          ),
+          Wrap(
+            spacing: 16,
+            children: [
+              ReadingStatus.hasntStarted,
+              ReadingStatus.reading,
+              ReadingStatus.finishedReading
+            ]
+                .map((status) => ReadingStatusChip(
+                      readingStatus: status,
+                      isSelected:
+                          widget.arguments.review.readingStatus == status,
+                      onTap: _onReadingStatusBadgeClick,
+                    ))
+                .toList(),
+          ),
+        ],
+      ),
+    );
   }
 
   Padding getScoreFormField() {
@@ -225,7 +183,7 @@ class _WriteReviewState extends State<WriteReview> {
           ),
           Wrap(
             spacing: 16,
-            children: [1, 2, 3]
+            children: [3, 2, 1]
                 .map((score) => ScoreChip(
                       score: score,
                       isSelected: widget.arguments.review.stars == score,
@@ -259,7 +217,7 @@ class _WriteReviewState extends State<WriteReview> {
     form.save();
     await widget.arguments.onSave(
       widget.arguments.review,
-      widget.arguments.bookId,
+      bookId: widget.arguments.bookId,
     );
   }
 

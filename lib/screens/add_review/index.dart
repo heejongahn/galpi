@@ -42,7 +42,7 @@ class _AddReviewState extends State<AddReview> {
     );
   }
 
-  Future<void> _onCreate(Review review, String bookId) async {
+  Future<void> _onCreate(Review review, {String bookId}) async {
     try {
       await createReview(review: review, bookId: bookId);
       Navigator.pushNamedAndRemoveUntil(
