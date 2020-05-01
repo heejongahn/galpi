@@ -37,7 +37,7 @@ class ReviewCard extends StatelessWidget {
             ),
             title: Text(
               review.title,
-              style: Theme.of(context).textTheme.title,
+              style: Theme.of(context).textTheme.headline6,
             ),
             subtitle: Text(
               '${user.displayName ?? user.email}',

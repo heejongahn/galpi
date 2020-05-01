@@ -12,12 +12,12 @@ final theme = ThemeData(
     color: Colors.white,
     iconTheme: IconThemeData(color: Colors.black),
     textTheme: TextTheme(
-      title: TextStyle(color: Colors.black, fontSize: 18),
+      headline6: TextStyle(color: Colors.black, fontSize: 18),
     ),
   ),
   iconTheme: IconThemeData(color: primaryColor),
   textTheme: TextTheme(
-    title: TextStyle(
+    headline6: TextStyle(
       fontWeight: FontWeight.bold,
     ),
   ),

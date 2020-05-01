@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:galpi/models/user.dart';
 import 'package:galpi/utils/http_client.dart';

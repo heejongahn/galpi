@@ -89,7 +89,7 @@ class _WriteReviewState extends State<WriteReview> {
         initialValue: widget.arguments.review != null
             ? widget.arguments.review.title
             : null,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           alignLabelWithHint: true,
           labelText: '제목',
           border: OutlineInputBorder(
@@ -119,7 +119,7 @@ class _WriteReviewState extends State<WriteReview> {
         initialValue: widget.arguments.review != null
             ? widget.arguments.review.body
             : null,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           alignLabelWithHint: true,
           labelText: '내용',
           border: OutlineInputBorder(

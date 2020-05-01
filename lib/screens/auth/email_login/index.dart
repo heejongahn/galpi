@@ -78,12 +78,12 @@ class _EmailLoginState extends State<EmailLogin> {
                     margin: const EdgeInsets.only(bottom: 12),
                     child: Text(
                       '환영합니다!',
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                     ),
                   ),
                   Text(
                     '이메일 주소로 간편하게 로그인하고\n아름다운 독서 기록을 남기세요',
-                    style: Theme.of(context).textTheme.subtitle,
+                    style: Theme.of(context).textTheme.subtitle2,
                   ),
                   _buildEmailRow(),
                   _buildConfirmButton(onConfirm: onSignIn),

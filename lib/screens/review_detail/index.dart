@@ -60,7 +60,7 @@ class ReviewDetail extends StatelessWidget {
               arguments.review.title,
               style: Theme.of(context)
                   .textTheme
-                  .display3
+                  .headline2
                   .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
             ),
             DateInfo(review: arguments.review),
@@ -78,7 +78,7 @@ class ReviewDetail extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Text(
                 arguments.review.body,
-                style: Theme.of(context).textTheme.body1.copyWith(
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
                       fontSize: 16,
                       height: 1.6,
                     ),

@@ -145,6 +145,8 @@ class _EditProfileState extends State<EditProfile> {
 
     final signResult = await getSignedUrl(key: key);
 
+    print(signResult);
+
     await uploadFileToS3(
       file: image,
       url: signResult['signedUrl'] as String,

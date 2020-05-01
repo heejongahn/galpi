@@ -61,7 +61,7 @@ class BookInfo extends StatelessWidget {
             textAlign: TextAlign.start,
             style: Theme.of(context)
                 .textTheme
-                .subtitle
+                .subtitle2
                 .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
             overflow: TextOverflow.ellipsis,
           ),
