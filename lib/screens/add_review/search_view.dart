@@ -43,6 +43,7 @@ class _SearchViewState extends State<SearchView> {
       Container(
         padding: const EdgeInsets.all(20),
         child: TextField(
+          autofocus: true,
           focusNode: _focusNode,
           onChanged: (v) {
             _queryStreamController.sink.add(v);
@@ -91,7 +92,7 @@ class _SearchViewState extends State<SearchView> {
     return InfiniteScrollListView(
       data: books,
       fetchMore: _fetchMore,
-      itemBuilder: (Book book) {
+      itemBuilder: (Book book, {int index}) {
         return BookCard(
           book: book,
           onTap: () => widget.onSelectBook(book),
@@ -118,7 +119,12 @@ class _SearchViewState extends State<SearchView> {
   Widget _buildPlaceholder() {
     return Container(
       alignment: Alignment.center,
-      child: const Text('검색 결과가 없습니다.'),
+      child: query == ''
+          ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Text('독후감을 작성할 책을 찾아보세요.'),
+              const Text('제목, 저자, 출판사 등의 키워드로 검색할 수 있습니다.'),
+            ])
+          : const Text('검색 결과가 없습니다.'),
     );
   }
 }
