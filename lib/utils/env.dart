@@ -51,6 +51,6 @@ Future<void> loadEnvForCurrentFlavor() async {
 
   env.kakaoRestApiKey = _dotEnv.env[_KEY_kakaoRestApiKey];
   env.apiEndpoint = _dotEnv.env[_KEY_apiEndpoint];
-  env.webiEndpoint = _dotEnv.env[_KEY_webEndpoint];
+  env.webEndpoint = _dotEnv.env[_KEY_webEndpoint];
   env.sentryDSN = _dotEnv.env[_KEY_sentryDSN];
 }
