@@ -41,6 +41,7 @@ dependencies:
   mime_type: ^0.3.0
   path: ^1.6.4
   sentry: ">=3.0.0 <4.0.0"
+  share: ^0.6.4
 
 dev_dependencies:
   flutter_test:

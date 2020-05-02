@@ -13,6 +13,7 @@ import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/screens/write_review/index.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart' show Share;
 import 'package:tuple/tuple.dart';
 
 class ReviewDetailArguments {
@@ -39,17 +40,10 @@ class ReviewDetail extends StatelessWidget {
         title: const Text('독후감'),
         centerTitle: false,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(review.isPublic ? Icons.lock : Icons.lock_open),
-            onPressed: () => _onEditPublicity(context, review),
-          ),
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () => _onEditReview(review, book, context),
-          ),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () => _onDeleteReview(review, context),
+          _buildShowBottomSheetButton(
+            review: review,
+            book: book,
+            context: context,
           ),
         ],
       ),
@@ -59,6 +53,77 @@ class ReviewDetail extends StatelessWidget {
           getReviewDetail(context, review),
         ]),
       ),
+    );
+  }
+
+  IconButton _buildShowBottomSheetButton(
+      {Review review, Book book, BuildContext context}) {
+    return IconButton(
+      icon: Icon(Icons.more_vert),
+      onPressed: () {
+        showModalBottomSheet<void>(
+          context: context,
+          builder: (context) {
+            return SafeArea(
+              child: Wrap(
+                children: [
+                  ...review.isPublic
+                      ? [
+                          ListTile(
+                            leading: const Icon(Icons.lock),
+                            title: const Text('비공개로 전환'),
+                            onTap: () {
+                              _onSetIsPublicToFalse(
+                                context: context,
+                                review: review,
+                              );
+                            },
+                          )
+                        ]
+                      : [],
+                  ListTile(
+                    leading: const Icon(Icons.share),
+                    title: const Text('공유하기'),
+                    onTap: () async {
+                      final result = await _onSetIsPublicToTrue(
+                        context: context,
+                        review: review,
+                      );
+
+                      if (result) {
+                        Navigator.of(context).pop();
+                        _onShare(review: review);
+                      }
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.edit),
+                    title: const Text('수정하기'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _onEditReview(review, book, context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.delete,
+                      color: Colors.redAccent,
+                    ),
+                    title: const Text(
+                      '삭제하기',
+                      style: TextStyle(color: Colors.redAccent),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _onDeleteReview(review, context);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -148,17 +213,125 @@ class ReviewDetail extends StatelessWidget {
     }
   }
 
-  Future<void> _onEditPublicity(BuildContext context, Review review) async {
+  Future<bool> _onSetIsPublicToTrue({
+    BuildContext context,
+    Review review,
+  }) async {
+    if (review.isPublic) {
+      return true;
+    }
+
     try {
-      final newIsPublic = !review.isPublic;
-      review.isPublic = newIsPublic;
-      await _updateReview(context, review);
+      final result = await showDialog<bool>(
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                title: const Text("공개 독후감으로 전환할까요?"),
+                content: const Text(
+                  "다른 사람들이 독후감을 볼 수 있게 됩니다. 언제든지 비공개로 전환할 수 있습니다.",
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: const Text("취소"),
+                    onPressed: () {
+                      Navigator.of(ctx).pop(false);
+                    },
+                  ),
+                  FlatButton(
+                    child: const Text("공개로 전환"),
+                    onPressed: () async {
+                      try {
+                        review.isPublic = true;
+                        await _updateReview(context, review);
+                        Navigator.of(ctx).pop(true);
+                      } catch (e) {
+                        Navigator.of(ctx).pop(false);
+                        rethrow;
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          ) ??
+          false;
+
+      if (result) {
+        showMaterialSnackbar(
+          context,
+          '공개 독후감으로 전환했습니다.',
+        );
+      }
+
+      return result;
+    } catch (e) {
+      review.isPublic = false;
       showMaterialSnackbar(
         context,
-        newIsPublic ? '공개 독후감으로 변경했습니다.' : '비공개 독후감으로 변경했습니다.',
+        '공개 독후감으로 전환하는 데 실패했습니다.',
       );
+      rethrow;
+    }
+  }
+
+  Future<void> _onSetIsPublicToFalse({
+    BuildContext context,
+    Review review,
+    bool isPublic,
+  }) async {
+    if (!review.isPublic) {
+      return true;
+    }
+
+    try {
+      final result = await showDialog<bool>(
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                title: const Text("비공개 독후감으로 전환할까요?"),
+                content: const Text(
+                  "이미 생성된 공유 링크에는 더 이상 접근할 수 없습니다. 언제든지 공개로 전환할 수 있습니다.",
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: const Text("취소"),
+                    onPressed: () {
+                      Navigator.of(ctx).pop(false);
+                    },
+                  ),
+                  FlatButton(
+                    child: const Text("비공개로 전환"),
+                    onPressed: () async {
+                      try {
+                        review.isPublic = false;
+                        await _updateReview(context, review);
+                        Navigator.of(ctx).pop(true);
+                      } catch (e) {
+                        Navigator.of(ctx).pop(false);
+                        rethrow;
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          ) ??
+          false;
+
+      if (result) {
+        showMaterialSnackbar(
+          context,
+          '비공개 독후감으로 전환했습니다.',
+        );
+      }
+
+      return result;
     } catch (e) {
-      showMaterialSnackbar(context, '수정에 실패했습니다.');
+      review.isPublic = true;
+      showMaterialSnackbar(
+        context,
+        '비공개 독후감으로 전환하는 데 실패했습니다.',
+      );
       rethrow;
     }
   }
@@ -183,6 +356,12 @@ class ReviewDetail extends StatelessWidget {
           }
         },
       ),
+    );
+  }
+
+  Future<void> _onShare({Review review}) async {
+    await Share.share(
+      'https://galpi.world/review/${review.id}',
     );
   }
 }
