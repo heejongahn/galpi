@@ -1,7 +1,5 @@
 import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
-import 'package:galpi/remotes/review/delete.dart';
-import 'package:galpi/remotes/review/edit.dart';
 import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/utils/show_error_dialog.dart';
 import 'package:galpi/utils/show_material_snackbar.dart';
@@ -14,7 +12,6 @@ import 'package:galpi/models/review.dart';
 import 'package:galpi/screens/write_review/index.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart' show Share;
-import 'package:tuple/tuple.dart';
 
 class ReviewDetailArguments {
   final String reviewId;
@@ -165,6 +162,8 @@ class ReviewDetail extends StatelessWidget {
   }
 
   void _onDeleteReview(Review review, BuildContext context) {
+    final reviewRepository = Provider.of<ReviewRepository>(context);
+
     showDialog<void>(
         context: context,
         builder: (BuildContext context) {
@@ -182,7 +181,7 @@ class ReviewDetail extends StatelessWidget {
                 textColor: Colors.red,
                 child: const Text("삭제"),
                 onPressed: () async {
-                  await deleteReview(reviewId: review.id);
+                  await reviewRepository.delete(review: review);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     '/',
@@ -199,14 +198,7 @@ class ReviewDetail extends StatelessWidget {
     final reviewRepository = Provider.of<ReviewRepository>(context);
 
     try {
-      final updated = await editReview(review: updatedReview);
-      reviewRepository.data = reviewRepository.data.map((e) {
-        if (e.item1.id == arguments.reviewId) {
-          return Tuple2(updated, e.item2);
-        }
-
-        return e;
-      }).toList();
+      reviewRepository.edit(review: updatedReview);
     } catch (e) {
       showErrorDialog(context: context, message: '독후감 수정 중 오류가 발생했습니다.');
       rethrow;

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/remotes/create_book.dart';
-import 'package:galpi/remotes/review/create.dart';
 
 import 'package:galpi/screens/write_review/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
+import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/utils/show_error_dialog.dart';
+import 'package:provider/provider.dart';
 
 import './search_view.dart';
 
@@ -43,8 +44,10 @@ class _AddReviewState extends State<AddReview> {
   }
 
   Future<void> _onCreate(Review review, {String bookId}) async {
+    final reviewRepository = Provider.of<ReviewRepository>(context);
+
     try {
-      await createReview(review: review, bookId: bookId);
+      await reviewRepository.create(review: review, bookId: bookId);
       Navigator.pushNamedAndRemoveUntil(
           context, '/', (Route<dynamic> r) => false);
     } catch (e) {

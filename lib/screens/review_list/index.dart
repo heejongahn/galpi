@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:galpi/components/infinite_scroll_list_view/index.dart';
 import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/components/main_drawer/index.dart';
-import 'package:galpi/remotes/review/list.dart';
 import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +19,19 @@ class ReviewsState extends State<Reviews> {
   UniqueKey listViewKey = UniqueKey();
 
   var isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero, () {
+      final reviewRepository = Provider.of<ReviewRepository>(context);
+      reviewRepository.initiailze();
+      setState(() {
+        isInitialized = true;
+      });
+    });
+  }
 
   Widget _buildEmptyScreen() {
     return Align(
@@ -52,21 +64,25 @@ class ReviewsState extends State<Reviews> {
           ),
           body: RefreshIndicator(
             onRefresh: () async {
+              reviewRepository.initiailze();
+
               setState(() {
-                reviewRepository.data = [];
-                isInitialized = false;
                 listViewKey = UniqueKey();
               });
 
               return true;
             },
-            child: InfiniteScrollListView<Tuple2<Review, Book>>(
-              key: listViewKey,
-              data: reviewRepository.data,
-              fetchMore: _fetchItems,
-              emptyWidget: _buildEmptyScreen(),
-              itemBuilder: _itemBuilder,
-            ),
+            child: isInitialized
+                ? InfiniteScrollListView<Tuple2<Review, Book>>(
+                    key: listViewKey,
+                    data: reviewRepository.data,
+                    fetchMore: () => reviewRepository.fetchNext(
+                      userId: userRepository.user.id,
+                    ),
+                    emptyWidget: _buildEmptyScreen(),
+                    itemBuilder: _itemBuilder,
+                  )
+                : Container(),
           ),
           endDrawer: const MainDrawer(),
           floatingActionButton: FloatingActionButton(
@@ -100,23 +116,6 @@ class ReviewsState extends State<Reviews> {
         onTap: () => _onOpenReviewDetail(review, book, index),
       ),
     );
-  }
-
-  Future<bool> _fetchItems() async {
-    final reviewRepository = Provider.of<ReviewRepository>(context);
-
-    final items = await fetchReviews(
-      userId: userRepository.user.id,
-      skip: reviewRepository.data.length,
-      take: PAGE_SIZE,
-    );
-
-    setState(() {
-      reviewRepository.data = reviewRepository.data + items;
-      isInitialized = true;
-    });
-
-    return items.length == PAGE_SIZE;
   }
 }
 
