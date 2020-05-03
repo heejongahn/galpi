@@ -1,6 +1,8 @@
+import 'package:galpi/components/avatar/index.dart';
 import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/stores/review_repository.dart';
+import 'package:galpi/stores/user_repository.dart';
 import 'package:galpi/utils/show_error_dialog.dart';
 import 'package:galpi/utils/show_material_snackbar.dart';
 import 'package:intl/intl.dart';
@@ -134,7 +136,7 @@ class ReviewDetail extends StatelessWidget {
               review.title,
               style: Theme.of(context)
                   .textTheme
-                  .headline2
+                  .headline3
                   .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
             ),
             DateInfo(review: review),
@@ -364,25 +366,40 @@ class DateInfo extends StatelessWidget {
   });
 
   final Review review;
-  final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
+  final DateFormat formatter = DateFormat('yyyy년 M월 d일');
 
   @override
   Widget build(BuildContext context) {
+    final userRepository = Provider.of<UserRepository>(context);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(
-          review.createdAt != null
-              ? '${formatter.format(review.createdAt)} 작성'
-              : '작성 일자 없음',
-          style: Theme.of(context).textTheme.caption,
-        ),
-        Text(
-            review.lastModifiedAt != null
-                ? '${formatter.format(review.lastModifiedAt)} 최종 수정'
-                : '최종 수정 일자 없음',
-            style: Theme.of(context).textTheme.caption)
-      ]),
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          /**
+           * FIXME: 다른 유저의 글을 볼 수 있게되면 실제 저자의 정보로 변경
+           */
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Avatar(
+              profileImageUrl: userRepository.user.profileImageUrl,
+              size: 40,
+            ),
+          ),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              userRepository.user.displayName,
+            ),
+            review.createdAt != null
+                ? Text(
+                    '${formatter.format(review.createdAt)}',
+                    style: Theme.of(context).textTheme.caption,
+                  )
+                : Container(),
+          ]),
+        ],
+      ),
     );
   }
 }

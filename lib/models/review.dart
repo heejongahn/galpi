@@ -63,8 +63,8 @@ class Review {
       readingStatus: readingStatusInverseMap[map['readingStatus']],
       readingStartedAt: readingStartedAt,
       readingFinishedAt: readingFinishedAt,
-      createdAt: DateTime.parse(map['createdAt'] as String),
-      lastModifiedAt: DateTime.parse(map['lastModifiedAt'] as String),
+      createdAt: DateTime.parse(map['createdAt'] as String).toLocal(),
+      lastModifiedAt: DateTime.parse(map['lastModifiedAt'] as String).toLocal(),
       isPublic: map['isPublic'] as bool,
     );
 
@@ -150,8 +150,9 @@ class Review {
       readingStatus: readingStatusInverseMap[map[columnReadingStatus]],
       readingStartedAt: readingStartedAt,
       readingFinishedAt: readingFinishedAt,
-      createdAt: DateTime.parse(map[columnCreatedAt] as String),
-      lastModifiedAt: DateTime.parse(map[columnLastModifiedAt] as String),
+      createdAt: DateTime.parse(map[columnCreatedAt] as String).toLocal(),
+      lastModifiedAt:
+          DateTime.parse(map[columnLastModifiedAt] as String).toLocal(),
     );
   }
 
@@ -174,9 +175,12 @@ class Review {
           readingStatusInverseMap[map['${table}_${columnReadingStatus}']],
       readingStartedAt: readingStartedAt,
       readingFinishedAt: readingFinishedAt,
-      createdAt: DateTime.parse(map['${table}_${columnCreatedAt}'] as String),
-      lastModifiedAt:
-          DateTime.parse(map['${table}_${columnLastModifiedAt}'] as String),
+      createdAt: DateTime.parse(
+        map['${table}_${columnCreatedAt}'] as String,
+      ).toLocal(),
+      lastModifiedAt: DateTime.parse(
+        map['${table}_${columnLastModifiedAt}'] as String,
+      ).toLocal(),
     );
   }
 }

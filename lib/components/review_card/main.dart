@@ -6,7 +6,7 @@ import 'package:galpi/models/review.dart';
 import 'package:galpi/models/user.dart';
 import 'package:intl/intl.dart';
 
-final formatter = DateFormat('yyyy-MM-dd');
+final formatter = DateFormat('yyyy년 M월 d일');
 
 class ReviewCard extends StatelessWidget {
   final User user;
@@ -40,7 +40,7 @@ class ReviewCard extends StatelessWidget {
               style: Theme.of(context).textTheme.headline6,
             ),
             subtitle: Text(
-              '${user.displayName ?? user.email}',
+              '${user.displayName ?? user.email} · ${formatter.format(review.createdAt)}',
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.caption,
             ),
@@ -65,7 +65,7 @@ class ReviewCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(6),
             boxShadow: const [
               BoxShadow(
                 color: Color.fromRGBO(32, 33, 36, 0.28),
@@ -76,7 +76,7 @@ class ReviewCard extends StatelessWidget {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(6),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
