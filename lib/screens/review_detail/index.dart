@@ -3,6 +3,7 @@ import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/stores/user_repository.dart';
+import 'package:galpi/utils/env.dart';
 import 'package:galpi/utils/show_error_dialog.dart';
 import 'package:galpi/utils/show_material_snackbar.dart';
 import 'package:intl/intl.dart';
@@ -355,7 +356,7 @@ class ReviewDetail extends StatelessWidget {
 
   Future<void> _onShare({Review review}) async {
     await Share.share(
-      'https://galpi.world/review/${review.id}',
+      '${env.webEndpoint}/review/${review.id}',
     );
   }
 }
