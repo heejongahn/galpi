@@ -37,7 +37,11 @@ class ReviewCard extends StatelessWidget {
             ),
             title: Text(
               review.title,
-              style: Theme.of(context).textTheme.headline6,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyText1.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             subtitle: Text(
               '${user.displayName ?? user.email} · ${formatter.format(review.createdAt)}',

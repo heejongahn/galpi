@@ -28,6 +28,8 @@ class BookCard extends StatelessWidget {
                 ListTile(
                   title: Text(
                     book.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(
                     '${book.author} | ${book.publisher}',
