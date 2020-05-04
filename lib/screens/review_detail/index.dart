@@ -63,7 +63,7 @@ class ReviewDetail extends StatelessWidget {
       onPressed: () {
         showModalBottomSheet<void>(
           context: context,
-          builder: (context) {
+          builder: (bottomSheetContext) {
             return SafeArea(
               child: Wrap(
                 children: [
@@ -91,7 +91,7 @@ class ReviewDetail extends StatelessWidget {
                       );
 
                       if (result) {
-                        Navigator.of(context).pop();
+                        Navigator.of(bottomSheetContext).pop();
                         _onShare(review: review);
                       }
                     },
@@ -100,7 +100,7 @@ class ReviewDetail extends StatelessWidget {
                     leading: const Icon(Icons.edit),
                     title: const Text('수정하기'),
                     onTap: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(bottomSheetContext).pop();
                       _onEditReview(review, book, context);
                     },
                   ),
@@ -114,7 +114,7 @@ class ReviewDetail extends StatelessWidget {
                       style: TextStyle(color: Colors.redAccent),
                     ),
                     onTap: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(bottomSheetContext).pop();
                       _onDeleteReview(review, context);
                     },
                   ),
