@@ -90,6 +90,7 @@ class _SearchViewState extends State<SearchView> {
     }
 
     return InfiniteScrollListView(
+      key: Key(query),
       data: books,
       fetchMore: _fetchMore,
       itemBuilder: (Book book, {int index}) {
