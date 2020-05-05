@@ -28,7 +28,7 @@ class BookCard extends StatelessWidget {
                 ListTile(
                   title: Text(
                     book.title,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(

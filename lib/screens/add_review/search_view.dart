@@ -39,24 +39,27 @@ class _SearchViewState extends State<SearchView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        padding: const EdgeInsets.all(20),
-        child: TextField(
-          autofocus: true,
-          focusNode: _focusNode,
-          onChanged: (v) {
-            _queryStreamController.sink.add(v);
-          },
-          textInputAction: TextInputAction.search,
-          decoration: const InputDecoration(
-            labelText: '제목, 저자, 출판사',
-            border: OutlineInputBorder(),
+    return Container(
+      color: Colors.white,
+      child: Column(children: [
+        Container(
+          padding: const EdgeInsets.all(20),
+          child: TextField(
+            autofocus: true,
+            focusNode: _focusNode,
+            onChanged: (v) {
+              _queryStreamController.sink.add(v);
+            },
+            textInputAction: TextInputAction.search,
+            decoration: const InputDecoration(
+              labelText: '제목, 저자, 출판사',
+              border: OutlineInputBorder(),
+            ),
           ),
         ),
-      ),
-      Expanded(child: _buildContent()),
-    ]);
+        Expanded(child: _buildContent()),
+      ]),
+    );
   }
 
   @override
@@ -89,17 +92,23 @@ class _SearchViewState extends State<SearchView> {
       return _buildPlaceholder();
     }
 
-    return InfiniteScrollListView(
-      key: Key(query),
-      data: books,
-      fetchMore: _fetchMore,
-      itemBuilder: (Book book, {int index}) {
-        return BookCard(
-          book: book,
-          onTap: () => widget.onSelectBook(book),
-        );
-      },
-      emptyWidget: _buildPlaceholder(),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: InfiniteScrollListView(
+        key: Key(query),
+        data: books,
+        fetchMore: _fetchMore,
+        itemBuilder: (Book book, {int index}) {
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: BookCard(
+              book: book,
+              onTap: () => widget.onSelectBook(book),
+            ),
+          );
+        },
+        emptyWidget: _buildPlaceholder(),
+      ),
     );
   }
 
