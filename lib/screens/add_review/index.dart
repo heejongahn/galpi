@@ -35,7 +35,10 @@ class _AddReviewState extends State<AddReview> {
     Navigator.of(context).pushNamed(
       '/review/write',
       arguments: WriteReviewArgument(
-        review: Review(stars: 2),
+        review: Review(
+          stars: 3,
+          readingStatus: ReadingStatus.finishedReading,
+        ),
         book: book,
         bookId: bookId,
         onSave: _onCreate,
