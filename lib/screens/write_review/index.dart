@@ -154,9 +154,9 @@ class _WriteReviewState extends State<WriteReview> {
           Wrap(
             spacing: 16,
             children: [
-              ReadingStatus.hasntStarted,
+              ReadingStatus.finishedReading,
               ReadingStatus.reading,
-              ReadingStatus.finishedReading
+              ReadingStatus.hasntStarted,
             ]
                 .map((status) => ReadingStatusChip(
                       readingStatus: status,
