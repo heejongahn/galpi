@@ -84,6 +84,7 @@ class _SearchViewState extends State<SearchView> {
   void _onQueryChange(String newQuery) {
     setState(() {
       query = newQuery;
+      books = [];
     });
   }
 
