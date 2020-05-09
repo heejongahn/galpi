@@ -77,12 +77,12 @@ class _EmailLoginState extends State<EmailLogin> {
                   Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     child: Text(
-                      '환영합니다!',
+                      '메일 인증',
                       style: Theme.of(context).textTheme.headline6,
                     ),
                   ),
                   Text(
-                    '이메일 주소로 간편하게 로그인하고\n아름다운 독서 기록을 남기세요',
+                    '입력한 주소로 인증 메일이 전송됩니다.',
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                   _buildEmailRow(),
@@ -106,7 +106,7 @@ class _EmailLoginState extends State<EmailLogin> {
         autofocus: true,
         decoration: InputDecoration(
             border: const UnderlineInputBorder(),
-            labelText: '이메일 주소',
+            labelText: '메일 주소',
             helperText: _status == LoginStatus.idle ||
                     _status == LoginStatus.sendingEmail
                 ? ''
@@ -162,11 +162,11 @@ class _EmailLoginState extends State<EmailLogin> {
   Future<void> _initializeFirebaseDynamicLinks() async {
     final firebaseDLInstance = FirebaseDynamicLinks.instance;
 
-    await firebaseDLInstance.getInitialLink().then((data) {
-      if (data != null) {
-        _loginIfAvailable(data.link);
-      }
-    });
+    final initialLink = await firebaseDLInstance.getInitialLink();
+
+    if (initialLink != null) {
+      await _loginIfAvailable(initialLink.link);
+    }
 
     firebaseDLInstance.onLink(
       onSuccess: (data) async {
@@ -199,13 +199,13 @@ class _EmailLoginState extends State<EmailLogin> {
     );
 
     try {
-      final success = await userRepository.loginWithEmail(
+      final authResult = await userRepository.loginWithEmail(
         email: email,
         link: link.toString(),
       );
 
       _removeCurrentSnackBar();
-      if (success) {
+      if (authResult.item1) {
         _showSnackBar('${email}으로 로그인 되었습니다.');
       } else {
         throw Error();

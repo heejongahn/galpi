@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,6 +13,7 @@ import 'package:galpi/utils/flavor.dart';
 import 'package:galpi/utils/http_client.dart';
 import 'package:package_info/package_info.dart';
 import 'package:galpi/constants.dart';
+import 'package:tuple/tuple.dart';
 
 const secureStorage = FlutterSecureStorage();
 
@@ -19,6 +21,8 @@ enum AuthStatus {
   Unauthenticated,
   Authenticated,
 }
+
+const unknownAuthFailure = Tuple2(false, null);
 
 class UserRepository extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -79,7 +83,7 @@ class UserRepository extends ChangeNotifier {
     }
   }
 
-  Future<bool> loginWithEmail({
+  Future<Tuple2<bool, String>> loginWithEmail({
     String email,
     String link,
   }) async {
@@ -88,19 +92,68 @@ class UserRepository extends ChangeNotifier {
           await _auth.signInWithEmailAndLink(email: email, link: link);
 
       if (authResult.user == null) {
-        return false;
+        return unknownAuthFailure;
       }
 
       final firebaseToken = (await authResult.user.getIdToken()).token;
       final token = await registerWithFirebase(token: firebaseToken);
       return _login(token);
+    } on PlatformException catch (e) {
+      return Tuple2(false, e.code);
     } catch (e) {
-      print(e);
-      return false;
+      return unknownAuthFailure;
     }
   }
 
-  Future<bool> _login(String token) async {
+  Future<Tuple2<bool, String>> registerWithEmailAndPassword({
+    String email,
+    String password,
+  }) async {
+    try {
+      final authResult = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (authResult.user == null) {
+        return unknownAuthFailure;
+      }
+
+      final firebaseToken = (await authResult.user.getIdToken()).token;
+      final token = await registerWithFirebase(token: firebaseToken);
+      return _login(token);
+    } on PlatformException catch (e) {
+      return Tuple2(false, e.code);
+    } catch (e) {
+      return unknownAuthFailure;
+    }
+  }
+
+  Future<Tuple2<bool, String>> loginWithEmailAndPassword({
+    String email,
+    String password,
+  }) async {
+    try {
+      final authResult = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (authResult.user == null) {
+        return unknownAuthFailure;
+      }
+
+      final firebaseToken = (await authResult.user.getIdToken()).token;
+      final token = await registerWithFirebase(token: firebaseToken);
+      return _login(token);
+    } on PlatformException catch (e) {
+      return Tuple2(false, e.code);
+    } catch (e) {
+      return unknownAuthFailure;
+    }
+  }
+
+  Future<Tuple2<bool, String>> _login(String token) async {
     final sharedPreference = await SharedPreferences.getInstance();
 
     try {
@@ -112,11 +165,10 @@ class UserRepository extends ChangeNotifier {
         sharedPreference.remove(SHARED_PREFERENCE_LOGIN_EMAIL),
       ]);
 
-      return true;
+      return const Tuple2(true, null);
     } catch (e) {
-      print(e);
       await logout();
-      return false;
+      return unknownAuthFailure;
     }
   }
 

@@ -6,6 +6,7 @@ final theme = ThemeData(
   fontFamily: 'SpoqaHan-Sans',
   accentColor: Colors.black87,
   primaryColor: primaryColor,
+  scaffoldBackgroundColor: Colors.white,
   appBarTheme: AppBarTheme(
     brightness: Brightness.light,
     elevation: 1,

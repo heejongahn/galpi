@@ -30,10 +30,14 @@ class MainDrawer extends StatelessWidget {
                 ),
                 title: Text(
                   _getProfileSectionTitle(
-                      userRepository.authStatus, userRepository.user),
+                    userRepository.authStatus,
+                    userRepository.user,
+                  ),
                 ),
                 subtitle: Text(
-                  _getProfileSectionSubtitle(userRepository.authStatus),
+                  _getProfileSectionSubtitle(
+                    userRepository.authStatus,
+                  ),
                 ),
               ),
             ),
@@ -97,7 +101,7 @@ class MainDrawer extends StatelessWidget {
     switch (authStatus) {
       case AuthStatus.Unauthenticated:
         {
-          return '이메일 주소로 로그인해\n데이터 백업을 활성화하세요';
+          return '메일 주소로 로그인해\n데이터 백업을 활성화하세요';
         }
       case AuthStatus.Authenticated:
         {
