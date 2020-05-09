@@ -177,7 +177,7 @@ class UserRepository extends ChangeNotifier {
 
   Future<FirebaseUser> reloadFirebaseUser() async {
     final currentUser = await _auth.currentUser();
-    await currentUser.reload();
+    await currentUser?.reload();
 
     firebaseUser = currentUser;
 
