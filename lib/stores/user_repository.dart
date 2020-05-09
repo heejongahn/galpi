@@ -58,7 +58,10 @@ class UserRepository extends ChangeNotifier {
         await secureStorage.read(key: AUTH_LOGIN_TOKEN_KEY);
 
     if (loginToken != null) {
-      await _loginWithToken(loginToken);
+      final authResult = await _loginWithToken(loginToken);
+      if (authResult.item1) {
+        return;
+      }
     }
 
     await reloadFirebaseUser();
