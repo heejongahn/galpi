@@ -13,8 +13,6 @@ class EmailLogin extends StatefulWidget {
   _EmailLoginState createState() => _EmailLoginState();
 }
 
-typedef OnConfirm = void Function();
-
 enum LoginStatus {
   idle,
   sendingEmail,
@@ -34,65 +32,34 @@ class _EmailLoginState extends State<EmailLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserRepository>(
-      builder: (context, userRepository, child) {
-        Future<void> onSignIn() async {
-          final isResending = _status != LoginStatus.idle;
-
-          _showSnackBar('인증 메일을 ${isResending ? '다시 ' : ''}발송합니다.');
-
-          setState(() {
-            _status = LoginStatus.sendingEmail;
-          });
-
-          final success = await userRepository.sendLoginEmail(email: _email);
-          _removeCurrentSnackBar();
-
-          if (success) {
-            _showSnackBar(
-              '${_email}로 인증 메일을 ${isResending ? '다시 ' : ''}발송했습니다.\n메일 애플리케이션 또는 사이트를 확인하세요.',
-            );
-            setState(() {
-              _status = LoginStatus.sentEmail;
-            });
-          } else {
-            _showSnackBar('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
-            setState(() {
-              _status = LoginStatus.idle;
-            });
-          }
-        }
-
-        return Scaffold(
-          appBar: AppBar(
-            title: const Logo(),
-            centerTitle: false,
-          ),
-          body: Container(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: CommonForm(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      '메일 인증',
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                  ),
-                  Text(
-                    '입력한 주소로 인증 메일이 전송됩니다.',
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                  _buildEmailRow(),
-                  _buildConfirmButton(onConfirm: onSignIn),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Logo(),
+        centerTitle: false,
+      ),
+      body: Container(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        child: CommonForm(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  '메일 인증',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
               ),
-            ),
+              Text(
+                '입력한 메일 주소로 인증 메일이 전송됩니다.',
+                style: Theme.of(context).textTheme.subtitle2,
+              ),
+              _buildEmailRow(),
+              _buildConfirmButton(),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -102,6 +69,8 @@ class _EmailLoginState extends State<EmailLogin> {
     return Container(
       padding: const EdgeInsets.only(top: 24, bottom: 32),
       child: TextField(
+        keyboardType: TextInputType.emailAddress,
+        textInputAction: TextInputAction.send,
         enabled: _status != LoginStatus.verifying,
         autofocus: true,
         decoration: InputDecoration(
@@ -117,18 +86,21 @@ class _EmailLoginState extends State<EmailLogin> {
             _status = LoginStatus.idle;
           });
         },
+        onSubmitted: (value) {
+          _onSignIn();
+        },
       ),
     );
   }
 
-  Widget _buildConfirmButton({OnConfirm onConfirm}) {
+  Widget _buildConfirmButton() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(
           height: 48,
           child: RaisedButton(
-            onPressed: _status == LoginStatus.idle ? onConfirm : null,
+            onPressed: _status == LoginStatus.idle ? _onSignIn : null,
             child: const Text('인증 메일 발송'),
             color: Colors.black,
             textColor: Colors.white,
@@ -140,13 +112,42 @@ class _EmailLoginState extends State<EmailLogin> {
                 height: 48,
                 child: FlatButton(
                   onPressed:
-                      _status != LoginStatus.sendingEmail ? onConfirm : null,
+                      _status != LoginStatus.sendingEmail ? _onSignIn : null,
                   child: const Text('메일을 받지 못하셨나요?'),
                 ),
               )
             : Container(width: 0, height: 0),
       ],
     );
+  }
+
+  Future<void> _onSignIn() async {
+    final userRepository = Provider.of<UserRepository>(context);
+
+    final isResending = _status != LoginStatus.idle;
+
+    _showSnackBar('인증 메일을 ${isResending ? '다시 ' : ''}발송합니다.');
+
+    setState(() {
+      _status = LoginStatus.sendingEmail;
+    });
+
+    final success = await userRepository.sendLoginEmail(email: _email);
+    _removeCurrentSnackBar();
+
+    if (success) {
+      _showSnackBar(
+        '${_email}로 인증 메일을 ${isResending ? '다시 ' : ''}발송했습니다.\n메일 애플리케이션 또는 사이트를 확인하세요.',
+      );
+      setState(() {
+        _status = LoginStatus.sentEmail;
+      });
+    } else {
+      _showSnackBar('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+      setState(() {
+        _status = LoginStatus.idle;
+      });
+    }
   }
 
   void _showSnackBar(String message) {

@@ -10,8 +10,6 @@ class EmailPasswordRegister extends StatefulWidget {
   _EmailPasswordRegisterState createState() => _EmailPasswordRegisterState();
 }
 
-typedef OnConfirm = void Function();
-
 enum LoginStatus {
   idle,
   verifying,
@@ -20,33 +18,28 @@ enum LoginStatus {
 const passwordMinLength = 8;
 
 class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
+  final _passwordFocusNode = FocusNode();
+  final _passwordConfirmFocusNode = FocusNode();
+
   String _email = '';
   String _password = '';
   String _passwordConfirm = '';
   LoginStatus _status = LoginStatus.idle;
 
-  String get _passwordHelperText {
-    if (_password.length < passwordMinLength) {
-      return '최소 ${passwordMinLength}자 이상';
-    }
-
-    return null;
-  }
-
   String get _passwordConfirmHelperText {
     if (_passwordConfirm != _password) {
-      return '비밀번호가 일치하지 않습니다.';
+      return '비밀번호와 일치하지 않습니다.';
     }
 
     return null;
   }
 
   bool get _canConfirm {
-    if (_passwordConfirmHelperText != null) {
+    if (_password.length < passwordMinLength) {
       return false;
     }
 
-    if (_passwordHelperText != null) {
+    if (_passwordConfirmHelperText != null) {
       return false;
     }
 
@@ -74,7 +67,7 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: Text(
-                    '메일 주소와 비밀번호로 회원가입',
+                    '회원가입',
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
@@ -85,7 +78,7 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
                 _buildEmailRow(),
                 _buildPasswordRow(),
                 _buildPasswordConfirmRow(),
-                _buildConfirmButton(onConfirm: _onRegister),
+                _buildConfirmButton(),
               ],
             ),
           ),
@@ -143,6 +136,8 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
         top: 24,
       ),
       child: TextField(
+        textInputAction: TextInputAction.next,
+        keyboardType: TextInputType.emailAddress,
         enabled: _status != LoginStatus.verifying,
         autofocus: true,
         decoration: const InputDecoration(
@@ -154,6 +149,9 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
             _email = email;
             _status = LoginStatus.idle;
           });
+        },
+        onSubmitted: (value) {
+          _passwordFocusNode.requestFocus();
         },
       ),
     );
@@ -167,18 +165,23 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
         top: 12,
       ),
       child: TextField(
+        textInputAction: TextInputAction.next,
+        focusNode: _passwordFocusNode,
         obscureText: true,
         autofocus: true,
-        decoration: InputDecoration(
-          border: const UnderlineInputBorder(),
+        decoration: const InputDecoration(
+          border: UnderlineInputBorder(),
           labelText: '비밀번호',
-          helperText: _passwordHelperText,
+          helperText: '최소 ${passwordMinLength}자 이상',
         ),
         onChanged: (String password) {
           setState(() {
             _password = password;
             _status = LoginStatus.idle;
           });
+        },
+        onSubmitted: (value) {
+          _passwordConfirmFocusNode.requestFocus();
         },
       ),
     );
@@ -193,6 +196,7 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
         bottom: 32,
       ),
       child: TextField(
+        focusNode: _passwordConfirmFocusNode,
         obscureText: true,
         autofocus: true,
         decoration: InputDecoration(
@@ -206,11 +210,16 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
             _status = LoginStatus.idle;
           });
         },
+        onSubmitted: (value) {
+          if (_canConfirm) {
+            _onRegister();
+          }
+        },
       ),
     );
   }
 
-  Widget _buildConfirmButton({OnConfirm onConfirm}) {
+  Widget _buildConfirmButton() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -218,7 +227,7 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
           margin: const EdgeInsets.only(top: 48),
           height: 48,
           child: RaisedButton(
-            onPressed: _canConfirm ? onConfirm : null,
+            onPressed: _canConfirm ? _onRegister : null,
             child: const Text('회원가입'),
             color: Colors.black,
             textColor: Colors.white,

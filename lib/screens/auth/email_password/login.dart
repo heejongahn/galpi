@@ -10,8 +10,6 @@ class EmailPasswordLogin extends StatefulWidget {
   _EmailPasswordLoginState createState() => _EmailPasswordLoginState();
 }
 
-typedef OnConfirm = void Function();
-
 enum LoginStatus {
   idle,
   verifying,
@@ -20,6 +18,8 @@ enum LoginStatus {
 const passwordMinLength = 8;
 
 class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
+  final _passwordFocusNode = FocusNode();
+
   String _email = '';
   String _password = '';
   LoginStatus _status = LoginStatus.idle;
@@ -49,17 +49,17 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: Text(
-                    '메일 주소와 비밀번호로 로그인',
+                    '로그인',
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
                 Text(
-                  '로그인에 사용할 메일 주소와 비밀번호를 입력하세요.',
+                  '메일 주소와 비밀번호를 입력하세요.',
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 _buildEmailRow(),
                 _buildPasswordRow(),
-                _buildConfirmButton(onConfirm: _onLogin),
+                _buildConfirmButton(),
               ],
             ),
           ),
@@ -107,14 +107,14 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
     }
   }
 
-  Widget _buildEmailRow({
-    AuthStatus authStatus,
-  }) {
+  Widget _buildEmailRow() {
     return Container(
       padding: const EdgeInsets.only(
         top: 24,
       ),
       child: TextField(
+        keyboardType: TextInputType.emailAddress,
+        textInputAction: TextInputAction.next,
         enabled: _status != LoginStatus.verifying,
         autofocus: true,
         decoration: const InputDecoration(
@@ -127,22 +127,24 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
             _status = LoginStatus.idle;
           });
         },
+        onSubmitted: (value) {
+          _passwordFocusNode.requestFocus();
+        },
       ),
     );
   }
 
-  Widget _buildPasswordRow({
-    AuthStatus authStatus,
-  }) {
+  Widget _buildPasswordRow() {
     return Container(
       padding: const EdgeInsets.only(
         top: 12,
       ),
       child: TextField(
+        focusNode: _passwordFocusNode,
         obscureText: true,
         autofocus: true,
-        decoration: InputDecoration(
-          border: const UnderlineInputBorder(),
+        decoration: const InputDecoration(
+          border: UnderlineInputBorder(),
           labelText: '비밀번호',
         ),
         onChanged: (String password) {
@@ -151,11 +153,16 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
             _status = LoginStatus.idle;
           });
         },
+        onSubmitted: (value) {
+          if (_canConfirm) {
+            _onLogin();
+          }
+        },
       ),
     );
   }
 
-  Widget _buildConfirmButton({OnConfirm onConfirm}) {
+  Widget _buildConfirmButton() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -163,8 +170,8 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
           margin: const EdgeInsets.only(top: 48),
           height: 48,
           child: RaisedButton(
-            onPressed: _canConfirm ? onConfirm : null,
-            child: Text('로그인'),
+            onPressed: _canConfirm ? _onLogin : null,
+            child: const Text('로그인'),
             color: Colors.black,
             textColor: Colors.white,
           ),
