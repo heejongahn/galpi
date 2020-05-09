@@ -88,6 +88,10 @@ class UserRepository extends ChangeNotifier {
     }
   }
 
+  Future<void> sendPasswordResetEmail({String email}) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   Future<bool> sendLoginEmail({
     String email,
   }) async {

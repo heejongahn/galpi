@@ -107,6 +107,10 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
     }
   }
 
+  void _onPasswordReset() {
+    Navigator.of(context).pushReplacementNamed('/auth/reset-password');
+  }
+
   Widget _buildEmailRow() {
     return Container(
       padding: const EdgeInsets.only(
@@ -176,6 +180,14 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
             textColor: Colors.white,
           ),
         ),
+        Container(
+          margin: const EdgeInsets.only(top: 12),
+          height: 48,
+          child: FlatButton(
+            onPressed: _onPasswordReset,
+            child: const Text('비밀번호를 잊으셨나요?'),
+          ),
+        )
       ],
     );
   }
