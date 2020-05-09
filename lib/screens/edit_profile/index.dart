@@ -138,6 +138,10 @@ class _EditProfileState extends State<EditProfile> {
         maxWidth: 140,
       );
 
+      if (image == null) {
+        return;
+      }
+
       final filename = p.basename(image.path).replaceAll(
             'image_picker_',
             '',
@@ -146,8 +150,6 @@ class _EditProfileState extends State<EditProfile> {
       final key = 'profile/$filename';
 
       final signResult = await getSignedUrl(key: key);
-
-      print(signResult);
 
       await uploadFileToS3(
         file: image,
@@ -165,7 +167,8 @@ class _EditProfileState extends State<EditProfile> {
             return AlertDialog(
               title: const Text("접근 권한 필요"),
               content: const Text(
-                  '프로필 사진 변경을 위해선 사진 접근 권한이 필요합니다. 설정에서 “갈피” 어플리케이션의 사진 접근을 허용해주세요.'),
+                '프로필 사진 변경을 위해선 사진 접근 권한이 필요합니다. 설정에서 “갈피” 어플리케이션의 사진 접근을 허용해주세요.',
+              ),
               actions: <Widget>[
                 FlatButton(
                   textColor: Colors.black,
