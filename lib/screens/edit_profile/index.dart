@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:galpi/remotes/get_signed_url.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
@@ -130,31 +131,59 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> getImage() async {
-    final image = await ImagePicker.pickImage(
-      source: ImageSource.gallery,
-      maxHeight: 140,
-      maxWidth: 140,
-    );
+    try {
+      final image = await ImagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 140,
+        maxWidth: 140,
+      );
 
-    final filename = p.basename(image.path).replaceAll(
-          'image_picker_',
-          '',
+      final filename = p.basename(image.path).replaceAll(
+            'image_picker_',
+            '',
+          );
+
+      final key = 'profile/$filename';
+
+      final signResult = await getSignedUrl(key: key);
+
+      print(signResult);
+
+      await uploadFileToS3(
+        file: image,
+        url: signResult['signedUrl'] as String,
+      );
+
+      setState(() {
+        _profileImageUrl = signResult['objectUrl'] as String;
+      });
+    } on PlatformException catch (e) {
+      if (e.code == 'photo_access_denied') {
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("접근 권한 필요"),
+              content: const Text(
+                  '프로필 사진 변경을 위해선 사진 접근 권한이 필요합니다. 설정에서 “갈피” 어플리케이션의 사진 접근을 허용해주세요.'),
+              actions: <Widget>[
+                FlatButton(
+                  textColor: Colors.black,
+                  child: const Text("닫기"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
         );
 
-    final key = 'profile/$filename';
+        return;
+      }
 
-    final signResult = await getSignedUrl(key: key);
-
-    print(signResult);
-
-    await uploadFileToS3(
-      file: image,
-      url: signResult['signedUrl'] as String,
-    );
-
-    setState(() {
-      _profileImageUrl = signResult['objectUrl'] as String;
-    });
+      rethrow;
+    }
   }
 
   Future<void> _onSave() async {
