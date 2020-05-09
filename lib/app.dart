@@ -13,10 +13,33 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> with WidgetsBindingObserver {
+  bool isInitialized = false;
+
+  @override
+  void initState() {
+    final userRepository = Provider.of<UserRepository>(context, listen: false);
+
+    super.initState();
+    userRepository.initialize().then<void>(
+      (_) {
+        setState(() {
+          isInitialized = true;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<UserRepository>(
       builder: (context, userRepository, child) {
+        if (!isInitialized) {
+          return Container(
+            alignment: Alignment.center,
+            child: const CircularProgressIndicator(),
+          );
+        }
+
         switch (userRepository.authStatus) {
           case AuthStatus.Authenticated:
             {

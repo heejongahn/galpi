@@ -225,5 +225,3 @@ class UserRepository extends ChangeNotifier {
     user = await editProfile(updatedUser);
   }
 }
-
-final userRepository = UserRepository();

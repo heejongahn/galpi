@@ -107,6 +107,7 @@ class ReviewsState extends State<Reviews> {
   Widget _itemBuilder(Tuple2<Review, Book> pair, {int index}) {
     final review = pair.item1;
     final book = pair.item2;
+    final userRepository = Provider.of<UserRepository>(context);
 
     return Container(
       child: ReviewCard(

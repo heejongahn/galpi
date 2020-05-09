@@ -117,6 +117,8 @@ class MainDrawer extends StatelessWidget {
   }
 
   Future<void> _onSignOut(BuildContext context) async {
+    final userRepository = Provider.of<UserRepository>(context);
+
     final onSignOutConfirm = (BuildContext dialogContext) async {
       await userRepository.logout();
       Navigator.of(dialogContext).pop();

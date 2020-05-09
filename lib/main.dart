@@ -92,9 +92,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     if (!isInitialized) {
-      return Container(
-        alignment: Alignment.center,
-        child: const CircularProgressIndicator(),
+      return Scaffold(
+        body: Container(
+          alignment: Alignment.center,
+          child: const CircularProgressIndicator(),
+        ),
       );
     }
 
@@ -102,8 +104,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       builder: (_) {
         return ReviewRepository();
       },
-      child: ChangeNotifierProvider.value(
-        value: userRepository,
+      child: ChangeNotifierProvider(
+        builder: (_) {
+          return UserRepository();
+        },
         child: Scaffold(
           key: _scaffoldKey,
           body: App(),
@@ -116,7 +120,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     await loadEnvForCurrentFlavor();
-    await userRepository.initialize();
 
     setState(() {
       isInitialized = true;
