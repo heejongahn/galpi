@@ -19,6 +19,7 @@ const secureStorage = FlutterSecureStorage();
 
 enum AuthStatus {
   Unauthenticated,
+  NeedsEmailVerification,
   Authenticated,
 }
 
@@ -26,6 +27,7 @@ const unknownAuthFailure = Tuple2(false, null);
 
 class UserRepository extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser firebaseUser;
 
   User _user;
 
@@ -36,21 +38,53 @@ class UserRepository extends ChangeNotifier {
   }
 
   AuthStatus get authStatus {
-    if (user == null) {
-      return AuthStatus.Unauthenticated;
+    if (firebaseUser != null && !firebaseUser.isEmailVerified) {
+      return AuthStatus.NeedsEmailVerification;
     }
 
-    return AuthStatus.Authenticated;
+    if (user != null) {
+      return AuthStatus.Authenticated;
+    }
+
+    return AuthStatus.Unauthenticated;
   }
 
-  bool get isLoggedIn => authStatus == AuthStatus.Authenticated;
+  bool get isLoggedIn {
+    return authStatus == AuthStatus.Authenticated;
+  }
 
   Future<void> initialize() async {
     final String loginToken =
         await secureStorage.read(key: AUTH_LOGIN_TOKEN_KEY);
 
     if (loginToken != null) {
-      await _login(loginToken);
+      await _loginWithToken(loginToken);
+    }
+
+    await reloadFirebaseUser();
+
+    _auth.onAuthStateChanged.listen((newFirebaseUser) {
+      firebaseUser = newFirebaseUser;
+      notifyListeners();
+    });
+  }
+
+  Future<void> sendVerificationEmail() async {
+    if (firebaseUser == null) {
+      return;
+    }
+
+    await firebaseUser.sendEmailVerification();
+  }
+
+  Future<bool> checkIfEmailVerified() async {
+    final firebaseUser = await reloadFirebaseUser();
+
+    if (firebaseUser.isEmailVerified) {
+      await _loginWithFirebaseUser(firebaseUser);
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -95,9 +129,8 @@ class UserRepository extends ChangeNotifier {
         return unknownAuthFailure;
       }
 
-      final firebaseToken = (await authResult.user.getIdToken()).token;
-      final token = await registerWithFirebase(token: firebaseToken);
-      return _login(token);
+      final result = await _loginWithFirebaseUser(authResult.user);
+      return result;
     } on PlatformException catch (e) {
       return Tuple2(false, e.code);
     } catch (e) {
@@ -110,18 +143,12 @@ class UserRepository extends ChangeNotifier {
     String password,
   }) async {
     try {
-      final authResult = await _auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      if (authResult.user == null) {
-        return unknownAuthFailure;
-      }
-
-      final firebaseToken = (await authResult.user.getIdToken()).token;
-      final token = await registerWithFirebase(token: firebaseToken);
-      return _login(token);
+      return const Tuple2(true, null);
     } on PlatformException catch (e) {
       return Tuple2(false, e.code);
     } catch (e) {
@@ -139,13 +166,8 @@ class UserRepository extends ChangeNotifier {
         password: password,
       );
 
-      if (authResult.user == null) {
-        return unknownAuthFailure;
-      }
-
-      final firebaseToken = (await authResult.user.getIdToken()).token;
-      final token = await registerWithFirebase(token: firebaseToken);
-      return _login(token);
+      final result = await _loginWithFirebaseUser(authResult.user);
+      return result;
     } on PlatformException catch (e) {
       return Tuple2(false, e.code);
     } catch (e) {
@@ -153,7 +175,27 @@ class UserRepository extends ChangeNotifier {
     }
   }
 
-  Future<Tuple2<bool, String>> _login(String token) async {
+  Future<FirebaseUser> reloadFirebaseUser() async {
+    final currentUser = await _auth.currentUser();
+    await currentUser.reload();
+
+    firebaseUser = currentUser;
+
+    return currentUser;
+  }
+
+  Future<Tuple2<bool, String>> _loginWithFirebaseUser(
+      FirebaseUser loggingInFirebaseUser) async {
+    if (loggingInFirebaseUser == null) {
+      return unknownAuthFailure;
+    }
+
+    final firebaseToken = (await loggingInFirebaseUser.getIdToken()).token;
+    final token = await registerWithFirebase(token: firebaseToken);
+    return _loginWithToken(token);
+  }
+
+  Future<Tuple2<bool, String>> _loginWithToken(String token) async {
     final sharedPreference = await SharedPreferences.getInstance();
 
     try {

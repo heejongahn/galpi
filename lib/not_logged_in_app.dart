@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:galpi/components/screen_with_navigator/index.dart';
 import 'package:galpi/screens/auth/email_login/index.dart';
-import 'package:galpi/screens/auth/email_password_login/index.dart';
+import 'package:galpi/screens/auth/email_password/login.dart';
+import 'package:galpi/screens/auth/email_password/register.dart';
 import 'package:galpi/screens/auth/index.dart';
 
 class NotLoggedInApp extends StatefulWidget {
@@ -37,10 +38,13 @@ class _NotLoggedInAppState extends State<NotLoggedInApp>
                   {
                     return EmailLogin();
                   }
-                case '/auth/login/email-password':
+                case '/auth/email-password/login':
                   {
-                    final args = settings.arguments as Map<String, bool>;
-                    return EmailPasswordLogin(arguments: args);
+                    return EmailPasswordLogin();
+                  }
+                case '/auth/email-password/register':
+                  {
+                    return EmailPasswordRegister();
                   }
               }
 

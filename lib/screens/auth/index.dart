@@ -100,8 +100,7 @@ class _AuthState extends State<Auth> {
             shape: rectBorder,
             onPressed: () {
               Navigator.of(context).pushNamed(
-                '/auth/login/email-password',
-                arguments: {'isRegistering': false},
+                '/auth/email-password/login',
               );
             },
             child: const Text('메일 주소와 비밀번호로 로그인'),
@@ -137,8 +136,7 @@ class _AuthState extends State<Auth> {
             shape: rectBorder,
             onPressed: () {
               Navigator.of(context).pushNamed(
-                '/auth/login/email-password',
-                arguments: {'isRegistering': true},
+                '/auth/email-password/register',
               );
             },
             child: const Text('메일 주소와 비밀번호로 회원가입'),

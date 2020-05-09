@@ -5,13 +5,9 @@ import 'package:galpi/components/common_form/index.dart';
 import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/stores/user_repository.dart';
 
-class EmailPasswordLogin extends StatefulWidget {
-  final Map<String, bool> arguments;
-
-  const EmailPasswordLogin({@required this.arguments});
-
+class EmailPasswordRegister extends StatefulWidget {
   @override
-  _EmailPasswordLoginState createState() => _EmailPasswordLoginState();
+  _EmailPasswordRegisterState createState() => _EmailPasswordRegisterState();
 }
 
 typedef OnConfirm = void Function();
@@ -23,18 +19,13 @@ enum LoginStatus {
 
 const passwordMinLength = 8;
 
-class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
-  bool _forceLoginView = false;
+class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
   String _email = '';
   String _password = '';
   String _passwordConfirm = '';
   LoginStatus _status = LoginStatus.idle;
 
   String get _passwordHelperText {
-    if (_isRegistering) {
-      return null;
-    }
-
     if (_password.length < passwordMinLength) {
       return '최소 ${passwordMinLength}자 이상';
     }
@@ -43,23 +34,11 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
   }
 
   String get _passwordConfirmHelperText {
-    if (!_isRegistering) {
-      return null;
-    }
-
     if (_passwordConfirm != _password) {
       return '비밀번호가 일치하지 않습니다.';
     }
 
     return null;
-  }
-
-  bool get _isRegistering {
-    return !_forceLoginView && widget.arguments['isRegistering'];
-  }
-
-  String get _actionLabel {
-    return _isRegistering ? '회원가입' : '로그인';
   }
 
   bool get _canConfirm {
@@ -95,7 +74,7 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: Text(
-                    _isRegistering ? '메일 주소와 비밀번호로 회원가입' : '메일 주소와 비밀번호로 로그인',
+                    '메일 주소와 비밀번호로 회원가입',
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
@@ -105,53 +84,14 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
                 ),
                 _buildEmailRow(),
                 _buildPasswordRow(),
-                _isRegistering ? _buildPasswordConfirmRow() : Container(),
-                _buildConfirmButton(onConfirm: onSignIn),
+                _buildPasswordConfirmRow(),
+                _buildConfirmButton(onConfirm: _onRegister),
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  Future<void> _onLogin() async {
-    final userRepository = Provider.of<UserRepository>(context);
-
-    setState(() {
-      _status = LoginStatus.verifying;
-    });
-
-    final authResult = await userRepository.loginWithEmailAndPassword(
-      email: _email,
-      password: _password,
-    );
-
-    setState(() {
-      _status = LoginStatus.idle;
-    });
-
-    if (authResult.item1) {
-      _showSnackBar('성공적으로 로그인 되었습니다.');
-    } else {
-      switch (authResult.item2) {
-        case 'ERROR_USER_NOT_FOUND':
-          {
-            _showSnackBar('해당 계정이 존재하지 않습니다. 아직 가입 전이라면 먼저 회원가입부터 진행해주세요.');
-            return;
-          }
-        case 'ERROR_WRONG_PASSWORD':
-          {
-            _showSnackBar('비밀번호가 올바르지 않습니다. 확인 후 다시 시도해주세요.');
-            return;
-          }
-        default:
-          {
-            _showSnackBar('${_actionLabel}에 실패했습니다. 다시 시도해주세요.');
-            return;
-          }
-      }
-    }
   }
 
   Future<void> _onRegister() async {
@@ -171,15 +111,14 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
     });
 
     if (authResult.item1) {
-      _showSnackBar('성공적으로 가입 되었습니다.');
+      _showSnackBar('성공적으로 가입되었습니다.');
     } else {
       switch (authResult.item2) {
         case 'ERROR_EMAIL_ALREADY_IN_USE':
           {
             _showSnackBar('${_email}는 이미 사용 중인 메일 주소입니다. 로그인해주세요.');
-            setState(() {
-              _forceLoginView = true;
-            });
+            Navigator.of(context)
+                .pushReplacementNamed('/auth/email-password/login');
             return;
           }
         case 'ERROR_WEAK_PASSWORD':
@@ -189,62 +128,7 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
           }
         default:
           {
-            _showSnackBar('${_actionLabel}에 실패했습니다. 다시 시도해주세요.');
-            return;
-          }
-      }
-    }
-  }
-
-  Future<void> _onSendVerificationEmail() async {}
-
-  Future<void> onSignIn() async {
-    final userRepository = Provider.of<UserRepository>(context);
-
-    setState(() {
-      _status = LoginStatus.verifying;
-    });
-
-    final authResult = _isRegistering
-        ? await userRepository.registerWithEmailAndPassword(
-            email: _email,
-            password: _password,
-          )
-        : await userRepository.loginWithEmailAndPassword(
-            email: _email,
-            password: _password,
-          );
-
-    setState(() {
-      _status = LoginStatus.idle;
-    });
-
-    if (authResult.item1) {
-      _showSnackBar(_isRegistering ? '성공적으로 가입 되었습니다.' : '성공적으로 로그인 되었습니다.');
-    } else {
-      print(authResult.item2);
-      switch (authResult.item2) {
-        case 'ERROR_USER_NOT_FOUND':
-          {
-            _showSnackBar('해당 계정이 존재하지 않습니다. 아직 가입 전이라면 먼저 회원가입부터 진행해주세요.');
-            return;
-          }
-        case 'ERROR_WRONG_PASSWORD':
-          {
-            _showSnackBar('비밀번호가 올바르지 않습니다. 확인 후 다시 시도해주세요.');
-            return;
-          }
-        case 'ERROR_EMAIL_ALREADY_IN_USE':
-          {
-            _showSnackBar('${_email}는 이미 사용 중인 메일 주소입니다. 로그인해주세요.');
-            setState(() {
-              _forceLoginView = true;
-            });
-            return;
-          }
-        default:
-          {
-            _showSnackBar('${_actionLabel}에 실패했습니다. 다시 시도해주세요.');
+            _showSnackBar('회원가입에 실패했습니다. 다시 시도해주세요.');
             return;
           }
       }
@@ -335,7 +219,7 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
           height: 48,
           child: RaisedButton(
             onPressed: _canConfirm ? onConfirm : null,
-            child: Text(_actionLabel),
+            child: const Text('회원가입'),
             color: Colors.black,
             textColor: Colors.white,
           ),
