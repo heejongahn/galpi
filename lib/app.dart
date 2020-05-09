@@ -26,7 +26,11 @@ class _AppState extends State<App> with WidgetsBindingObserver {
           isInitialized = true;
         });
       },
-    );
+    ).catchError((_) {
+      setState(() {
+        isInitialized = true;
+      });
+    });
   }
 
   @override
