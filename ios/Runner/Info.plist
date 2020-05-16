@@ -69,5 +69,10 @@
 		<string>https://galpi.page.link</string>
 		<string>https://galpidev.page.link</string>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>itms-beta</string>
+		<string>itms</string>
+	</array>
 </dict>
 </plist>

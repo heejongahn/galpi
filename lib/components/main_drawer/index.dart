@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:galpi/components/avatar/index.dart';
 import 'package:galpi/models/user.dart';
 import 'package:galpi/stores/user_repository.dart';
+import 'package:launch_review/launch_review.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 
@@ -49,12 +50,18 @@ class MainDrawer extends StatelessWidget {
                       onTap: () => _onEditProfile(context),
                     ),
                     ListTile(
+                      leading: Icon(Icons.rate_review),
+                      title: const Text('의견 남기기'),
+                      onTap: _onWriteReview,
+                    ),
+                    ListTile(
                       leading: Icon(Icons.exit_to_app),
                       title: const Text('로그아웃'),
                       onTap: () => _onSignOut(context),
                     )
                   ]
                 : [],
+            const Divider(),
             _buildAboutListTile(),
           ],
         ),
@@ -114,6 +121,13 @@ class MainDrawer extends StatelessWidget {
 
   void _onEditProfile(BuildContext context) {
     Navigator.of(context).pushNamed('/profile/edit');
+  }
+
+  void _onWriteReview() {
+    LaunchReview.launch(
+      iOSAppId: '1470817706',
+      androidAppId: 'name.ahnheejong.galpi',
+    );
   }
 
   Future<void> _onSignOut(BuildContext context) async {

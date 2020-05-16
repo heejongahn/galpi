@@ -42,6 +42,7 @@ dependencies:
   path: ^1.6.4
   sentry: ">=3.0.0 <4.0.0"
   share: ^0.6.4
+  launch_review: ^2.0.0
 
 dev_dependencies:
   flutter_test:
