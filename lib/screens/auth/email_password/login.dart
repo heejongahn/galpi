@@ -80,30 +80,30 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
       password: _password,
     );
 
+    if (authResult.item1) {
+      return;
+    }
+
     setState(() {
       _status = LoginStatus.idle;
     });
 
-    if (authResult.item1) {
-      _showSnackBar('성공적으로 로그인 되었습니다.');
-    } else {
-      switch (authResult.item2) {
-        case 'ERROR_USER_NOT_FOUND':
-          {
-            _showSnackBar('해당 계정이 존재하지 않습니다. 아직 가입 전이라면 먼저 회원가입부터 진행해주세요.');
-            return;
-          }
-        case 'ERROR_WRONG_PASSWORD':
-          {
-            _showSnackBar('비밀번호가 올바르지 않습니다. 확인 후 다시 시도해주세요.');
-            return;
-          }
-        default:
-          {
-            _showSnackBar('로그인에 실패했습니다. 다시 시도해주세요.');
-            return;
-          }
-      }
+    switch (authResult.item2) {
+      case 'ERROR_USER_NOT_FOUND':
+        {
+          _showSnackBar('해당 계정이 존재하지 않습니다. 아직 가입 전이라면 먼저 회원가입부터 진행해주세요.');
+          return;
+        }
+      case 'ERROR_WRONG_PASSWORD':
+        {
+          _showSnackBar('비밀번호가 올바르지 않습니다. 확인 후 다시 시도해주세요.');
+          return;
+        }
+      default:
+        {
+          _showSnackBar('로그인에 실패했습니다. 다시 시도해주세요.');
+          return;
+        }
     }
   }
 
