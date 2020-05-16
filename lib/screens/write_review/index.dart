@@ -35,6 +35,7 @@ class WriteReview extends StatefulWidget {
 
 class _WriteReviewState extends State<WriteReview> {
   final _formKey = GlobalKey<FormState>();
+  bool isSaving = false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +44,31 @@ class _WriteReviewState extends State<WriteReview> {
         title: Text(widget.arguments.isEditing ? '독후감 수정' : '독후감 작성'),
         centerTitle: false,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.done),
-            onPressed: _onSave,
-          )
+          isSaving
+              ? Center(
+                  child: Container(
+                    width: 48,
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 16),
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                    ),
+                  ),
+                )
+              : IconButton(
+                  icon: Icon(Icons.done),
+                  onPressed: _onSave,
+                )
         ],
+        // bottom: isSaving
+        //     ? const PreferredSize(
+        //         preferredSize: Size(double.infinity, 0),
+        //         child: LinearProgressIndicator(
+        //           backgroundColor: Colors.white,
+        //         ),
+        //       )
+        //     : null,
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -215,10 +236,21 @@ class _WriteReviewState extends State<WriteReview> {
     }
 
     form.save();
-    await widget.arguments.onSave(
-      widget.arguments.review,
-      bookId: widget.arguments.bookId,
-    );
+    setState(() {
+      isSaving = true;
+    });
+
+    try {
+      await widget.arguments.onSave(
+        widget.arguments.review,
+        bookId: widget.arguments.bookId,
+      );
+    } finally {
+      if (mounted)
+        setState(() {
+          isSaving = false;
+        });
+    }
   }
 
   void _onBlur() {
