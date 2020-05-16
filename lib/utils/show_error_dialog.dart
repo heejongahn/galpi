@@ -7,7 +7,7 @@ void showErrorDialog({
 }) {
   showDialog<void>(
     context: context,
-    builder: (BuildContext context) {
+    builder: (BuildContext dialogContext) {
       return AlertDialog(
         title: const Text("앗!"),
         content: Text(message),
@@ -16,7 +16,7 @@ void showErrorDialog({
             textColor: Colors.black,
             child: const Text("닫기"),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(dialogContext).pop();
             },
           ),
         ],

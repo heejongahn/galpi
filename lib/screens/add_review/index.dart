@@ -52,7 +52,10 @@ class _AddReviewState extends State<AddReview> {
     try {
       await reviewRepository.create(review: review, bookId: bookId);
       Navigator.pushNamedAndRemoveUntil(
-          context, '/', (Route<dynamic> r) => false);
+        context,
+        '/',
+        (Route<dynamic> r) => false,
+      );
     } catch (e) {
       print(e);
       showErrorDialog(context: context, message: '독후감 작성 중 오류가 발생했습니다.');

@@ -108,7 +108,7 @@ class _NotLoggedInAppState extends State<NotLoggedInApp>
       return;
     }
 
-    _scaffoldKey.currentState.showSnackBar(
+    _scaffoldKey.currentState?.showSnackBar(
       SnackBar(
           content: Text(
         '${email}으로 로그인 중',
@@ -126,7 +126,7 @@ class _NotLoggedInAppState extends State<NotLoggedInApp>
         throw Error();
       } else {}
     } catch (e) {
-      _scaffoldKey.currentState.showSnackBar(
+      _scaffoldKey.currentState?.showSnackBar(
         const SnackBar(
           content: Text('로그인에 실패했습니다. 다시 시도해주세요.'),
         ),
