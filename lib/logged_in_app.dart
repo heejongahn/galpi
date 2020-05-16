@@ -19,7 +19,7 @@ class LoggedInApp extends StatefulWidget {
 }
 
 class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
-  final int _pageIndex = 1;
+  final int _pageIndex = 0;
   bool isMigrationFinished = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -44,9 +44,9 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
     return Scaffold(
       key: _scaffoldKey,
       body: IndexedStack(index: _pageIndex, children: [
-        ScreenWithNavigator(
-          child: Books(),
-        ),
+        // ScreenWithNavigator(
+        //   child: Books(),
+        // ),
         ScreenWithNavigator(
           child: Reviews(),
           onGenerateRoute: (RouteSettings settings) {
