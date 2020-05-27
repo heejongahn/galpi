@@ -10,7 +10,7 @@ env:
 
 branches:
   only:
-    - master
+    - develop
 
 matrix:
   include:
