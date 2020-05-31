@@ -118,9 +118,9 @@ class _AuthState extends State<Auth> {
           await userRepository.checkIfUserExists(email: _email);
 
       if (doesUserExist) {
-        navigator.pushNamed('/auth/email-password/login', arguments: _email);
+        navigator.pushNamed('/auth/login', arguments: _email);
       } else {
-        navigator.pushNamed('/auth/email-password/register', arguments: _email);
+        navigator.pushNamed('/auth/register', arguments: _email);
       }
     } finally {
       setState(() {

@@ -132,7 +132,7 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
               '${widget.email}는 이미 사용 중인 메일 주소입니다. 로그인해주세요.',
             );
             Navigator.of(context).pushReplacementNamed(
-              '/auth/email-password/login',
+              '/auth/login',
               arguments: widget.email,
             );
             return;

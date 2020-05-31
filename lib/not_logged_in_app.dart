@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'package:galpi/components/screen_with_navigator/index.dart';
 import 'package:galpi/constants.dart';
-import 'package:galpi/screens/auth/email_login/index.dart';
 import 'package:galpi/screens/auth/email_password/login.dart';
 import 'package:galpi/screens/auth/email_password/register.dart';
 import 'package:galpi/screens/auth/index.dart';
-import 'package:galpi/screens/auth/reset-password/index.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,21 +39,13 @@ class _NotLoggedInAppState extends State<NotLoggedInApp>
                   {
                     return Auth();
                   }
-                case '/auth/reset-password':
-                  {
-                    return ResetPassword();
-                  }
-                case '/auth/email':
-                  {
-                    return EmailLogin();
-                  }
-                case '/auth/email-password/login':
+                case '/auth/login':
                   {
                     return EmailPasswordLogin(
                       email: settings.arguments as String,
                     );
                   }
-                case '/auth/email-password/register':
+                case '/auth/register':
                   {
                     return EmailPasswordRegister(
                       email: settings.arguments as String,

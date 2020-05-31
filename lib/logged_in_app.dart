@@ -7,10 +7,8 @@ import 'package:galpi/migrations/index.dart';
 import 'package:galpi/screens/edit_profile/index.dart';
 import 'package:galpi/screens/webview/index.dart';
 import 'package:galpi/screens/write_review/index.dart';
-import 'package:galpi/screens/book_list/index.dart';
 import 'package:galpi/screens/review_list/index.dart';
 import 'package:galpi/screens/add_review/index.dart';
-import 'package:galpi/screens/auth/email_login/index.dart';
 import 'package:galpi/screens/review_detail/index.dart';
 
 class LoggedInApp extends StatefulWidget {
@@ -70,10 +68,6 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
                     {
                       final args = settings.arguments as ReviewDetailArguments;
                       return ReviewDetail(arguments: args);
-                    }
-                  case '/auth/email-login':
-                    {
-                      return EmailLogin();
                     }
                   case '/profile/edit':
                     {
