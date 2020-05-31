@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/utils/show_material_snackbar.dart';
 import 'package:provider/provider.dart';
 
 import 'package:galpi/components/common_form/index.dart';
@@ -6,6 +7,10 @@ import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/stores/user_repository.dart';
 
 class EmailPasswordRegister extends StatefulWidget {
+  final String email;
+
+  const EmailPasswordRegister({this.email});
+
   @override
   _EmailPasswordRegisterState createState() => _EmailPasswordRegisterState();
 }
@@ -21,7 +26,6 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
   final _passwordFocusNode = FocusNode();
   final _passwordConfirmFocusNode = FocusNode();
 
-  String _email = '';
   String _password = '';
   String _passwordConfirm = '';
   LoginStatus _status = LoginStatus.idle;
@@ -67,15 +71,26 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: Text(
-                    '회원가입',
-                    style: Theme.of(context).textTheme.headline6,
+                    '처음 오셨군요!',
+                    style: Theme.of(context).textTheme.headline4.copyWith(
+                          color: Colors.black,
+                        ),
                   ),
                 ),
-                Text(
-                  '로그인에 사용할 메일 주소와 비밀번호를 입력하세요.',
-                  style: Theme.of(context).textTheme.subtitle2,
+                RichText(
+                  text: TextSpan(
+                    style: DefaultTextStyle.of(context).style,
+                    children: [
+                      TextSpan(
+                        text: widget.email,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const TextSpan(text: ' 으로 계정을 만듭니다.'),
+                    ],
+                  ),
                 ),
-                _buildEmailRow(),
                 _buildPasswordRow(),
                 _buildPasswordConfirmRow(),
                 _buildConfirmButton(),
@@ -95,7 +110,7 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
     });
 
     final authResult = await userRepository.registerWithEmailAndPassword(
-      email: _email,
+      email: widget.email,
       password: _password,
     );
 
@@ -104,57 +119,42 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
     });
 
     if (authResult.item1) {
-      _showSnackBar('성공적으로 가입되었습니다.');
+      showMaterialSnackbar(
+        context,
+        '성공적으로 가입되었습니다.',
+      );
     } else {
       switch (authResult.item2) {
         case 'ERROR_EMAIL_ALREADY_IN_USE':
           {
-            _showSnackBar('${_email}는 이미 사용 중인 메일 주소입니다. 로그인해주세요.');
-            Navigator.of(context)
-                .pushReplacementNamed('/auth/email-password/login');
+            showMaterialSnackbar(
+              context,
+              '${widget.email}는 이미 사용 중인 메일 주소입니다. 로그인해주세요.',
+            );
+            Navigator.of(context).pushReplacementNamed(
+              '/auth/login',
+              arguments: widget.email,
+            );
             return;
           }
         case 'ERROR_WEAK_PASSWORD':
           {
-            _showSnackBar('너무 쉬운 비밀번호입니다. 더 강력한 비밀번호로 다시 시도해주세요.');
+            showMaterialSnackbar(
+              context,
+              '너무 쉬운 비밀번호입니다. 더 강력한 비밀번호로 다시 시도해주세요.',
+            );
             return;
           }
         default:
           {
-            _showSnackBar('회원가입에 실패했습니다. 다시 시도해주세요.');
+            showMaterialSnackbar(
+              context,
+              '회원가입에 실패했습니다. 다시 시도해주세요.',
+            );
             return;
           }
       }
     }
-  }
-
-  Widget _buildEmailRow({
-    AuthStatus authStatus,
-  }) {
-    return Container(
-      padding: const EdgeInsets.only(
-        top: 24,
-      ),
-      child: TextField(
-        textInputAction: TextInputAction.next,
-        keyboardType: TextInputType.emailAddress,
-        enabled: _status != LoginStatus.verifying,
-        autofocus: true,
-        decoration: const InputDecoration(
-          border: UnderlineInputBorder(),
-          labelText: '이메일 주소',
-        ),
-        onChanged: (String email) {
-          setState(() {
-            _email = email;
-            _status = LoginStatus.idle;
-          });
-        },
-        onSubmitted: (value) {
-          _passwordFocusNode.requestFocus();
-        },
-      ),
-    );
   }
 
   Widget _buildPasswordRow({
@@ -233,13 +233,68 @@ class _EmailPasswordRegisterState extends State<EmailPasswordRegister> {
             textColor: Colors.white,
           ),
         ),
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 48),
+          child: Row(
+            children: <Widget>[
+              const Expanded(child: Divider()),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
+                child: const Text("또는"),
+              ),
+              const Expanded(child: Divider()),
+            ],
+          ),
+        ),
+        Container(
+          height: 48,
+          child: FlatButton(
+            onPressed: _status != LoginStatus.idle ? null : _onSendEmail,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(right: 12),
+                  child: Icon(Icons.mail),
+                ),
+                const Text('인증 메일을 통해 회원가입'),
+              ],
+            ),
+          ),
+        )
       ],
     );
   }
 
-  void _showSnackBar(String message) {
-    Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-    ));
+  Future<void> _onSendEmail() async {
+    final userRepository = Provider.of<UserRepository>(context);
+
+    setState(() {
+      _status = LoginStatus.verifying;
+    });
+
+    showMaterialSnackbar(context, '회원가입을 위한 인증 메일을 발송합니다.');
+
+    try {
+      final success = await userRepository.sendLoginEmail(email: widget.email);
+      Scaffold.of(context).removeCurrentSnackBar();
+
+      if (success) {
+        showMaterialSnackbar(
+          context,
+          '${widget.email}으로 인증 메일을 발송했습니다.\n메일 애플리케이션 또는 사이트를 확인하세요.',
+        );
+      } else {
+        showMaterialSnackbar(context, '메일 발송 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
+    } catch (e) {
+      showMaterialSnackbar(context, '메일 발송 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setState(() {
+        _status = LoginStatus.idle;
+      });
+    }
   }
 }
