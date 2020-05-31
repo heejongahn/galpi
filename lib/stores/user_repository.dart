@@ -104,6 +104,11 @@ class UserRepository extends ChangeNotifier {
     await firebaseUser.sendEmailVerification();
   }
 
+  Future<bool> checkIfUserExists({String email}) async {
+    final signInMethods = await _auth.fetchSignInMethodsForEmail(email: email);
+    return signInMethods.isNotEmpty;
+  }
+
   Future<bool> checkIfEmailVerified() async {
     final firebaseUser = await reloadFirebaseUser();
 

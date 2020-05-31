@@ -51,11 +51,15 @@ class _NotLoggedInAppState extends State<NotLoggedInApp>
                   }
                 case '/auth/email-password/login':
                   {
-                    return EmailPasswordLogin();
+                    return EmailPasswordLogin(
+                      email: settings.arguments as String,
+                    );
                   }
                 case '/auth/email-password/register':
                   {
-                    return EmailPasswordRegister();
+                    return EmailPasswordRegister(
+                      email: settings.arguments as String,
+                    );
                   }
               }
 

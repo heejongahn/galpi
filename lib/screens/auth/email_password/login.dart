@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/utils/show_material_snackbar.dart';
 import 'package:provider/provider.dart';
 
 import 'package:galpi/components/common_form/index.dart';
-import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/stores/user_repository.dart';
 
 class EmailPasswordLogin extends StatefulWidget {
+  final String email;
+
+  const EmailPasswordLogin({this.email});
+
   @override
   _EmailPasswordLoginState createState() => _EmailPasswordLoginState();
 }
@@ -20,7 +24,6 @@ const passwordMinLength = 8;
 class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
   final _passwordFocusNode = FocusNode();
 
-  String _email = '';
   String _password = '';
   LoginStatus _status = LoginStatus.idle;
 
@@ -29,15 +32,21 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
       return false;
     }
 
-    return true;
+    return _password.isNotEmpty;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Logo(),
+        // title: const Logo(),
         centerTitle: false,
+        actions: [
+          FlatButton(
+            child: const Text('비밀번호 찾기'),
+            onPressed: _status != LoginStatus.idle ? null : _onPasswordReset,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -49,15 +58,30 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: Text(
-                    '로그인',
-                    style: Theme.of(context).textTheme.headline6,
+                    '다시 오셨군요!',
+                    style: Theme.of(context).textTheme.headline4.copyWith(
+                          color: Colors.black,
+                        ),
                   ),
                 ),
-                Text(
-                  '메일 주소와 비밀번호를 입력하세요.',
-                  style: Theme.of(context).textTheme.subtitle2,
+                RichText(
+                  text: TextSpan(
+                    style: DefaultTextStyle.of(context).style,
+                    children: [
+                      TextSpan(
+                        text: widget.email,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const TextSpan(text: ' 으로 로그인합니다.'),
+                    ],
+                  ),
+                  // style: Theme.of(context)
+                  //     .textTheme
+                  //     .subtitle2
+                  //     .copyWith(color: Colors.black87),
                 ),
-                _buildEmailRow(),
                 _buildPasswordRow(),
                 _buildConfirmButton(),
               ],
@@ -76,7 +100,7 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
     });
 
     final authResult = await userRepository.loginWithEmailAndPassword(
-      email: _email,
+      email: widget.email,
       password: _password,
     );
 
@@ -107,41 +131,10 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
     }
   }
 
-  void _onPasswordReset() {
-    Navigator.of(context).pushReplacementNamed('/auth/reset-password');
-  }
-
-  Widget _buildEmailRow() {
-    return Container(
-      padding: const EdgeInsets.only(
-        top: 24,
-      ),
-      child: TextField(
-        keyboardType: TextInputType.emailAddress,
-        textInputAction: TextInputAction.next,
-        enabled: _status != LoginStatus.verifying,
-        autofocus: true,
-        decoration: const InputDecoration(
-          border: UnderlineInputBorder(),
-          labelText: '이메일 주소',
-        ),
-        onChanged: (String email) {
-          setState(() {
-            _email = email;
-            _status = LoginStatus.idle;
-          });
-        },
-        onSubmitted: (value) {
-          _passwordFocusNode.requestFocus();
-        },
-      ),
-    );
-  }
-
   Widget _buildPasswordRow() {
     return Container(
       padding: const EdgeInsets.only(
-        top: 12,
+        top: 48,
       ),
       child: TextField(
         focusNode: _passwordFocusNode,
@@ -171,7 +164,7 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 48),
+          margin: const EdgeInsets.only(top: 24),
           height: 48,
           child: RaisedButton(
             onPressed: _canConfirm ? _onLogin : null,
@@ -181,11 +174,34 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
           ),
         ),
         Container(
-          margin: const EdgeInsets.only(top: 12),
+          margin: const EdgeInsets.symmetric(vertical: 48),
+          child: Row(
+            children: <Widget>[
+              const Expanded(child: Divider()),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
+                child: const Text("또는"),
+              ),
+              const Expanded(child: Divider()),
+            ],
+          ),
+        ),
+        Container(
           height: 48,
           child: FlatButton(
-            onPressed: _onPasswordReset,
-            child: const Text('비밀번호를 잊으셨나요?'),
+            onPressed: _status != LoginStatus.idle ? null : _onSendEmail,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(right: 12),
+                  child: Icon(Icons.mail),
+                ),
+                const Text('인증 메일을 통해 로그인'),
+              ],
+            ),
           ),
         )
       ],
@@ -196,5 +212,62 @@ class _EmailPasswordLoginState extends State<EmailPasswordLogin> {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
     ));
+  }
+
+  Future<void> _onPasswordReset() async {
+    final userRepository = Provider.of<UserRepository>(context);
+
+    setState(() {
+      _status = LoginStatus.verifying;
+    });
+
+    showMaterialSnackbar(context, '비밀번호 재설정 메일을 발송합니다.');
+    final email = widget.email;
+
+    try {
+      await userRepository.sendPasswordResetEmail(email: email);
+      Scaffold.of(context).removeCurrentSnackBar();
+
+      showMaterialSnackbar(
+        context,
+        '${email}으로 메일을 발송했습니다.\n메일 애플리케이션 또는 사이트를 확인하세요.',
+      );
+    } catch (e) {
+      showMaterialSnackbar(context, '메일 발송 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setState(() {
+        _status = LoginStatus.idle;
+      });
+    }
+  }
+
+  Future<void> _onSendEmail() async {
+    final userRepository = Provider.of<UserRepository>(context);
+
+    setState(() {
+      _status = LoginStatus.verifying;
+    });
+
+    showMaterialSnackbar(context, '로그인을 위한 인증 메일을 발송합니다.');
+
+    try {
+      final success = await userRepository.sendLoginEmail(email: widget.email);
+      Scaffold.of(context).removeCurrentSnackBar();
+
+      if (success) {
+        showMaterialSnackbar(
+          context,
+          '${widget.email}으로 인증 메일을 발송했습니다.\n메일 애플리케이션 또는 사이트를 확인하세요.',
+        );
+      } else {
+        showMaterialSnackbar(context, '메일 발송 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
+    } catch (e) {
+      showMaterialSnackbar(context, '메일 발송 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setState(() {
+        _status = LoginStatus.idle;
+      });
+    }
   }
 }
