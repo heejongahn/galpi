@@ -35,27 +35,29 @@ class _AuthState extends State<Auth> {
         elevation: 0,
         shape: null,
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-        child: CommonForm(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: const Logo(
-                  fontSize: 90,
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+          child: CommonForm(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: const Logo(
+                    fontSize: 90,
+                  ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 24, bottom: 48),
-                child: Text(
-                  '갈피에 오신 것을 환영합니다.\n메일 주소로 로그인하고\n아름다운 독서 기록을 남기세요.',
-                  style: Theme.of(context).textTheme.subtitle2,
+                Container(
+                  margin: const EdgeInsets.only(top: 24, bottom: 48),
+                  child: Text(
+                    '갈피에 오신 것을 환영합니다.\n메일 주소로 로그인하고\n아름다운 독서 기록을 남기세요.',
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
                 ),
-              ),
-              loginBody,
-            ],
+                loginBody,
+              ],
+            ),
           ),
         ),
       ),
