@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/avatar/index.dart';
+import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/models/user.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:launch_review/launch_review.dart';
@@ -76,7 +77,13 @@ class MainDrawer extends StatelessWidget {
         if (snapshot.hasData) {
           return AboutListTile(
             icon: Icon(Icons.info_outline),
-            applicationName: 'galpi',
+            applicationIcon: const Logo(),
+            applicationName: '갈피',
+            aboutBoxChildren: [
+              const Text(
+                '갈피는 아름다운 독후감 관리 앱입니다.',
+              ),
+            ],
             applicationVersion: snapshot.data.version,
           );
         }
