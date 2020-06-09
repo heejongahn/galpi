@@ -18,9 +18,16 @@ class EditProfile extends StatefulWidget {
 
 typedef OnConfirm = void Function();
 
+const maxIntroductionLength = 100;
+
 class _EditProfileState extends State<EditProfile> {
   String _profileImageUrl = '';
   String _displayName = '';
+  String _introduction = '';
+
+  bool get _hasIntroductionLengthError {
+    return _introduction.length >= maxIntroductionLength;
+  }
 
   @override
   void initState() {
@@ -48,8 +55,8 @@ class _EditProfileState extends State<EditProfile> {
         centerTitle: false,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: _onSave,
+            icon: Icon(Icons.check),
+            onPressed: _hasIntroductionLengthError ? null : _onSave,
           ),
         ],
       ),
@@ -61,6 +68,7 @@ class _EditProfileState extends State<EditProfile> {
             children: <Widget>[
               _buildProfileImageRow(),
               _buildDisplayNameRow(),
+              _buildIntroductionRow(),
             ],
           ),
         ),
@@ -112,9 +120,7 @@ class _EditProfileState extends State<EditProfile> {
         decoration: const InputDecoration(
           alignLabelWithHint: true,
           labelText: '닉네임',
-          border: UnderlineInputBorder(
-            borderRadius: BorderRadius.zero,
-          ),
+          border: OutlineInputBorder(),
         ),
         validator: (value) {
           if (value.isEmpty) {
@@ -125,6 +131,32 @@ class _EditProfileState extends State<EditProfile> {
         },
         onChanged: (val) => setState(() {
           _displayName = val;
+        }),
+      ),
+    );
+  }
+
+  Widget _buildIntroductionRow() {
+    final userRepository = Provider.of<UserRepository>(context);
+    final user = userRepository.user;
+
+    final sanitizedLength = _introduction == null ? 0 : _introduction.length;
+    final helperOrErrorText = '${sanitizedLength} / ${maxIntroductionLength}자';
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 24, 0, 8),
+      child: TextFormField(
+        maxLines: 3,
+        initialValue: user.introduction,
+        decoration: InputDecoration(
+          alignLabelWithHint: true,
+          labelText: '소개',
+          border: const OutlineInputBorder(),
+          helperText: helperOrErrorText,
+          errorText: _hasIntroductionLengthError ? helperOrErrorText : null,
+        ),
+        onChanged: (val) => setState(() {
+          _introduction = val;
         }),
       ),
     );
@@ -194,6 +226,7 @@ class _EditProfileState extends State<EditProfile> {
 
     final map = userRepository.user.toMap();
     map['displayName'] = _displayName;
+    map['introduction'] = _introduction;
     map['profileImageUrl'] = _profileImageUrl;
 
     final updated = User.fromPayload(map);
