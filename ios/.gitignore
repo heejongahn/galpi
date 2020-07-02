@@ -16,6 +16,7 @@
 **/profile
 **/xcuserdata
 .generated/
+Flutter/.last_build_id
 Flutter/App.framework
 Flutter/Flutter.framework
 Flutter/Generated.xcconfig
