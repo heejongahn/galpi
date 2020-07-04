@@ -5,6 +5,7 @@ import 'package:galpi/components/screen_with_navigator/index.dart';
 import 'package:galpi/migrations/index.dart';
 
 import 'package:galpi/screens/edit_profile/index.dart';
+import 'package:galpi/screens/review_preview/index.dart';
 import 'package:galpi/screens/webview/index.dart';
 import 'package:galpi/screens/write_review/index.dart';
 import 'package:galpi/screens/review_list/index.dart';
@@ -48,6 +49,8 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
         ScreenWithNavigator(
           child: Reviews(),
           onGenerateRoute: (RouteSettings settings) {
+            final fullscreenPrefixes = ['/profile', '/review/preview'];
+
             return MaterialPageRoute<dynamic>(
               builder: (_) {
                 switch (settings.name) {
@@ -69,6 +72,11 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
                       final args = settings.arguments as ReviewDetailArguments;
                       return ReviewDetail(arguments: args);
                     }
+                  case '/review/preview':
+                    {
+                      final args = settings.arguments as ReviewPreviewArguments;
+                      return ReviewPreview(arguments: args);
+                    }
                   case '/profile/edit':
                     {
                       return EditProfile();
@@ -87,7 +95,10 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
                 return Container();
               },
               // FIXME: 더 나은 방법을 찾아보자
-              fullscreenDialog: settings.name.startsWith('/profile'),
+              fullscreenDialog: fullscreenPrefixes.indexWhere((prefix) {
+                    return settings.name.startsWith(prefix);
+                  }) !=
+                  -1,
             );
           },
           onUnknownRoute: (_) {

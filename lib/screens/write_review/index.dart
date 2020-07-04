@@ -5,6 +5,7 @@ import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
+import 'package:galpi/screens/review_preview/index.dart';
 
 typedef OnSave = Future<void> Function(Review review, {String bookId});
 
@@ -44,6 +45,10 @@ class _WriteReviewState extends State<WriteReview> {
         title: Text(widget.arguments.isEditing ? '독후감 수정' : '독후감 작성'),
         centerTitle: false,
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.remove_red_eye),
+            onPressed: _onOpenPreviewDialog,
+          ),
           isSaving
               ? Center(
                   child: Container(
@@ -124,7 +129,7 @@ class _WriteReviewState extends State<WriteReview> {
 
           return null;
         },
-        onSaved: (val) => setState(() {
+        onChanged: (val) => setState(() {
           widget.arguments.review.title = val;
         }),
       ),
@@ -157,7 +162,7 @@ class _WriteReviewState extends State<WriteReview> {
 
           return null;
         },
-        onSaved: (val) => setState(() {
+        onChanged: (val) => setState(() {
           widget.arguments.review.body = val;
         }),
       ),
@@ -253,6 +258,15 @@ class _WriteReviewState extends State<WriteReview> {
           isSaving = false;
         });
     }
+  }
+
+  void _onOpenPreviewDialog() {
+    final args =
+        ReviewPreviewArguments(widget.arguments.review, widget.arguments.book);
+    Navigator.of(context).pushNamed(
+      '/review/preview',
+      arguments: args,
+    );
   }
 
   void _onBlur() {
