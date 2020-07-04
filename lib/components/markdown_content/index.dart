@@ -36,6 +36,8 @@ class MarkdownContent extends StatelessWidget {
       styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
         h1: textTheme.headline5.copyWith(
           height: 2,
+          fontWeight: FontWeight.bold,
+          fontSize: 36,
         ),
         h2: textTheme.headline6.copyWith(
           height: 2,
