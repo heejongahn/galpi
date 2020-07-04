@@ -44,6 +44,7 @@ dependencies:
   share: ^0.6.4
   launch_review: ^2.0.0
   flutter_markdown: ^0.4.2
+  google_fonts: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'package:galpi/components/avatar/index.dart';
+import 'package:galpi/components/markdown_content/index.dart';
 import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/stores/review_repository.dart';
@@ -152,13 +153,7 @@ class ReviewDetail extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
-              child: Text(
-                review.body,
-                style: Theme.of(context).textTheme.bodyText1.copyWith(
-                      fontSize: 16,
-                      height: 1.6,
-                    ),
-              ),
+              child: MarkdownContent(data: review.body),
             )
           ],
         ));
