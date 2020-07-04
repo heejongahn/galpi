@@ -130,66 +130,68 @@ class ReviewDetail extends StatelessWidget {
 
   Padding getReviewDetail(BuildContext context, Review review) {
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              review.title,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline3
-                  .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            DateInfo(review: review),
-            Wrap(
-              spacing: 16,
-              children: <Widget>[
-                ReadingStatusChip(readingStatus: review.readingStatus),
-                ScoreChip(
-                  score: review.stars,
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: MarkdownContent(data: review.body),
-            )
-          ],
-        ));
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            review.title,
+            style: Theme.of(context)
+                .textTheme
+                .headline3
+                .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          DateInfo(review: review),
+          Wrap(
+            spacing: 16,
+            children: <Widget>[
+              ReadingStatusChip(readingStatus: review.readingStatus),
+              ScoreChip(
+                score: review.stars,
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: MarkdownContent(data: review.body),
+          )
+        ],
+      ),
+    );
   }
 
   void _onDeleteReview(Review review, BuildContext context) {
     final reviewRepository = Provider.of<ReviewRepository>(context);
 
     showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("정말 삭제하시겠습니까?"),
-            content: const Text("삭제한 독후감는 다시 복구할 수 없습니다."),
-            actions: <Widget>[
-              FlatButton(
-                child: const Text("취소"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                textColor: Colors.red,
-                child: const Text("삭제"),
-                onPressed: () async {
-                  await reviewRepository.delete(review: review);
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/',
-                    (Route<dynamic> r) => false,
-                  );
-                },
-              ),
-            ],
-          );
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("정말 삭제하시겠습니까?"),
+          content: const Text("삭제한 독후감는 다시 복구할 수 없습니다."),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text("취소"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              textColor: Colors.red,
+              child: const Text("삭제"),
+              onPressed: () async {
+                await reviewRepository.delete(review: review);
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/',
+                  (Route<dynamic> r) => false,
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _updateReview(BuildContext context, Review updatedReview) async {

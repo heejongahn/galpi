@@ -143,6 +143,8 @@ class _WriteReviewState extends State<WriteReview> {
         decoration: const InputDecoration(
           alignLabelWithHint: true,
           labelText: '내용',
+          helperText: '마크다운(Markdown) 문법을 지원합니다.',
+          helperStyle: TextStyle(),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.zero,
           ),
