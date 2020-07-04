@@ -7,7 +7,7 @@ final theme = ThemeData(
   accentColor: Colors.black87,
   primaryColor: primaryColor,
   scaffoldBackgroundColor: Colors.white,
-  appBarTheme: AppBarTheme(
+  appBarTheme: const AppBarTheme(
     brightness: Brightness.light,
     elevation: 1,
     color: Colors.white,
@@ -17,7 +17,11 @@ final theme = ThemeData(
     ),
   ),
   iconTheme: IconThemeData(color: primaryColor),
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
+    bodyText2: TextStyle(
+      fontSize: 16,
+      height: 1.6,
+    ),
     headline6: TextStyle(
       fontWeight: FontWeight.bold,
     ),
