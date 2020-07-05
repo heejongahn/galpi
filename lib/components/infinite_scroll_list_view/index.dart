@@ -27,7 +27,11 @@ class InfiniteScrollListViewState<T> extends State<InfiniteScrollListView<T>> {
           _fetchItems();
 
           if (data.isEmpty) {
-            return Container();
+            return Container(
+              height: 400,
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(),
+            );
           }
 
           return Container(
