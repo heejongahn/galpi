@@ -35,6 +35,10 @@ class ReviewCard extends StatelessWidget {
             leading: Avatar(
               profileImageUrl: user.profileImageUrl,
             ),
+            trailing: Icon(
+              review.isPublic ? Icons.lock_open : Icons.lock,
+              color: Colors.black87,
+            ),
             title: Text(
               review.title,
               maxLines: 2,
