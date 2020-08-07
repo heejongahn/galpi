@@ -3,9 +3,9 @@ const { execSync } = require("child_process");
 const flavors = ["dev", "prod"];
 
 const firebaseSecretFiles = flavors
-  .map(flavor => [
+  .map((flavor) => [
     `android/app/src/${flavor}/google-services.json`,
-    `ios/config/${flavor}/GoogleService-Info.plist`
+    `ios/config/${flavor}/GoogleService-Info.plist`,
   ])
   .reduce((accm, curr) => accm.concat(curr), []);
 
@@ -19,14 +19,14 @@ const secretFiles = [
   ...firebaseSecretFiles,
 
   // Environment:
-  ...flavors.map(flavor => `.env.${flavor}`)
+  ...flavors.map((flavor) => `assets/.env.${flavor}`),
 ];
 
 async function archiveSecrets() {
   console.log(
     [
       "💾  Archiving files:",
-      ...secretFiles.map(filename => `📄  ${filename}`)
+      ...secretFiles.map((filename) => `📄  ${filename}`),
     ].join("\n")
   );
 

@@ -70,8 +70,9 @@ flutter:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
   assets:
-    - .env.dev
-    - .env.prod
+    - assets/.env.dev
+    - assets/.env.prod
+    - assets/icon/icon.png
 
   fonts:
     - family: Spoqa-Han-Sans

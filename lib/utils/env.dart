@@ -43,7 +43,7 @@ Future<void> loadEnvForCurrentFlavor() async {
   final flavor = await getCurrentFlavor();
   final envFileName = _getEnvFileName(flavor);
 
-  await _dotEnv.load(envFileName);
+  await _dotEnv.load('assets/$envFileName');
 
   if (!_dotEnv.isEveryDefined(_vars)) {
     throw '$envFileName: Not all environment variables were provided.';
@@ -53,4 +53,6 @@ Future<void> loadEnvForCurrentFlavor() async {
   env.apiEndpoint = _dotEnv.env[_KEY_apiEndpoint];
   env.webEndpoint = _dotEnv.env[_KEY_webEndpoint];
   env.sentryDSN = _dotEnv.env[_KEY_sentryDSN];
+
+  print(env.apiEndpoint);
 }
