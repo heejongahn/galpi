@@ -23,18 +23,46 @@ class ReviewRepository extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<Tuple2<Review, Book>> _unreadData = [];
+  List<Tuple2<Review, Book>> get unreadData {
+    return _unreadData;
+  }
+
+  set unreadData(List<Tuple2<Review, Book>> newData) {
+    _unreadData = newData;
+    notifyListeners();
+  }
+
   void initiailze() {
     data = [];
   }
 
-  Future<bool> fetchNext({String userId}) async {
+  Future<bool> fetchNextRead({
+    String userId,
+  }) async {
     final items = await fetchReviews(
       userId: userId,
       skip: reviewRepository.data.length,
       take: PAGE_SIZE,
+      active: true,
     );
 
     data = reviewRepository.data + items;
+
+    return items.length == PAGE_SIZE;
+  }
+
+  Future<bool> fetchNextUnread({
+    String userId,
+  }) async {
+    final items = await fetchReviews(
+      userId: userId,
+      skip: reviewRepository.data.length,
+      take: PAGE_SIZE,
+      active: false,
+    );
+
+    unreadData = reviewRepository.unreadData + items;
 
     return items.length == PAGE_SIZE;
   }
