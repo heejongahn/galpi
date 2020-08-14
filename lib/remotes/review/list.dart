@@ -10,9 +10,10 @@ Future<List<Tuple2<Review, Book>>> fetchReviews({
   String userId,
   int skip = 0,
   int take = 20,
+  bool active = true,
 }) async {
   final response = await httpClient.get(
-    '${env.apiEndpoint}/review/list?userId=${userId}&skip=${skip}&take=${take}',
+    '${env.apiEndpoint}/review/list?userId=${userId}&skip=${skip}&take=${take}&active=${active}',
     headers: {
       "Content-Type": "application/json; charset=utf-8",
     },
