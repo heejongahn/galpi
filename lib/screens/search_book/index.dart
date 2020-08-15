@@ -28,7 +28,7 @@ class _SearchBookState extends State<SearchBook> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('새 독후감 작성'),
+        title: const Text('책 검색'),
         centerTitle: false,
       ),
       body: SearchView(onSelectBook: widget.arguments.onSelect),

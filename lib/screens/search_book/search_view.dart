@@ -52,7 +52,7 @@ class _SearchViewState extends State<SearchView> {
             },
             textInputAction: TextInputAction.search,
             decoration: const InputDecoration(
-              labelText: '제목, 저자, 출판사',
+              labelText: '검색어',
               border: OutlineInputBorder(),
             ),
           ),
@@ -132,7 +132,6 @@ class _SearchViewState extends State<SearchView> {
       alignment: Alignment.center,
       child: query == ''
           ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Text('독후감을 작성할 책을 찾아보세요.'),
               const Text('제목, 저자, 출판사 등의 키워드로 검색할 수 있습니다.'),
             ])
           : const Text('검색 결과가 없습니다.'),
