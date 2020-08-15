@@ -73,9 +73,11 @@ class InfiniteScrollListViewState<T> extends State<InfiniteScrollListView<T>> {
     status = Status.loading;
 
     final canLoadMore = await widget.fetchMore();
-    setState(() {
-      status = canLoadMore ? Status.idle : Status.fetchedAll;
-    });
+    if (mounted) {
+      setState(() {
+        status = canLoadMore ? Status.idle : Status.fetchedAll;
+      });
+    }
   }
 }
 
