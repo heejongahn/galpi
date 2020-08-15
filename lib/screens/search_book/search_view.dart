@@ -8,7 +8,7 @@ import 'package:galpi/components/book_card/main.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/remotes/fetch_books.dart';
 
-typedef OnSelectBook = void Function(Book book);
+typedef OnSelectBook = Future<void> Function({Book book});
 
 class SearchView extends StatefulWidget {
   final OnSelectBook onSelectBook;
@@ -104,7 +104,7 @@ class _SearchViewState extends State<SearchView> {
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: BookCard(
               book: book,
-              onTap: () => widget.onSelectBook(book),
+              onTap: () => widget.onSelectBook(book: book),
             ),
           );
         },

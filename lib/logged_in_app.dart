@@ -6,10 +6,10 @@ import 'package:galpi/migrations/index.dart';
 
 import 'package:galpi/screens/edit_profile/index.dart';
 import 'package:galpi/screens/review_preview/index.dart';
+import 'package:galpi/screens/search_book/index.dart';
 import 'package:galpi/screens/webview/index.dart';
 import 'package:galpi/screens/write_review/index.dart';
 import 'package:galpi/screens/review_list/index.dart';
-import 'package:galpi/screens/add_review/index.dart';
 import 'package:galpi/screens/review_detail/index.dart';
 
 class LoggedInApp extends StatefulWidget {
@@ -58,9 +58,10 @@ class _LoggedInAppState extends State<LoggedInApp> with WidgetsBindingObserver {
                     {
                       return Reviews();
                     }
-                  case '/review/add':
+                  case '/book/search':
                     {
-                      return AddReview();
+                      final args = settings.arguments as SearchBookArguments;
+                      return SearchBook(arguments: args);
                     }
                   case '/review/write':
                     {
