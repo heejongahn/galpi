@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/remotes/review/create.dart';
+import 'package:galpi/remotes/review/create_revision.dart';
 import 'package:galpi/remotes/review/delete.dart';
 import 'package:galpi/remotes/review/edit.dart';
 
@@ -69,6 +70,10 @@ class ReviewRepository extends ChangeNotifier {
 
   Future<void> create({Review review, String bookId}) async {
     await createReview(review: review, bookId: bookId);
+  }
+
+  Future<void> addRevision({Review review}) async {
+    await createRevision(review: review);
   }
 
   Future<void> edit({Review review}) async {
