@@ -75,7 +75,9 @@ class ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
       ),
       endDrawer: const MainDrawer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _onOpenNewReview,
+        onPressed: _tabController.index == 0
+            ? _onOpenAddUnreadReview
+            : _onOpenNewReview,
         child: const Icon(Icons.add),
       ),
     );

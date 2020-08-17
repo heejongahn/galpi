@@ -184,14 +184,14 @@ class _WriteReviewState extends State<WriteReview> {
             children: [
               ReadingStatus.finishedReading,
               ReadingStatus.reading,
-              ReadingStatus.hasntStarted,
             ]
-                .map((status) => ReadingStatusChip(
-                      readingStatus: status,
-                      isSelected:
-                          widget.arguments.review.readingStatus == status,
-                      onTap: _onReadingStatusBadgeClick,
-                    ))
+                .map(
+                  (status) => ReadingStatusChip(
+                    readingStatus: status,
+                    isSelected: widget.arguments.review.readingStatus == status,
+                    onTap: _onReadingStatusBadgeClick,
+                  ),
+                )
                 .toList(),
           ),
         ],
