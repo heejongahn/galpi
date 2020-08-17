@@ -55,16 +55,25 @@ class Review {
         ? null
         : DateTime.tryParse(map[columnReadingFinishedAt] as String);
 
+    final createdAt = map['createdAt'] == null
+        ? null
+        : DateTime.tryParse(map['createdAt'] as String)?.toLocal();
+    final lastModifiedAt = map['lastModifiedAt'] == null
+        ? null
+        : DateTime.tryParse(map['lastModifiedAt'] as String)?.toLocal();
+
     final review = Review(
       id: map['id'] as String,
       stars: map['stars'] as int,
       title: map['title'] as String,
       body: map['body'] as String,
-      readingStatus: readingStatusInverseMap[map['readingStatus']],
+      readingStatus: map['readingStatus'] == null
+          ? ReadingStatus.hasntStarted
+          : readingStatusInverseMap[map['readingStatus']],
       readingStartedAt: readingStartedAt,
       readingFinishedAt: readingFinishedAt,
-      createdAt: DateTime.parse(map['createdAt'] as String).toLocal(),
-      lastModifiedAt: DateTime.parse(map['lastModifiedAt'] as String).toLocal(),
+      createdAt: createdAt,
+      lastModifiedAt: lastModifiedAt,
       isPublic: map['isPublic'] as bool,
     );
 
