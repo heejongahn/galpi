@@ -30,11 +30,10 @@ class ReviewDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reviewBookPair = Provider.of<ReviewRepository>(context)
+    final review = Provider.of<ReviewRepository>(context)
         .data
-        .firstWhere((element) => element.item1.id == arguments.reviewId);
-    final Review review = reviewBookPair.item1;
-    final Book book = reviewBookPair.item2;
+        .firstWhere((element) => element.id == arguments.reviewId);
+    final Book book = review.book;
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +42,6 @@ class ReviewDetail extends StatelessWidget {
         actions: <Widget>[
           _buildShowBottomSheetButton(
             review: review,
-            book: book,
             context: context,
           ),
         ],
@@ -58,7 +56,7 @@ class ReviewDetail extends StatelessWidget {
   }
 
   IconButton _buildShowBottomSheetButton(
-      {Review review, Book book, BuildContext context}) {
+      {Review review, BuildContext context}) {
     return IconButton(
       icon: Icon(Icons.more_vert),
       onPressed: () {
@@ -102,7 +100,7 @@ class ReviewDetail extends StatelessWidget {
                     title: const Text('수정하기'),
                     onTap: () {
                       Navigator.of(bottomSheetContext).pop();
-                      _onEditReview(review, book, context);
+                      _onEditReview(review, review.book, context);
                     },
                   ),
                   ListTile(

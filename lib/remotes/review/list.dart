@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show describeEnum;
-import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/utils/env.dart';
 import 'package:galpi/utils/http_client.dart';
-import 'package:tuple/tuple.dart';
 
 enum ListType {
   all,
@@ -12,7 +10,7 @@ enum ListType {
   read,
 }
 
-Future<List<Tuple2<Review, Book>>> fetchReviews({
+Future<List<Review>> fetchReviews({
   String userId,
   int skip = 0,
   int take = 20,
@@ -36,7 +34,7 @@ Future<List<Tuple2<Review, Book>>> fetchReviews({
       List<Map<String, dynamic>>.from(decoded['reviews'] as List<dynamic>);
 
   final reviewIterable = reviews.map((data) => Review.fromPayload(data));
-  final reviewList = reviewIterable.toList().cast<Tuple2<Review, Book>>();
+  final reviewList = reviewIterable.toList();
 
   return reviewList;
 }

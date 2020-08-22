@@ -9,18 +9,16 @@ import 'package:galpi/remotes/review/edit.dart';
 
 import 'package:galpi/remotes/review/list.dart';
 
-import 'package:tuple/tuple.dart';
-
 const PAGE_SIZE = 20;
 
 class ReviewRepository extends ChangeNotifier {
-  List<Tuple2<Review, Book>> _data = [];
+  List<Review> _data = [];
 
-  List<Tuple2<Review, Book>> get data {
+  List<Review> get data {
     return _data;
   }
 
-  set data(List<Tuple2<Review, Book>> newData) {
+  set data(List<Review> newData) {
     _data = newData;
     notifyListeners();
   }
@@ -54,14 +52,14 @@ class ReviewRepository extends ChangeNotifier {
 
   Future<void> createUnread({Book book}) async {
     final created = await createUnreadReview(book: book);
-    data.insert(0, Tuple2(created, book));
+    data.insert(0, created);
   }
 
   Future<void> edit({Review review}) async {
     final updated = await editReview(review: review);
     data = data.map((e) {
-      if (e.item1.id == review.id) {
-        return Tuple2(updated, e.item2);
+      if (e.id == review.id) {
+        return updated;
       }
 
       return e;

@@ -23,6 +23,5 @@ Future<Review> editReview({Review review}) async {
   final updatedReviewPayload =
       Map<String, dynamic>.from(decoded['review'] as Map<String, dynamic>);
 
-  final updatedReview = Review.fromPayload(updatedReviewPayload).item1;
-  return updatedReview;
+  return Review.fromPayload(updatedReviewPayload);
 }

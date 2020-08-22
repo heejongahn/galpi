@@ -25,6 +25,5 @@ Future<Review> createRevision({
   final createRevision =
       Map<String, dynamic>.from(decoded['review'] as Map<String, dynamic>);
 
-  final updatedReview = Review.fromPayload(createRevision).item1;
-  return updatedReview;
+  return Review.fromPayload(createRevision);
 }

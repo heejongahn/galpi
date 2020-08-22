@@ -1,36 +1,34 @@
 import 'package:galpi/models/book.dart';
+import 'package:galpi/models/revision.dart';
 import 'package:intl/intl.dart';
-import 'package:tuple/tuple.dart';
 
 final formatter = DateFormat('yyyy-MM-dd');
 
-enum ReadingStatus {
-  hasntStarted,
-  reading,
-  finishedReading,
-}
-
-Map<ReadingStatus, String> readingStatusMap = {
-  ReadingStatus.hasntStarted: 'hasntStarted',
-  ReadingStatus.reading: 'reading',
-  ReadingStatus.finishedReading: 'finishedReading'
-};
-
-Map<String, ReadingStatus> readingStatusInverseMap =
-    readingStatusMap.map((k, v) => MapEntry(v, k));
-
 class Review {
   String id;
-  final int legacyId;
-  int stars;
-  String title;
-  String body;
-  ReadingStatus readingStatus;
   DateTime readingStartedAt;
   DateTime readingFinishedAt;
   final DateTime createdAt;
   final DateTime lastModifiedAt;
   bool isPublic;
+
+  Book book;
+  Revision activeRevision;
+
+  @deprecated
+  final int legacyId;
+
+  @deprecated
+  int stars;
+
+  @deprecated
+  String title;
+
+  @deprecated
+  String body;
+
+  @deprecated
+  ReadingStatus readingStatus;
 
   Review({
     this.id,
@@ -44,9 +42,11 @@ class Review {
     this.createdAt,
     this.lastModifiedAt,
     this.isPublic = false,
+    this.book,
+    this.activeRevision,
   });
 
-  static Tuple2<Review, Book> fromPayload(Map<String, dynamic> map) {
+  static Review fromPayload(Map<String, dynamic> map) {
     final readingStartedAt = map[columnReadingStartedAt] == null
         ? null
         : DateTime.tryParse(map[columnReadingStartedAt] as String);
@@ -77,9 +77,12 @@ class Review {
       isPublic: map['isPublic'] as bool,
     );
 
-    final book = Book.fromPayload(map['book'] as Map<String, dynamic>);
+    review.book = Book.fromPayload(map['book'] as Map<String, dynamic>);
+    review.activeRevision = map['activeRevision'] != null
+        ? Revision.fromPayload(map['activeRevision'] as Map<String, dynamic>)
+        : null;
 
-    return Tuple2(review, book);
+    return review;
   }
 
   Map<String, dynamic> toMap() {

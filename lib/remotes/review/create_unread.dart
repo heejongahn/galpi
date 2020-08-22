@@ -24,6 +24,5 @@ Future<Review> createUnreadReview({
   final createdReviewPayload =
       Map<String, dynamic>.from(decoded['review'] as Map<String, dynamic>);
 
-  final createdReview = Review.fromPayload(createdReviewPayload).item1;
-  return createdReview;
+  return Review.fromPayload(createdReviewPayload);
 }

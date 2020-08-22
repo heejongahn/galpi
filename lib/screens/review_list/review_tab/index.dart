@@ -7,11 +7,10 @@ import 'package:galpi/components/score_badge/index.dart';
 import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
 
 import 'package:galpi/screens/review_detail/index.dart';
-import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
+import 'package:galpi/models/revision.dart';
 
 const PAGE_SIZE = 20;
 
@@ -65,7 +64,7 @@ class ReviewTabState extends State<ReviewTab> {
         return true;
       },
       child: isInitialized
-          ? InfiniteScrollListView<Tuple2<Review, Book>>(
+          ? InfiniteScrollListView<Review>(
               key: listViewKey,
               data: reviewRepository.data,
               fetchMore: () => reviewRepository.fetchNextRead(
@@ -78,29 +77,32 @@ class ReviewTabState extends State<ReviewTab> {
     );
   }
 
-  void _onOpenReviewDetail(Review review, Book book, int index) {
+  void _onOpenReviewDetail(Review review, int index) {
     final args = ReviewDetailArguments(review.id);
     Navigator.of(context).pushNamed('/review/detail', arguments: args);
   }
 
-  Widget _itemBuilder(Tuple2<Review, Book> pair, {int index}) {
-    final review = pair.item1;
-    final book = pair.item2;
+  Widget _itemBuilder(Review review, {int index}) {
+    if (review.activeRevision != null) {
+      print(review.activeRevision);
+    }
+
+    final readingStatus = review.activeRevision?.readingStatus;
 
     return Container(
       child: BookCard(
-        book: book,
+        book: review.book,
         adornment: Container(
           margin: const EdgeInsets.only(top: 16),
           child: Wrap(
             spacing: 12,
             children: [
               ReadingStatusBadge(
-                readingStatus: review.readingStatus,
+                readingStatus: readingStatus ?? ReadingStatus.hasntStarted,
               ),
-              if (review.readingStatus == ReadingStatus.finishedReading)
+              if (readingStatus == ReadingStatus.finishedReading)
                 ScoreBadge(
-                  score: review.stars,
+                  score: review.activeRevision?.stars,
                 ),
               review.isPublic
                   ? const Badge(
@@ -114,7 +116,7 @@ class ReviewTabState extends State<ReviewTab> {
             ],
           ),
         ),
-        onTap: () => _onOpenReviewDetail(review, book, index),
+        onTap: () => _onOpenReviewDetail(review, index),
       ),
     );
   }
