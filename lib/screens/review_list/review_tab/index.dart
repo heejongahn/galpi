@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:galpi/components/badge/index.dart';
 import 'package:galpi/components/book_card/main.dart';
 import 'package:galpi/components/infinite_scroll_list_view/index.dart';
+import 'package:galpi/components/reading_status_badge/index.dart';
+import 'package:galpi/components/score_badge/index.dart';
 import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:provider/provider.dart';
@@ -88,13 +90,29 @@ class ReviewTabState extends State<ReviewTab> {
     return Container(
       child: BookCard(
         book: book,
-        adornment: Row(
-          children: [
-            Badge(
-              iconData: Icons.lock,
-              text: '공개',
-            ),
-          ],
+        adornment: Container(
+          margin: const EdgeInsets.only(top: 16),
+          child: Wrap(
+            spacing: 12,
+            children: [
+              ReadingStatusBadge(
+                readingStatus: review.readingStatus,
+              ),
+              if (review.readingStatus == ReadingStatus.finishedReading)
+                ScoreBadge(
+                  score: review.stars,
+                ),
+              review.isPublic
+                  ? const Badge(
+                      iconData: Icons.lock_open,
+                      text: '공개',
+                    )
+                  : const Badge(
+                      iconData: Icons.lock,
+                      text: '비공개',
+                    ),
+            ],
+          ),
         ),
         onTap: () => _onOpenReviewDetail(review, book, index),
       ),

@@ -18,9 +18,10 @@ final empytyImage = Container(
 
 class BookCard extends StatelessWidget {
   final Book book;
+  final Widget adornment;
   final GestureTapCallback onTap;
 
-  const BookCard({this.book, this.onTap});
+  const BookCard({this.book, this.onTap, this.adornment});
 
   @override
   Widget build(BuildContext context) {
@@ -60,56 +61,109 @@ class BookCard extends StatelessWidget {
           horizontal: 20,
         ),
         decoration: const BoxDecoration(
+          color: Colors.white,
           border: Border(
             bottom: BorderSide(color: Colors.black12, width: 1),
           ),
         ),
         child: Align(
           alignment: Alignment.topRight,
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            bookImage,
-            Flexible(
-              child: Container(
-                margin: EdgeInsets.only(
-                  left: 16,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              bookImage,
+              Flexible(
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    left: 16,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _Title(book: book, textTheme: textTheme),
+                      _Author(book: book, textTheme: textTheme),
+                      _Publisher(book: book, textTheme: textTheme),
+                      if (adornment != null) adornment
+                    ],
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      book.title,
-                      maxLines: 2,
-                      style: textTheme.subtitle1.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      book.author,
-                      style: textTheme.subtitle2.copyWith(
-                        color: Colors.grey,
-                        fontSize: 14.0,
-                        height: 1.4,
-                      ),
-                    ),
-                    Text(
-                      book.publisher,
-                      style: textTheme.subtitle2.copyWith(
-                        color: Colors.grey,
-                        fontSize: 14.0,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ]),
+              )
+            ],
+          ),
         ),
       ),
       onTap: onTap,
+    );
+  }
+}
+
+class _Title extends StatelessWidget {
+  const _Title({
+    Key key,
+    @required this.book,
+    @required this.textTheme,
+  }) : super(key: key);
+
+  final Book book;
+  final TextTheme textTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      book.title,
+      maxLines: 2,
+      style: textTheme.subtitle1.copyWith(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+      ),
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+class _Publisher extends StatelessWidget {
+  const _Publisher({
+    Key key,
+    @required this.book,
+    @required this.textTheme,
+  }) : super(key: key);
+
+  final Book book;
+  final TextTheme textTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      book.publisher,
+      style: textTheme.subtitle2.copyWith(
+        color: Colors.grey,
+        fontSize: 14.0,
+        height: 1.4,
+      ),
+    );
+  }
+}
+
+class _Author extends StatelessWidget {
+  const _Author({
+    Key key,
+    @required this.book,
+    @required this.textTheme,
+  }) : super(key: key);
+
+  final Book book;
+  final TextTheme textTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      book.author,
+      style: textTheme.subtitle2.copyWith(
+        color: Colors.grey,
+        fontSize: 14.0,
+        height: 1.4,
+      ),
     );
   }
 }
