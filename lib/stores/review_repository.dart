@@ -3,6 +3,7 @@ import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/remotes/review/create.dart';
 import 'package:galpi/remotes/review/create_revision.dart';
+import 'package:galpi/remotes/review/create_unread.dart';
 import 'package:galpi/remotes/review/delete.dart';
 import 'package:galpi/remotes/review/edit.dart';
 
@@ -74,6 +75,11 @@ class ReviewRepository extends ChangeNotifier {
 
   Future<void> addRevision({Review review}) async {
     await createRevision(review: review);
+  }
+
+  Future<void> createUnread({Book book}) async {
+    final created = await createUnreadReview(book: book);
+    unreadData.insert(0, Tuple2(created, book));
   }
 
   Future<void> edit({Review review}) async {

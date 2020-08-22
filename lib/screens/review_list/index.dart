@@ -84,7 +84,12 @@ class ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   }
 
   Future<void> _onOpenAddUnreadReview() async {
+    final reviewRepository = Provider.of<ReviewRepository>(context);
+
     final arguments = SearchBookArguments(onSelect: ({Book book}) async {
+      await reviewRepository.createUnread(book: book);
+      Navigator.of(context).pop();
+      setState(() {});
       return;
     });
 
