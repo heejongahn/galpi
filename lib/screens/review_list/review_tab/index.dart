@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:galpi/components/badge/index.dart';
+import 'package:galpi/components/book_card/main.dart';
 import 'package:galpi/components/infinite_scroll_list_view/index.dart';
 import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/stores/user_repository.dart';
@@ -6,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 import 'package:galpi/screens/review_detail/index.dart';
-import 'package:galpi/components/review_card/main.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 
@@ -83,13 +84,18 @@ class ReviewTabState extends State<ReviewTab> {
   Widget _itemBuilder(Tuple2<Review, Book> pair, {int index}) {
     final review = pair.item1;
     final book = pair.item2;
-    final userRepository = Provider.of<UserRepository>(context);
 
     return Container(
-      child: ReviewCard(
-        user: userRepository.user,
-        review: review,
+      child: BookCard(
         book: book,
+        adornment: Row(
+          children: [
+            Badge(
+              iconData: Icons.lock,
+              text: '공개',
+            ),
+          ],
+        ),
         onTap: () => _onOpenReviewDetail(review, book, index),
       ),
     );

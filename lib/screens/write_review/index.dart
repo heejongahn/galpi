@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/book_info/index.dart';
+import 'package:galpi/components/reading_status_badge/index.dart';
 
-import 'package:galpi/components/reading_status_chip/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
@@ -179,20 +179,33 @@ class _WriteReviewState extends State<WriteReview> {
             '독서 상태',
             style: Theme.of(context).textTheme.caption,
           ),
-          Wrap(
-            spacing: 16,
-            children: [
-              ReadingStatus.finishedReading,
-              ReadingStatus.reading,
-            ]
-                .map(
-                  (status) => ReadingStatusChip(
-                    readingStatus: status,
-                    isSelected: widget.arguments.review.readingStatus == status,
-                    onTap: _onReadingStatusBadgeClick,
-                  ),
-                )
-                .toList(),
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            child: Wrap(
+              spacing: 16,
+              children: [
+                ReadingStatus.finishedReading,
+                ReadingStatus.reading,
+              ]
+                  .map(
+                    (status) => GestureDetector(
+                      child: Opacity(
+                        opacity: widget.arguments.review.readingStatus == status
+                            ? 1
+                            : 0.6,
+                        child: ReadingStatusBadge(
+                          readingStatus: status,
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          widget.arguments.review.readingStatus = status;
+                        });
+                      },
+                    ),
+                  )
+                  .toList(),
+            ),
           ),
         ],
       ),

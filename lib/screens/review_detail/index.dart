@@ -1,6 +1,6 @@
 import 'package:galpi/components/avatar/index.dart';
 import 'package:galpi/components/markdown_content/index.dart';
-import 'package:galpi/components/reading_status_chip/index.dart';
+import 'package:galpi/components/reading_status_badge/index.dart';
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/stores/user_repository.dart';
@@ -145,7 +145,7 @@ class ReviewDetail extends StatelessWidget {
           Wrap(
             spacing: 16,
             children: <Widget>[
-              ReadingStatusChip(readingStatus: review.readingStatus),
+              ReadingStatusBadge(readingStatus: review.readingStatus),
               ScoreChip(
                 score: review.stars,
               ),
