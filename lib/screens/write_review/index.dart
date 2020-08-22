@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/book_info/index.dart';
 import 'package:galpi/components/reading_status_badge/index.dart';
+import 'package:galpi/components/score_badge/index.dart';
 
 import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/models/book.dart';
@@ -222,31 +223,35 @@ class _WriteReviewState extends State<WriteReview> {
             '평가',
             style: Theme.of(context).textTheme.caption,
           ),
-          Wrap(
-            spacing: 16,
-            children: [3, 2, 1]
-                .map((score) => ScoreChip(
-                      score: score,
-                      isSelected: widget.arguments.review.stars == score,
-                      onTap: _onScoreBadgeClick,
-                    ))
-                .toList(),
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            child: Wrap(
+              spacing: 12,
+              children: [3, 2, 1]
+                  .map(
+                    (score) => GestureDetector(
+                      child: Opacity(
+                        opacity:
+                            widget.arguments.review.stars == score ? 1 : 0.6,
+                        child: ScoreBadge(
+                          score: score,
+                        ),
+                      ),
+                      onTap: () {
+                        setState(
+                          () {
+                            widget.arguments.review.stars = score;
+                          },
+                        );
+                      },
+                    ),
+                  )
+                  .toList(),
+            ),
           ),
         ],
       ),
     );
-  }
-
-  void _onScoreBadgeClick(int score) {
-    setState(() {
-      widget.arguments.review.stars = score;
-    });
-  }
-
-  void _onReadingStatusBadgeClick(ReadingStatus readingStatus) {
-    setState(() {
-      widget.arguments.review.readingStatus = readingStatus;
-    });
   }
 
   Future<void> _onSave() async {

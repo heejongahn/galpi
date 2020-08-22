@@ -1,7 +1,7 @@
 import 'package:galpi/components/avatar/index.dart';
 import 'package:galpi/components/markdown_content/index.dart';
 import 'package:galpi/components/reading_status_badge/index.dart';
-import 'package:galpi/components/score_chip/index.dart';
+import 'package:galpi/components/score_badge/index.dart';
 import 'package:galpi/stores/review_repository.dart';
 import 'package:galpi/stores/user_repository.dart';
 import 'package:galpi/utils/env.dart';
@@ -143,10 +143,10 @@ class ReviewDetail extends StatelessWidget {
           ),
           DateInfo(review: review),
           Wrap(
-            spacing: 16,
+            spacing: 12,
             children: <Widget>[
               ReadingStatusBadge(readingStatus: review.readingStatus),
-              ScoreChip(
+              ScoreBadge(
                 score: review.stars,
               ),
             ],
