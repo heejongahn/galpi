@@ -3,9 +3,9 @@ import 'package:galpi/components/book_info/index.dart';
 import 'package:galpi/components/reading_status_badge/index.dart';
 import 'package:galpi/components/score_badge/index.dart';
 
-import 'package:galpi/components/score_chip/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
+import 'package:galpi/models/revision.dart';
 import 'package:galpi/screens/review_preview/index.dart';
 
 typedef OnSave = Future<void> Function(Review review, {String bookId});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/components/badge/index.dart';
-import 'package:galpi/models/review.dart';
+import 'package:galpi/models/revision.dart';
 
 typedef OnTap = void Function(ReadingStatus readingStatus);
 

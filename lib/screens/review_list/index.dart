@@ -3,6 +3,7 @@ import 'package:galpi/components/logo/index.dart';
 import 'package:galpi/components/main_drawer/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
+import 'package:galpi/models/revision.dart';
 import 'package:galpi/remotes/create_book.dart';
 import 'package:galpi/screens/review_list/review_tab/index.dart';
 import 'package:galpi/screens/search_book/index.dart';
