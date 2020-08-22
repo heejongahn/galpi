@@ -44,6 +44,19 @@ class _SearchViewState extends State<SearchView> {
       child: Column(children: [
         Container(
           padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              bottom: BorderSide(color: Colors.black26, width: 1),
+            ),
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 8,
+                offset: Offset(0, 4),
+                color: Color.fromRGBO(0, 0, 0, 0.05),
+              )
+            ],
+          ),
           child: TextField(
             autofocus: true,
             focusNode: _focusNode,
@@ -52,6 +65,7 @@ class _SearchViewState extends State<SearchView> {
             },
             textInputAction: TextInputAction.search,
             decoration: const InputDecoration(
+              prefixIcon: Icon(Icons.search),
               labelText: '검색어',
               border: OutlineInputBorder(),
             ),
@@ -94,7 +108,7 @@ class _SearchViewState extends State<SearchView> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      // padding: const EdgeInsets.symmetric(horizontal: 20),
       child: InfiniteScrollListView(
         key: Key(query),
         data: books,

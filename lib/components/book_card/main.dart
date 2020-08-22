@@ -1,5 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:galpi/models/book.dart';
+import 'package:intl/intl.dart';
+
+final formatter = DateFormat('yyyy년 M월 d일');
+final empytyImage = Container(
+    alignment: Alignment.center,
+    width: 100,
+    height: 140,
+    color: Colors.white,
+    child: const Text(
+      '이미지 정보 없음',
+      style: TextStyle(
+        fontSize: 10,
+        color: Colors.grey,
+      ),
+    ));
 
 class BookCard extends StatelessWidget {
   final Book book;
@@ -13,32 +28,85 @@ class BookCard extends StatelessWidget {
       return Container(width: 0, height: 0);
     }
 
-    return GestureDetector(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Align(
-            alignment: Alignment.topRight,
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              book.imageUri != null && book.imageUri != ''
-                  ? Image.network(book.imageUri, width: 100, fit: BoxFit.cover)
-                  : Container(width: 0, height: 0),
-              Flexible(
-                  child: Column(children: [
-                ListTile(
-                  title: Text(
-                    book.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(
-                    '${book.author} | ${book.publisher}',
-                    style: const TextStyle(fontSize: 14.0),
-                  ),
+    final bookImage = book.imageUri != null && book.imageUri != ''
+        ? Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black26, width: 0.5),
+              boxShadow: [
+                const BoxShadow(
+                  blurRadius: 8,
+                  offset: Offset(0, 12),
+                  color: Color.fromRGBO(0, 0, 0, 0.08),
                 )
-              ]))
-            ]),
+              ],
+            ),
+            child: Image.network(
+              book.imageUri,
+              width: 100,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return empytyImage;
+              },
+            ),
+          )
+        : empytyImage;
+
+    final textTheme = Theme.of(context).textTheme;
+
+    return GestureDetector(
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 24,
+          horizontal: 20,
+        ),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.black12, width: 1),
           ),
+        ),
+        child: Align(
+          alignment: Alignment.topRight,
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            bookImage,
+            Flexible(
+              child: Container(
+                margin: EdgeInsets.only(
+                  left: 16,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      book.title,
+                      maxLines: 2,
+                      style: textTheme.subtitle1.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      book.author,
+                      style: textTheme.subtitle2.copyWith(
+                        color: Colors.grey,
+                        fontSize: 14.0,
+                        height: 1.4,
+                      ),
+                    ),
+                    Text(
+                      book.publisher,
+                      style: textTheme.subtitle2.copyWith(
+                        color: Colors.grey,
+                        fontSize: 14.0,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ]),
         ),
       ),
       onTap: onTap,
