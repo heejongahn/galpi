@@ -4,7 +4,6 @@ import 'package:galpi/components/main_drawer/index.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/remotes/create_book.dart';
-import 'package:galpi/screens/review_list/unread_tab/index.dart';
 import 'package:galpi/screens/review_list/review_tab/index.dart';
 import 'package:galpi/screens/search_book/index.dart';
 import 'package:galpi/screens/write_review/index.dart';
@@ -16,40 +15,9 @@ const PAGE_SIZE = 20;
 
 class ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final List<Tab> _tabs = <Tab>[
-    const Tab(
-      child: Text(
-        '읽기 전',
-      ),
-    ),
-    const Tab(
-      child: Text(
-        '읽음',
-      ),
-    ),
-  ];
-
-  TabController _tabController;
-
   UniqueKey listViewKey = UniqueKey();
 
   var isInitialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _tabController = TabController(
-      vsync: this,
-      length: _tabs.length,
-    );
-
-    _tabController.addListener(
-      () {
-        setState(() {});
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,25 +27,11 @@ class ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
         automaticallyImplyLeading: false,
         title: const Logo(),
         centerTitle: false,
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: _tabs,
-          labelColor: Colors.black87,
-          unselectedLabelColor: Colors.black54,
-        ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          UnreadTab(),
-          ReviewTab(),
-        ],
-      ),
+      body: ReviewTab(),
       endDrawer: const MainDrawer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _tabController.index == 0
-            ? _onOpenAddUnreadReview
-            : _onOpenNewReview,
+        onPressed: _onOpenNewReview,
         child: const Icon(Icons.add),
       ),
     );
@@ -97,6 +51,9 @@ class ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   }
 
   Future<void> _onOpenNewReview() async {
+    /**
+     * FIXME: 책만 추가할지 선택
+     */
     final arguments = SearchBookArguments(onSelect: ({Book book}) async {
       final bookId = await createBook(book: book);
 

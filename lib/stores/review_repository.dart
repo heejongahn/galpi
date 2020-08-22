@@ -25,16 +25,6 @@ class ReviewRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Tuple2<Review, Book>> _unreadData = [];
-  List<Tuple2<Review, Book>> get unreadData {
-    return _unreadData;
-  }
-
-  set unreadData(List<Tuple2<Review, Book>> newData) {
-    _unreadData = newData;
-    notifyListeners();
-  }
-
   void initiailze() {
     data = [];
   }
@@ -46,25 +36,10 @@ class ReviewRepository extends ChangeNotifier {
       userId: userId,
       skip: reviewRepository.data.length,
       take: PAGE_SIZE,
-      active: true,
+      listType: ListType.all,
     );
 
     data = reviewRepository.data + items;
-
-    return items.length == PAGE_SIZE;
-  }
-
-  Future<bool> fetchNextUnread({
-    String userId,
-  }) async {
-    final items = await fetchReviews(
-      userId: userId,
-      skip: reviewRepository.data.length,
-      take: PAGE_SIZE,
-      active: false,
-    );
-
-    unreadData = reviewRepository.unreadData + items;
 
     return items.length == PAGE_SIZE;
   }
@@ -79,7 +54,7 @@ class ReviewRepository extends ChangeNotifier {
 
   Future<void> createUnread({Book book}) async {
     final created = await createUnreadReview(book: book);
-    unreadData.insert(0, Tuple2(created, book));
+    data.insert(0, Tuple2(created, book));
   }
 
   Future<void> edit({Review review}) async {
