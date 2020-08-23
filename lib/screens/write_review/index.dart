@@ -7,7 +7,7 @@ import 'package:galpi/models/review.dart';
 import 'package:galpi/models/revision.dart';
 import 'package:galpi/screens/review_preview/index.dart';
 
-typedef OnSave = Future<void> Function(Review review, {String bookId});
+typedef OnSave = Future<void> Function(Review review);
 
 class WriteReviewArgument {
   final OnSave onSave;
@@ -33,6 +33,24 @@ class WriteReview extends StatefulWidget {
 class _WriteReviewState extends State<WriteReview> {
   final _formKey = GlobalKey<FormState>();
   bool isSaving = false;
+  Revision editingRevision;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final newRevision = Revision(
+      stars: 3,
+      title: '',
+      body: '',
+    );
+
+    editingRevision = widget.arguments.review.activeRevision ?? newRevision;
+
+    if (editingRevision.readingStatus == ReadingStatus.hasntStarted) {
+      editingRevision.readingStatus = ReadingStatus.finishedReading;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,9 +126,8 @@ class _WriteReviewState extends State<WriteReview> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 24, 0, 8),
       child: TextFormField(
-        initialValue: widget.arguments.review != null
-            ? widget.arguments.review.title
-            : null,
+        initialValue:
+            widget.arguments.review != null ? editingRevision.title : null,
         decoration: const InputDecoration(
           alignLabelWithHint: true,
           labelText: '제목',
@@ -126,7 +143,7 @@ class _WriteReviewState extends State<WriteReview> {
           return null;
         },
         onChanged: (val) => setState(() {
-          widget.arguments.review.title = val;
+          editingRevision.title = val;
         }),
       ),
     );
@@ -138,9 +155,8 @@ class _WriteReviewState extends State<WriteReview> {
         vertical: 8.0,
       ),
       child: TextFormField(
-        initialValue: widget.arguments.review != null
-            ? widget.arguments.review.body
-            : null,
+        initialValue:
+            widget.arguments.review != null ? editingRevision.body : null,
         decoration: const InputDecoration(
           alignLabelWithHint: true,
           labelText: '내용',
@@ -159,7 +175,7 @@ class _WriteReviewState extends State<WriteReview> {
           return null;
         },
         onChanged: (val) => setState(() {
-          widget.arguments.review.body = val;
+          editingRevision.body = val;
         }),
       ),
     );
@@ -186,16 +202,15 @@ class _WriteReviewState extends State<WriteReview> {
                   .map(
                     (status) => GestureDetector(
                       child: Opacity(
-                        opacity: widget.arguments.review.readingStatus == status
-                            ? 1
-                            : 0.6,
+                        opacity:
+                            editingRevision.readingStatus == status ? 1 : 0.6,
                         child: ReadingStatusBadge(
                           readingStatus: status,
                         ),
                       ),
                       onTap: () {
                         setState(() {
-                          widget.arguments.review.readingStatus = status;
+                          editingRevision.readingStatus = status;
                         });
                       },
                     ),
@@ -226,8 +241,7 @@ class _WriteReviewState extends State<WriteReview> {
                   .map(
                     (score) => GestureDetector(
                       child: Opacity(
-                        opacity:
-                            widget.arguments.review.stars == score ? 1 : 0.6,
+                        opacity: editingRevision.stars == score ? 1 : 0.6,
                         child: ScoreBadge(
                           score: score,
                         ),
@@ -235,7 +249,7 @@ class _WriteReviewState extends State<WriteReview> {
                       onTap: () {
                         setState(
                           () {
-                            widget.arguments.review.stars = score;
+                            editingRevision.stars = score;
                           },
                         );
                       },
@@ -259,6 +273,8 @@ class _WriteReviewState extends State<WriteReview> {
     setState(() {
       isSaving = true;
     });
+
+    widget.arguments.review.activeRevision = editingRevision;
 
     try {
       await widget.arguments.onSave(

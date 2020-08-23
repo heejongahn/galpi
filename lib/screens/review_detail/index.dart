@@ -197,7 +197,9 @@ class ReviewDetail extends StatelessWidget {
           ),
           OutlineButton.icon(
             visualDensity: VisualDensity.standard,
-            onPressed: () {},
+            onPressed: () {
+              _onEditReview(review, context);
+            },
             icon: Icon(Icons.add_comment),
             label: const Text('갈피 남기기'),
           ),
@@ -380,13 +382,13 @@ class ReviewDetail extends StatelessWidget {
       arguments: WriteReviewArgument(
         isEditing: true,
         review: review,
-        onSave: (Review updatedReview, {String bookId}) async {
+        onSave: (Review updatedReview) async {
           try {
             await _updateReview(context, updatedReview);
-            showMaterialSnackbar(context, '독후감을 수정했습니다.');
+            showMaterialSnackbar(context, '독후감을 저장했습니다.');
             return Navigator.of(context).pop();
           } catch (e) {
-            showMaterialSnackbar(context, '독후감 수정에 실패했습니다.');
+            showMaterialSnackbar(context, '독후감 저장에 실패했습니다.');
             rethrow;
           }
         },

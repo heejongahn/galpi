@@ -7,9 +7,13 @@ import './search_view.dart';
 typedef OnSelect = Future<void> Function({Book book});
 
 class SearchBookArguments {
-  final OnSelect onSelect;
+  final OnSelect onMoveToWriteReview;
+  final OnSelectBook onCreateReviewWithoutRevision;
 
-  const SearchBookArguments({this.onSelect});
+  const SearchBookArguments({
+    this.onMoveToWriteReview,
+    this.onCreateReviewWithoutRevision,
+  });
 }
 
 class SearchBook extends StatefulWidget {
@@ -31,7 +35,11 @@ class _SearchBookState extends State<SearchBook> {
         title: const Text('책 검색'),
         centerTitle: false,
       ),
-      body: SearchView(onSelectBook: widget.arguments.onSelect),
+      body: SearchView(
+        onMoveToWriteReview: widget.arguments.onMoveToWriteReview,
+        onCreateReviewWithoutRevision:
+            widget.arguments.onCreateReviewWithoutRevision,
+      ),
     );
   }
 }

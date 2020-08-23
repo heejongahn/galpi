@@ -11,9 +11,13 @@ import 'package:galpi/remotes/fetch_books.dart';
 typedef OnSelectBook = Future<void> Function({Book book});
 
 class SearchView extends StatefulWidget {
-  final OnSelectBook onSelectBook;
+  final OnSelectBook onMoveToWriteReview;
+  final OnSelectBook onCreateReviewWithoutRevision;
 
-  const SearchView({this.onSelectBook});
+  const SearchView({
+    this.onMoveToWriteReview,
+    this.onCreateReviewWithoutRevision,
+  });
 
   @override
   _SearchViewState createState() => _SearchViewState();
@@ -118,12 +122,46 @@ class _SearchViewState extends State<SearchView> {
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: BookCard(
               book: book,
-              onTap: () => widget.onSelectBook(book: book),
+              onTap: () => _onTapBookCard(book: book),
             ),
           );
         },
         emptyWidget: _buildPlaceholder(),
       ),
+    );
+  }
+
+  void _onTapBookCard({
+    Book book,
+  }) {
+    const maxTitleLength = 20;
+    final truncatedTitle = book.title.length > maxTitleLength
+        ? '${book.title.substring(0, maxTitleLength)}…'
+        : book.title;
+
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return SimpleDialog(
+          title: Text('『${truncatedTitle}』'),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                widget.onMoveToWriteReview(book: book);
+              },
+              child: const Text('독후감 남기기'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                widget.onCreateReviewWithoutRevision(book: book);
+              },
+              child: const Text('독후감 없이 책만 먼저 추가하기'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -133,6 +171,10 @@ class _SearchViewState extends State<SearchView> {
       page: (books.length ~/ PAGE_SIZE) + 1,
       size: PAGE_SIZE,
     );
+
+    if (!mounted) {
+      return false;
+    }
 
     setState(() {
       books = books + fetchedBooks;
