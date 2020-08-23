@@ -31,12 +31,12 @@ class ReviewRepository extends ChangeNotifier {
   }) async {
     final items = await fetchReviews(
       userId: userId,
-      skip: reviewRepository.data.length,
+      skip: data.length,
       take: PAGE_SIZE,
       listType: ListType.all,
     );
 
-    data = reviewRepository.data + items;
+    data = data + items;
 
     return items.length == PAGE_SIZE;
   }
@@ -55,7 +55,9 @@ class ReviewRepository extends ChangeNotifier {
 
   Future<void> createUnread({Book book}) async {
     final created = await createUnreadReview(book: book);
-    data.insert(0, created);
+    print(created);
+    print([created, ...data]);
+    data = [created, ...data];
   }
 
   Future<void> edit({Review review}) async {
@@ -73,5 +75,3 @@ class ReviewRepository extends ChangeNotifier {
     await deleteReview(reviewId: review.id);
   }
 }
-
-final reviewRepository = ReviewRepository();
