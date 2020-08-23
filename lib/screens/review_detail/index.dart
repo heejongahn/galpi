@@ -17,6 +17,8 @@ import 'package:galpi/screens/write_review/index.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart' show Share;
 
+final DateFormat formatter = DateFormat('yyyy년 M월 d일');
+
 class ReviewDetailArguments {
   final String reviewId;
 
@@ -37,7 +39,6 @@ class ReviewDetail extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('독후감'),
         centerTitle: false,
         actions: <Widget>[
           _buildShowBottomSheetButton(
@@ -49,7 +50,9 @@ class ReviewDetail extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           BookInfo(book: book),
-          getReviewDetail(context, review),
+          review.activeRevision != null
+              ? getReviewDetail(context, review)
+              : getWriteReview(context, review),
         ]),
       ),
     );
@@ -66,43 +69,42 @@ class ReviewDetail extends StatelessWidget {
             return SafeArea(
               child: Wrap(
                 children: [
-                  ...review.isPublic
-                      ? [
-                          ListTile(
-                            leading: const Icon(Icons.lock),
-                            title: const Text('비공개로 전환'),
-                            onTap: () {
-                              _onSetIsPublicToFalse(
-                                context: context,
-                                review: review,
-                              );
-                            },
-                          )
-                        ]
-                      : [],
-                  ListTile(
-                    leading: const Icon(Icons.share),
-                    title: const Text('공유하기'),
-                    onTap: () async {
-                      final result = await _onSetIsPublicToTrue(
-                        context: context,
-                        review: review,
-                      );
+                  if (review.activeRevision != null) ...[
+                    if (review.isPublic)
+                      ListTile(
+                        leading: const Icon(Icons.lock),
+                        title: const Text('비공개로 전환'),
+                        onTap: () {
+                          _onSetIsPublicToFalse(
+                            context: context,
+                            review: review,
+                          );
+                        },
+                      ),
+                    ListTile(
+                      leading: const Icon(Icons.share),
+                      title: const Text('공유하기'),
+                      onTap: () async {
+                        final result = await _onSetIsPublicToTrue(
+                          context: context,
+                          review: review,
+                        );
 
-                      if (result) {
+                        if (result) {
+                          Navigator.of(bottomSheetContext).pop();
+                          _onShare(review: review);
+                        }
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.edit),
+                      title: const Text('수정하기'),
+                      onTap: () {
                         Navigator.of(bottomSheetContext).pop();
-                        _onShare(review: review);
-                      }
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.edit),
-                    title: const Text('수정하기'),
-                    onTap: () {
-                      Navigator.of(bottomSheetContext).pop();
-                      _onEditReview(review, context);
-                    },
-                  ),
+                        _onEditReview(review, context);
+                      },
+                    ),
+                  ],
                   ListTile(
                     leading: const Icon(
                       Icons.delete,
@@ -127,32 +129,78 @@ class ReviewDetail extends StatelessWidget {
   }
 
   Padding getReviewDetail(BuildContext context, Review review) {
+    final activeRevision = review.activeRevision;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            review.title,
+            activeRevision.title,
             style: Theme.of(context)
                 .textTheme
                 .headline3
                 .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          DateInfo(review: review),
+          AuthorInfo(review: review),
           Wrap(
             spacing: 12,
             children: <Widget>[
-              ReadingStatusBadge(readingStatus: review.readingStatus),
+              ReadingStatusBadge(readingStatus: activeRevision.readingStatus),
               ScoreBadge(
-                score: review.stars,
+                score: activeRevision.stars,
               ),
             ],
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
-            child: MarkdownContent(data: review.body),
+            child: MarkdownContent(data: activeRevision.body),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget getWriteReview(BuildContext context, Review review) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 36,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.priority_high,
+            size: 48,
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 24, bottom: 12),
+            child: Text(
+              '남긴 갈피가 없습니다',
+              style: textTheme.headline5.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 48),
+            child: Text(
+              '${formatter.format(review.createdAt)}에 추가됨',
+              style: textTheme.caption,
+            ),
+          ),
+          OutlineButton.icon(
+            visualDensity: VisualDensity.standard,
+            onPressed: () {},
+            icon: Icon(Icons.add_comment),
+            label: const Text('갈피 남기기'),
+          ),
         ],
       ),
     );
@@ -353,13 +401,12 @@ class ReviewDetail extends StatelessWidget {
   }
 }
 
-class DateInfo extends StatelessWidget {
-  DateInfo({
+class AuthorInfo extends StatelessWidget {
+  const AuthorInfo({
     @required this.review,
   });
 
   final Review review;
-  final DateFormat formatter = DateFormat('yyyy년 M월 d일');
 
   @override
   Widget build(BuildContext context) {
@@ -384,15 +431,27 @@ class DateInfo extends StatelessWidget {
             Text(
               userRepository.user.displayName,
             ),
-            review.createdAt != null
-                ? Text(
-                    '${formatter.format(review.createdAt)}',
-                    style: Theme.of(context).textTheme.caption,
-                  )
-                : Container(),
+            review.createdAt != null ? DateInfo(review: review) : Container(),
           ]),
         ],
       ),
+    );
+  }
+}
+
+class DateInfo extends StatelessWidget {
+  const DateInfo({
+    Key key,
+    @required this.review,
+  }) : super(key: key);
+
+  final Review review;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      '${formatter.format(review.createdAt)}',
+      style: Theme.of(context).textTheme.caption,
     );
   }
 }
