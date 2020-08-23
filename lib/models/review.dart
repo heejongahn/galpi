@@ -32,11 +32,6 @@ class Review {
 
   Review({
     this.id,
-    this.legacyId,
-    this.stars,
-    this.title,
-    this.body,
-    this.readingStatus = ReadingStatus.hasntStarted,
     this.readingStartedAt,
     this.readingFinishedAt,
     this.createdAt,
@@ -44,6 +39,14 @@ class Review {
     this.isPublic = false,
     this.book,
     this.activeRevision,
+    /**
+     * depreacted
+     */
+    this.legacyId,
+    this.stars,
+    this.title,
+    this.body,
+    this.readingStatus = ReadingStatus.hasntStarted,
   });
 
   static Review fromPayload(Map<String, dynamic> map) {
@@ -106,25 +109,6 @@ class Review {
     }
 
     return map;
-  }
-
-  String get displayReadingStatus {
-    switch (readingStatus) {
-      case ReadingStatus.reading:
-        {
-          return '읽는 중';
-        }
-      case ReadingStatus.hasntStarted:
-        {
-          return '읽기 전';
-        }
-      case ReadingStatus.finishedReading:
-        {
-          return '읽음';
-        }
-    }
-
-    return null;
   }
 
   String get displayCreatedDate {
