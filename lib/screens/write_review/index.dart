@@ -279,7 +279,6 @@ class _WriteReviewState extends State<WriteReview> {
     try {
       await widget.arguments.onSave(
         widget.arguments.review,
-        bookId: widget.arguments.review.book.id,
       );
     } finally {
       if (mounted)
