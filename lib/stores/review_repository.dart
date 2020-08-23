@@ -42,8 +42,12 @@ class ReviewRepository extends ChangeNotifier {
     return items.length == PAGE_SIZE;
   }
 
-  Future<void> create({Review review, String bookId}) async {
-    await createReview(review: review, bookId: bookId);
+  Future<void> create({
+    Review review,
+  }) async {
+    await createReview(
+      review: review,
+    );
   }
 
   Future<void> addRevision({Review review}) async {

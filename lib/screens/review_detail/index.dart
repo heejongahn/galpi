@@ -100,7 +100,7 @@ class ReviewDetail extends StatelessWidget {
                     title: const Text('수정하기'),
                     onTap: () {
                       Navigator.of(bottomSheetContext).pop();
-                      _onEditReview(review, review.book, context);
+                      _onEditReview(review, context);
                     },
                   ),
                   ListTile(
@@ -326,15 +326,12 @@ class ReviewDetail extends StatelessWidget {
     }
   }
 
-  Future<void> _onEditReview(
-      Review review, Book book, BuildContext context) async {
+  Future<void> _onEditReview(Review review, BuildContext context) async {
     await Navigator.of(context).pushNamed(
       '/review/write',
       arguments: WriteReviewArgument(
         isEditing: true,
         review: review,
-        book: book,
-        bookId: 'FIXME',
         onSave: (Review updatedReview, {String bookId}) async {
           try {
             await _updateReview(context, updatedReview);

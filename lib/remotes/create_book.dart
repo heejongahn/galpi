@@ -5,12 +5,7 @@ import 'package:galpi/models/book.dart';
 import 'package:galpi/utils/http_client.dart';
 import 'package:galpi/utils/env.dart';
 
-// TODO: 이 타입을 어떻게 써야할까?
-// class CreateBookResponse {
-//   String bookId;
-// }
-
-Future<String> createBook({Book book}) async {
+Future<Book> createBook({Book book}) async {
   final url = '${env.apiEndpoint}/book/create';
 
   final body = const JsonEncoder().convert({'bookPayload': book.toMap()});
@@ -24,5 +19,8 @@ Future<String> createBook({Book book}) async {
   final decoded =
       httpClient.decodeBody<Map<String, dynamic>>(response.bodyBytes);
 
-  return decoded['bookId'] as String;
+  final createdBookPayload =
+      Map<String, dynamic>.from(decoded['book'] as Map<String, dynamic>);
+
+  return Book.fromPayload(createdBookPayload);
 }

@@ -7,13 +7,12 @@ import 'package:galpi/utils/env.dart';
 
 Future<Review> createReview({
   Review review,
-  String bookId,
 }) async {
   final url = '${env.apiEndpoint}/review/create';
 
   final body = const JsonEncoder().convert({
     'reviewPayload': review.toMap(),
-    'bookId': bookId,
+    'bookId': review.book.id,
   });
 
   final response = await httpClient.post(

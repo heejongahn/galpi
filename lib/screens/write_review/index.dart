@@ -3,7 +3,6 @@ import 'package:galpi/components/book_info/index.dart';
 import 'package:galpi/components/reading_status_badge/index.dart';
 import 'package:galpi/components/score_badge/index.dart';
 
-import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:galpi/models/revision.dart';
 import 'package:galpi/screens/review_preview/index.dart';
@@ -12,14 +11,10 @@ typedef OnSave = Future<void> Function(Review review, {String bookId});
 
 class WriteReviewArgument {
   final OnSave onSave;
-  final Book book;
-  final String bookId;
   final Review review;
   final bool isEditing;
 
   WriteReviewArgument({
-    this.book,
-    this.bookId,
     this.review,
     this.onSave,
     this.isEditing = false,
@@ -86,7 +81,7 @@ class _WriteReviewState extends State<WriteReview> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 BookInfo(
-                  book: widget.arguments.book,
+                  book: widget.arguments.review.book,
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -268,7 +263,7 @@ class _WriteReviewState extends State<WriteReview> {
     try {
       await widget.arguments.onSave(
         widget.arguments.review,
-        bookId: widget.arguments.bookId,
+        bookId: widget.arguments.review.book.id,
       );
     } finally {
       if (mounted)
@@ -279,8 +274,10 @@ class _WriteReviewState extends State<WriteReview> {
   }
 
   void _onOpenPreviewDialog() {
-    final args =
-        ReviewPreviewArguments(widget.arguments.review, widget.arguments.book);
+    final args = ReviewPreviewArguments(
+      widget.arguments.review,
+    );
+
     Navigator.of(context).pushNamed(
       '/review/preview',
       arguments: args,

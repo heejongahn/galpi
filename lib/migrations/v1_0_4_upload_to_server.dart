@@ -12,8 +12,11 @@ Future<void> v1_0_4_uploadToServer() async {
     final review = queryResult.item1[i];
     final book = queryResult.item2[i];
 
-    futures.add(createBook(book: book).then((bookId) {
-      createReview(review: review, bookId: bookId);
+    futures.add(createBook(book: book).then((book) {
+      review.book = book;
+      createReview(
+        review: review,
+      );
     }));
   }
 

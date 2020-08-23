@@ -56,7 +56,7 @@ class ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
      * FIXME: 책만 추가할지 선택
      */
     final arguments = SearchBookArguments(onSelect: ({Book book}) async {
-      final bookId = await createBook(book: book);
+      final createdBook = await createBook(book: book);
 
       Navigator.of(context).pushNamed(
         '/review/write',
@@ -64,9 +64,8 @@ class ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
           review: Review(
             stars: 3,
             readingStatus: ReadingStatus.finishedReading,
+            book: createdBook,
           ),
-          book: book,
-          bookId: bookId,
           onSave: _onCreateReview,
         ),
       );
@@ -80,7 +79,9 @@ class ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
     final reviewRepository = Provider.of<ReviewRepository>(context);
 
     try {
-      await reviewRepository.create(review: review, bookId: bookId);
+      await reviewRepository.create(
+        review: review,
+      );
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/',

@@ -7,15 +7,13 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 import 'package:galpi/components/book_info/index.dart';
-import 'package:galpi/models/book.dart';
 import 'package:galpi/models/review.dart';
 import 'package:provider/provider.dart';
 
 class ReviewPreviewArguments {
   final Review review;
-  final Book book;
 
-  ReviewPreviewArguments(this.review, this.book);
+  ReviewPreviewArguments(this.review);
 }
 
 class ReviewPreview extends StatelessWidget {
@@ -26,7 +24,7 @@ class ReviewPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final review = arguments.review;
-    final book = arguments.book;
+    final book = review.book;
 
     return Scaffold(
       appBar: AppBar(
