@@ -8,10 +8,11 @@ import 'package:galpi/utils/env.dart';
 Future<Review> createReview({
   Review review,
 }) async {
-  final url = '${env.apiEndpoint}/review/create';
+  final url = '${env.apiEndpoint}/review/create-review';
 
   final body = const JsonEncoder().convert({
     'reviewPayload': review.toMap(),
+    'revisionPayload': review.activeRevision?.toMap(),
     'bookId': review.book.id,
   });
 

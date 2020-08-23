@@ -5,7 +5,6 @@ import 'package:galpi/remotes/review/create.dart';
 import 'package:galpi/remotes/review/create_revision.dart';
 import 'package:galpi/remotes/review/create_unread.dart';
 import 'package:galpi/remotes/review/delete.dart';
-import 'package:galpi/remotes/review/edit.dart';
 
 import 'package:galpi/remotes/review/list.dart';
 
@@ -60,7 +59,7 @@ class ReviewRepository extends ChangeNotifier {
   }
 
   Future<void> edit({Review review}) async {
-    final updated = await editReview(review: review);
+    final updated = await createRevision(review: review);
     data = data.map((e) {
       if (e.id == review.id) {
         return updated;
