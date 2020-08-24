@@ -288,15 +288,20 @@ class _WriteReviewState extends State<WriteReview> {
     }
   }
 
-  void _onOpenPreviewDialog() {
+  Future<void> _onOpenPreviewDialog() async {
+    final originalRevision = widget.arguments.review.activeRevision;
+    widget.arguments.review.activeRevision = editingRevision;
+
     final args = ReviewPreviewArguments(
       widget.arguments.review,
     );
 
-    Navigator.of(context).pushNamed(
+    await Navigator.of(context).pushNamed(
       '/review/preview',
       arguments: args,
     );
+
+    widget.arguments.review.activeRevision = originalRevision;
   }
 
   void _onBlur() {

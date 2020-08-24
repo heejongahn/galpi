@@ -47,7 +47,7 @@ class ReviewPreview extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            review.title,
+            review.activeRevision?.title,
             style: Theme.of(context)
                 .textTheme
                 .headline3
@@ -57,15 +57,16 @@ class ReviewPreview extends StatelessWidget {
           Wrap(
             spacing: 12,
             children: <Widget>[
-              ReadingStatusBadge(readingStatus: review.readingStatus),
+              ReadingStatusBadge(
+                  readingStatus: review.activeRevision?.readingStatus),
               ScoreBadge(
-                score: review.stars,
+                score: review.activeRevision?.stars,
               ),
             ],
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
-            child: MarkdownContent(data: review.body),
+            child: MarkdownContent(data: review.activeRevision?.body),
           )
         ],
       ),
