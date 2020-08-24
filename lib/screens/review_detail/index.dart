@@ -246,7 +246,7 @@ class ReviewDetail extends StatelessWidget {
     final reviewRepository = Provider.of<ReviewRepository>(context);
 
     try {
-      await reviewRepository.edit(review: updatedReview);
+      await reviewRepository.saveRevision(review: updatedReview);
     } catch (e) {
       showErrorDialog(context: context, message: '독후감 수정 중 오류가 발생했습니다.');
       rethrow;

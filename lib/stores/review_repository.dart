@@ -49,10 +49,6 @@ class ReviewRepository extends ChangeNotifier {
     );
   }
 
-  Future<void> addRevision({Review review}) async {
-    await createRevision(review: review);
-  }
-
   Future<void> createUnread({Book book}) async {
     final created = await createUnreadReview(book: book);
     print(created);
@@ -60,7 +56,7 @@ class ReviewRepository extends ChangeNotifier {
     data = [created, ...data];
   }
 
-  Future<void> edit({Review review}) async {
+  Future<void> saveRevision({Review review}) async {
     final updated = await createRevision(review: review);
     data = data.map((e) {
       if (e.id == review.id) {
