@@ -75,7 +75,7 @@ class ReviewDetail extends StatelessWidget {
                         leading: const Icon(Icons.lock),
                         title: const Text('비공개로 전환'),
                         onTap: () {
-                          _onSetIsPublicToFalse(
+                          _onToggleIsPublic(
                             context: context,
                             review: review,
                           );
@@ -85,15 +85,19 @@ class ReviewDetail extends StatelessWidget {
                       leading: const Icon(Icons.share),
                       title: const Text('공유하기'),
                       onTap: () async {
-                        final result = await _onSetIsPublicToTrue(
-                          context: context,
-                          review: review,
-                        );
+                        if (!review.isPublic) {
+                          final result = await _onToggleIsPublic(
+                            context: context,
+                            review: review,
+                          );
 
-                        if (result) {
-                          Navigator.of(bottomSheetContext).pop();
-                          _onShare(review: review);
+                          if (!result) {
+                            return;
+                          }
                         }
+
+                        Navigator.of(bottomSheetContext).pop();
+                        _onShare(review: review);
                       },
                     ),
                     ListTile(
@@ -253,124 +257,74 @@ class ReviewDetail extends StatelessWidget {
     }
   }
 
-  Future<bool> _onSetIsPublicToTrue({
+  Future<bool> _onToggleIsPublic({
     BuildContext context,
     Review review,
   }) async {
-    if (review.isPublic) {
-      return true;
-    }
+    final reviewRepository = Provider.of<ReviewRepository>(context);
+
+    final nextIsPublic = !review.isPublic;
+
+    final nextLabel = nextIsPublic ? '공개 독후감' : '비공개 독후감';
+    final title = Text("${nextLabel}으로 전환할까요?");
+    final content = nextIsPublic
+        ? const Text(
+            "다른 사람들이 독후감을 볼 수 있게 됩니다. 언제든지 비공개로 전환할 수 있습니다.",
+          )
+        : const Text(
+            "이미 생성된 공유 링크에는 더 이상 접근할 수 없습니다. 언제든지 공개로 전환할 수 있습니다.",
+          );
+
+    final onPressed = (BuildContext dialogContext) async {
+      try {
+        review.isPublic = nextIsPublic;
+        await reviewRepository.edit(review: review);
+        Navigator.of(dialogContext).pop(true);
+      } catch (e) {
+        Navigator.of(dialogContext).pop(false);
+        rethrow;
+      }
+    };
 
     try {
       final result = await showDialog<bool>(
             context: context,
-            builder: (BuildContext ctx) {
-              return AlertDialog(
-                title: const Text("공개 독후감으로 전환할까요?"),
-                content: const Text(
-                  "다른 사람들이 독후감을 볼 수 있게 됩니다. 언제든지 비공개로 전환할 수 있습니다.",
+            builder: (BuildContext dialogContext) => AlertDialog(
+              title: title,
+              content: content,
+              actions: <Widget>[
+                FlatButton(
+                  child: const Text("취소"),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(false);
+                  },
                 ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: const Text("취소"),
-                    onPressed: () {
-                      Navigator.of(ctx).pop(false);
-                    },
-                  ),
-                  FlatButton(
-                    child: const Text("공개로 전환"),
-                    onPressed: () async {
-                      try {
-                        review.isPublic = true;
-                        await _updateReview(context, review);
-                        Navigator.of(ctx).pop(true);
-                      } catch (e) {
-                        Navigator.of(ctx).pop(false);
-                        rethrow;
-                      }
-                    },
-                  ),
-                ],
-              );
-            },
+                FlatButton(
+                  child: nextIsPublic
+                      ? const Text("공개로 전환")
+                      : const Text("비공개로 전환"),
+                  onPressed: () {
+                    onPressed(dialogContext);
+                  },
+                ),
+              ],
+            ),
           ) ??
           false;
 
       if (result) {
         showMaterialSnackbar(
           context,
-          '공개 독후감으로 전환했습니다.',
+          '${nextLabel}으로 전환했습니다.',
         );
       }
 
       return result;
     } catch (e) {
-      review.isPublic = false;
+      review.isPublic = !nextIsPublic;
       showMaterialSnackbar(
         context,
-        '공개 독후감으로 전환하는 데 실패했습니다.',
-      );
-      rethrow;
-    }
-  }
-
-  Future<void> _onSetIsPublicToFalse({
-    BuildContext context,
-    Review review,
-    bool isPublic,
-  }) async {
-    if (!review.isPublic) {
-      return true;
-    }
-
-    try {
-      final result = await showDialog<bool>(
-            context: context,
-            builder: (BuildContext ctx) {
-              return AlertDialog(
-                title: const Text("비공개 독후감으로 전환할까요?"),
-                content: const Text(
-                  "이미 생성된 공유 링크에는 더 이상 접근할 수 없습니다. 언제든지 공개로 전환할 수 있습니다.",
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: const Text("취소"),
-                    onPressed: () {
-                      Navigator.of(ctx).pop(false);
-                    },
-                  ),
-                  FlatButton(
-                    child: const Text("비공개로 전환"),
-                    onPressed: () async {
-                      try {
-                        review.isPublic = false;
-                        await _updateReview(context, review);
-                        Navigator.of(ctx).pop(true);
-                      } catch (e) {
-                        Navigator.of(ctx).pop(false);
-                        rethrow;
-                      }
-                    },
-                  ),
-                ],
-              );
-            },
-          ) ??
-          false;
-
-      if (result) {
-        showMaterialSnackbar(
-          context,
-          '비공개 독후감으로 전환했습니다.',
-        );
-      }
-
-      return result;
-    } catch (e) {
-      review.isPublic = true;
-      showMaterialSnackbar(
-        context,
-        '비공개 독후감으로 전환하는 데 실패했습니다.',
+        '${nextLabel}으로 전환하는 데 실패했습니다.',
       );
       rethrow;
     }
