@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:galpi/components/badge/index.dart';
 import 'package:galpi/components/book_card/main.dart';
 import 'package:galpi/components/infinite_scroll_list_view/index.dart';
+import 'package:galpi/components/is_public_badge/index.dart';
 import 'package:galpi/components/reading_status_badge/index.dart';
 import 'package:galpi/components/score_badge/index.dart';
 import 'package:galpi/stores/review_repository.dart';
@@ -83,10 +84,6 @@ class ReviewTabState extends State<ReviewTab> {
   }
 
   Widget _itemBuilder(Review review, {int index}) {
-    if (review.activeRevision != null) {
-      print(review.activeRevision);
-    }
-
     final readingStatus = review.activeRevision?.readingStatus;
 
     return Container(
@@ -96,24 +93,23 @@ class ReviewTabState extends State<ReviewTab> {
           margin: const EdgeInsets.only(top: 16),
           child: Wrap(
             spacing: 12,
-            children: [
-              ReadingStatusBadge(
-                readingStatus: readingStatus ?? ReadingStatus.hasntStarted,
-              ),
-              if (readingStatus == ReadingStatus.finishedReading)
-                ScoreBadge(
-                  score: review.activeRevision?.stars,
-                ),
-              review.isPublic
-                  ? const Badge(
-                      iconData: Icons.lock_open,
-                      text: '공개',
-                    )
-                  : const Badge(
-                      iconData: Icons.lock,
-                      text: '비공개',
+            children: review.activeRevision != null
+                ? [
+                    ReadingStatusBadge(
+                      readingStatus:
+                          readingStatus ?? ReadingStatus.hasntStarted,
                     ),
-            ],
+                    ScoreBadge(
+                      score: review.activeRevision?.stars,
+                    ),
+                    IsPublicBadge(isPublic: review.isPublic),
+                  ]
+                : [
+                    const Badge(
+                      iconData: Icons.bookmark,
+                      text: '저장됨',
+                    ),
+                  ],
           ),
         ),
         onTap: () => _onOpenReviewDetail(review, index),

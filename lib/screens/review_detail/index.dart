@@ -1,4 +1,5 @@
 import 'package:galpi/components/avatar/index.dart';
+import 'package:galpi/components/is_public_badge/index.dart';
 import 'package:galpi/components/markdown_content/index.dart';
 import 'package:galpi/components/reading_status_badge/index.dart';
 import 'package:galpi/components/score_badge/index.dart';
@@ -155,6 +156,7 @@ class ReviewDetail extends StatelessWidget {
               ScoreBadge(
                 score: activeRevision.stars,
               ),
+              IsPublicBadge(isPublic: review.isPublic),
             ],
           ),
           Padding(
