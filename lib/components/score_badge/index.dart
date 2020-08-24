@@ -29,17 +29,17 @@ class ScoreBadge extends StatelessWidget {
   String get label {
     switch (score) {
       case 0:
-        return '최악이에요';
+        return '최악';
       case 1:
-        return '별로에요';
+        return '별로';
       case 2:
-        return '보통이에요';
+        return '보통';
       case 3:
-        return '추천해요';
+        return '추천';
       case 4:
-        return '최고에요';
+        return '최고';
       default:
-        return '보통이에요';
+        return '보통';
     }
   }
 
