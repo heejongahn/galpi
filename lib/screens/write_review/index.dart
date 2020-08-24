@@ -39,13 +39,19 @@ class _WriteReviewState extends State<WriteReview> {
   void initState() {
     super.initState();
 
-    final newRevision = Revision(
+    editingRevision = Revision(
       stars: 3,
       title: '',
       body: '',
     );
 
-    editingRevision = widget.arguments.review.activeRevision ?? newRevision;
+    final activeRevision = widget.arguments.review.activeRevision;
+
+    if (activeRevision != null) {
+      editingRevision.stars = activeRevision.stars;
+      editingRevision.title = activeRevision.title;
+      editingRevision.body = activeRevision.body;
+    }
 
     if (editingRevision.readingStatus == ReadingStatus.hasntStarted) {
       editingRevision.readingStatus = ReadingStatus.finishedReading;
@@ -274,17 +280,22 @@ class _WriteReviewState extends State<WriteReview> {
       isSaving = true;
     });
 
+    final originalRevision = widget.arguments.review.activeRevision;
     widget.arguments.review.activeRevision = editingRevision;
 
     try {
       await widget.arguments.onSave(
         widget.arguments.review,
       );
+    } catch (_) {
+      widget.arguments.review.activeRevision = originalRevision;
     } finally {
       if (mounted)
-        setState(() {
-          isSaving = false;
-        });
+        setState(
+          () {
+            isSaving = false;
+          },
+        );
     }
   }
 
