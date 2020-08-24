@@ -93,6 +93,7 @@ class ReviewTabState extends State<ReviewTab> {
           margin: const EdgeInsets.only(top: 16),
           child: Wrap(
             spacing: 12,
+            runSpacing: 8,
             children: review.activeRevision != null
                 ? [
                     ReadingStatusBadge(
