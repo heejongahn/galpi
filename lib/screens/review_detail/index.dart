@@ -389,7 +389,9 @@ class AuthorInfo extends StatelessWidget {
             Text(
               userRepository.user.displayName,
             ),
-            review.createdAt != null ? DateInfo(review: review) : Container(),
+            review.activeRevision?.createdAt != null
+                ? DateInfo(dateTime: review.activeRevision?.createdAt)
+                : Container(),
           ]),
         ],
       ),
@@ -400,15 +402,15 @@ class AuthorInfo extends StatelessWidget {
 class DateInfo extends StatelessWidget {
   const DateInfo({
     Key key,
-    @required this.review,
+    @required this.dateTime,
   }) : super(key: key);
 
-  final Review review;
+  final DateTime dateTime;
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      '${formatter.format(review.createdAt)}',
+      '${formatter.format(dateTime)}',
       style: Theme.of(context).textTheme.caption,
     );
   }
