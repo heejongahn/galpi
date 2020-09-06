@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'book.g.dart';
+
+@JsonSerializable()
 class Book {
   final String id;
   final String isbn;
@@ -31,31 +36,9 @@ class Book {
     );
   }
 
-  static Book fromPayload(Map<String, dynamic> json) {
-    return Book(
-      id: json['id'] as String,
-      isbn: json['isbn'] as String,
-      title: json['title'] as String,
-      author: json['author'] as String,
-      publisher: json['publisher'] as String,
-      linkUri: json['linkUri'] as String,
-      imageUri: json['imageUri'] as String,
-    );
-  }
+  factory Book.fromJson(Map<String, dynamic> json) => _$BookFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    final map = Map<String, dynamic>.from(<String, dynamic>{});
-
-    // FIXME
-    map['isbn'] = isbn;
-    map['title'] = title;
-    map['author'] = author;
-    map['publisher'] = publisher;
-    map['linkUri'] = linkUri;
-    map['imageUri'] = imageUri;
-
-    return map;
-  }
+  Map<String, dynamic> toJson() => _$BookToJson(this);
 
   // LEGACY
   // 로컬 DB를 없애도 될 때가 되면 지운다

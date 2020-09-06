@@ -80,7 +80,7 @@ class Review {
       isPublic: map['isPublic'] as bool,
     );
 
-    review.book = Book.fromPayload(map['book'] as Map<String, dynamic>);
+    review.book = Book.fromJson(map['book'] as Map<String, dynamic>);
     review.activeRevision = map['activeRevision'] != null
         ? Revision.fromPayload(map['activeRevision'] as Map<String, dynamic>)
         : null;

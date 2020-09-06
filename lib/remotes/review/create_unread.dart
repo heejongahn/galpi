@@ -11,7 +11,11 @@ Future<Review> createUnreadReview({
 }) async {
   final url = '${env.apiEndpoint}/review/create-unread';
 
-  final body = const JsonEncoder().convert({'bookPayload': book.toMap()});
+  final body = const JsonEncoder().convert(
+    {
+      'bookPayload': book.toJson(),
+    },
+  );
 
   final response = await httpClient.post(
     url,

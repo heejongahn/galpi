@@ -8,7 +8,11 @@ import 'package:galpi/utils/env.dart';
 Future<Book> createBook({Book book}) async {
   final url = '${env.apiEndpoint}/book/create';
 
-  final body = const JsonEncoder().convert({'bookPayload': book.toMap()});
+  final body = const JsonEncoder().convert(
+    {
+      'bookPayload': book.toJson(),
+    },
+  );
 
   final response = await httpClient.post(
     url,
@@ -22,5 +26,5 @@ Future<Book> createBook({Book book}) async {
   final createdBookPayload =
       Map<String, dynamic>.from(decoded['book'] as Map<String, dynamic>);
 
-  return Book.fromPayload(createdBookPayload);
+  return Book.fromJson(createdBookPayload);
 }
