@@ -82,7 +82,7 @@ class Review {
 
     review.book = Book.fromJson(map['book'] as Map<String, dynamic>);
     review.activeRevision = map['activeRevision'] != null
-        ? Revision.fromPayload(map['activeRevision'] as Map<String, dynamic>)
+        ? Revision.fromJson(map['activeRevision'] as Map<String, dynamic>)
         : null;
 
     return review;

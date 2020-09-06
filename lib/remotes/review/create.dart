@@ -12,7 +12,7 @@ Future<Review> createReview({
 
   final body = const JsonEncoder().convert({
     'reviewPayload': review.toMap(),
-    'revisionPayload': review.activeRevision?.toMap(),
+    'revisionPayload': review.activeRevision?.toJson(),
     'bookId': review.book.id,
   });
 

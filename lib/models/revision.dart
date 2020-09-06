@@ -1,4 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
+
+part 'revision.g.dart';
 
 final formatter = DateFormat('yyyy-MM-dd');
 
@@ -18,11 +21,13 @@ Map<String, ReadingStatus> readingStatusInverseMap = readingStatusMap.map(
   (k, v) => MapEntry(v, k),
 );
 
+@JsonSerializable()
 class Revision {
   String id;
   int stars;
   String title;
   String body;
+  @JsonKey(defaultValue: ReadingStatus.hasntStarted)
   ReadingStatus readingStatus;
   final DateTime createdAt;
   final DateTime lastModifiedAt;
@@ -37,47 +42,10 @@ class Revision {
     this.lastModifiedAt,
   });
 
-  static Revision fromPayload(Map<String, dynamic> map) {
-    final createdAt = map['createdAt'] == null
-        ? null
-        : DateTime.tryParse(map['createdAt'] as String)?.toLocal();
-    final lastModifiedAt = map['lastModifiedAt'] == null
-        ? null
-        : DateTime.tryParse(map['lastModifiedAt'] as String)?.toLocal();
+  factory Revision.fromJson(Map<String, dynamic> json) =>
+      _$RevisionFromJson(json);
 
-    final revision = Revision(
-      id: map['id'] as String,
-      stars: map['stars'] as int,
-      title: map['title'] as String,
-      body: map['body'] as String,
-      createdAt: createdAt,
-      lastModifiedAt: lastModifiedAt,
-      readingStatus: map['readingStatus'] == null
-          ? ReadingStatus.hasntStarted
-          : readingStatusInverseMap[map['readingStatus']],
-    );
-
-    return revision;
-  }
-
-  Map<String, dynamic> toMap() {
-    final now = DateTime.now().toIso8601String();
-
-    final map = <String, dynamic>{
-      'stars': stars,
-      'title': title,
-      'body': body,
-      'readingStatus': readingStatusMap[readingStatus],
-    };
-
-    map['createdAt'] = createdAt != null ? createdAt.toIso8601String() : now;
-
-    if (id != null) {
-      map['id'] = id;
-    }
-
-    return map;
-  }
+  Map<String, dynamic> toJson() => _$RevisionToJson(this);
 
   String get displayReadingStatus {
     switch (readingStatus) {

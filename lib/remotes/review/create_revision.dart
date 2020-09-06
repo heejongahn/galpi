@@ -11,7 +11,7 @@ Future<Review> createRevision({
   final url = '${env.apiEndpoint}/review/create-revision';
 
   final body = const JsonEncoder().convert({
-    'revisionPayload': review.activeRevision.toMap(),
+    'revisionPayload': review.activeRevision.toJson(),
     'reviewId': review.id,
   });
 
