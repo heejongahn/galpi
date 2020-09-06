@@ -7,7 +7,7 @@ import 'package:galpi/utils/env.dart';
 
 Future<User> editProfile(User user) async {
   final url = '${env.apiEndpoint}/profile/edit';
-  final body = const JsonEncoder().convert(user.toMap());
+  final body = const JsonEncoder().convert(user.toJson());
 
   final response = await httpClient.put(
     url,
@@ -18,5 +18,5 @@ Future<User> editProfile(User user) async {
   final decoded =
       httpClient.decodeBody<Map<String, dynamic>>(response.bodyBytes);
 
-  return User.fromPayload(decoded['user'] as Map<String, dynamic>);
+  return User.fromJson(decoded['user'] as Map<String, dynamic>);
 }

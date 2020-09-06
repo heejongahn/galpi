@@ -14,5 +14,5 @@ Future<User> me() async {
   final decoded =
       httpClient.decodeBody<Map<String, dynamic>>(response.bodyBytes);
 
-  return User.fromPayload(decoded['user'] as Map<String, dynamic>);
+  return User.fromJson(decoded['user'] as Map<String, dynamic>);
 }

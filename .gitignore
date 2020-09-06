@@ -35,3 +35,5 @@ secrets.tar
 .env.dev
 
 .flutter-plugins-dependencies
+
+**/*.g.dart

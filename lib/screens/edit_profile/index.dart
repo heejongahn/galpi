@@ -224,12 +224,12 @@ class _EditProfileState extends State<EditProfile> {
   Future<void> _onSave() async {
     final userRepository = Provider.of<UserRepository>(context);
 
-    final map = userRepository.user.toMap();
+    final map = userRepository.user.toJson();
     map['displayName'] = _displayName;
     map['introduction'] = _introduction;
     map['profileImageUrl'] = _profileImageUrl;
 
-    final updated = User.fromPayload(map);
+    final updated = User.fromJson(map);
 
     await userRepository.updateUser(updated);
     Navigator.of(context).pop();
