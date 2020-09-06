@@ -11,7 +11,7 @@ Future<Review> editReview({
   final url = '${env.apiEndpoint}/review/edit-review';
 
   final body = const JsonEncoder().convert({
-    'reviewPayload': review.toMap(),
+    'reviewPayload': review.toJson(),
   });
 
   final response = await httpClient.put(
@@ -24,5 +24,5 @@ Future<Review> editReview({
   final createdReviewPayload =
       Map<String, dynamic>.from(decoded['review'] as Map<String, dynamic>);
 
-  return Review.fromPayload(createdReviewPayload);
+  return Review.fromJson(createdReviewPayload);
 }

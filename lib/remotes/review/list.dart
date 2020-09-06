@@ -33,7 +33,7 @@ Future<List<Review>> fetchReviews({
   final reviews =
       List<Map<String, dynamic>>.from(decoded['reviews'] as List<dynamic>);
 
-  final reviewIterable = reviews.map((data) => Review.fromPayload(data));
+  final reviewIterable = reviews.map((data) => Review.fromJson(data));
   final reviewList = reviewIterable.toList();
 
   return reviewList;

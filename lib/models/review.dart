@@ -1,9 +1,13 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:galpi/models/book.dart';
 import 'package:galpi/models/revision.dart';
 import 'package:intl/intl.dart';
 
+part 'review.g.dart';
+
 final formatter = DateFormat('yyyy-MM-dd');
 
+@JsonSerializable()
 class Review {
   String id;
   DateTime readingStartedAt;
@@ -28,6 +32,7 @@ class Review {
   String body;
 
   @deprecated
+  @JsonKey(defaultValue: ReadingStatus.hasntStarted)
   ReadingStatus readingStatus;
 
   Review({
@@ -49,67 +54,9 @@ class Review {
     this.readingStatus = ReadingStatus.hasntStarted,
   });
 
-  static Review fromPayload(Map<String, dynamic> map) {
-    final readingStartedAt = map[columnReadingStartedAt] == null
-        ? null
-        : DateTime.tryParse(map[columnReadingStartedAt] as String);
+  factory Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);
 
-    final readingFinishedAt = map[columnReadingFinishedAt] == null
-        ? null
-        : DateTime.tryParse(map[columnReadingFinishedAt] as String);
-
-    final createdAt = map['createdAt'] == null
-        ? null
-        : DateTime.tryParse(map['createdAt'] as String)?.toLocal();
-    final lastModifiedAt = map['lastModifiedAt'] == null
-        ? null
-        : DateTime.tryParse(map['lastModifiedAt'] as String)?.toLocal();
-
-    final review = Review(
-      id: map['id'] as String,
-      stars: map['stars'] as int,
-      title: map['title'] as String,
-      body: map['body'] as String,
-      readingStatus: map['readingStatus'] == null
-          ? ReadingStatus.hasntStarted
-          : readingStatusInverseMap[map['readingStatus']],
-      readingStartedAt: readingStartedAt,
-      readingFinishedAt: readingFinishedAt,
-      createdAt: createdAt,
-      lastModifiedAt: lastModifiedAt,
-      isPublic: map['isPublic'] as bool,
-    );
-
-    review.book = Book.fromJson(map['book'] as Map<String, dynamic>);
-    review.activeRevision = map['activeRevision'] != null
-        ? Revision.fromJson(map['activeRevision'] as Map<String, dynamic>)
-        : null;
-
-    return review;
-  }
-
-  Map<String, dynamic> toMap() {
-    final now = DateTime.now().toIso8601String();
-
-    final map = <String, dynamic>{
-      'stars': stars,
-      'title': title,
-      'body': body,
-      'readingStatus': readingStatusMap[readingStatus],
-      'readingStartedAt': readingStartedAt?.toIso8601String(),
-      'readingFinishedAt': readingFinishedAt?.toIso8601String(),
-      'isPublic': isPublic
-    };
-
-    map[columnCreatedAt] =
-        createdAt != null ? createdAt.toIso8601String() : now;
-
-    if (id != null) {
-      map[columnId] = id;
-    }
-
-    return map;
-  }
+  Map<String, dynamic> toJson() => _$ReviewToJson(this);
 
   String get displayCreatedDate {
     return formatter.format(createdAt);
